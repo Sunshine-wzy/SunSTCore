@@ -23,7 +23,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization
 
 @Dependencies(Dependency(maven = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"))
 object SunSTCore : Plugin() {
-    val sunstScope = CoroutineScope(SupervisorJob())
+    val sunstScope by lazy { CoroutineScope(SupervisorJob()) }
     val pluginManager = Bukkit.getServer().pluginManager
     val logger = plugin.logger
     
@@ -46,9 +46,14 @@ object SunSTCore : Plugin() {
 
 
     private fun init() {
+        try {
+            SReflect.init()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        
         SItem.initAction()
         DataManager.init()
-        SReflect.init()
         SunSTItem.init()
         SMachineWrench.init()
         SunSTCommand.init()

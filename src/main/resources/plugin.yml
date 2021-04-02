@@ -7,9 +7,15 @@ name: ${name}
 main: ${main}
 version: ${version}
 authors: ['Sunshine_wzy']
+description: A core lib made by SunShine Technology.
 
 api-version: 1.13
 
 lib-download: true
 lib-version: ${libVersion}
 loader-version: ${loaderVersion}
+
+
+commands:
+  sun:
+    description: SunShine Technology Core

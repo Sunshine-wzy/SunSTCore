@@ -55,3 +55,19 @@ compileTestKotlin {
         jvmTarget = "1.8"
     }
 }
+
+jar {
+    destinationDir(file('F:/Kotlin/Workspace/SunSTCore/build/core'))
+}
+
+task copyOutputJar {
+    copy {
+        from 'F:/Kotlin/Workspace/SunSTCore/build/core'
+        into 'F:/Kotlin/Workspace/SkyDream/cores'
+    }
+
+    copy {
+        from 'F:/Kotlin/Workspace/SunSTCore/build/core'
+        into 'F:/Kotlin/Debug/Spigot-1.16.5/plugins'
+    }
+}

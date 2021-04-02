@@ -62,9 +62,6 @@ object SEventSubscriberListener1 : SEventSubscriberListener() {
     fun onPlayerChannel(e: PlayerChannelEvent) { call(e) }
 
     @EventHandler
-    fun onPlayerChatTabComplete(e: PlayerChatTabCompleteEvent) { call(e) }
-
-    @EventHandler
     fun onPlayerCommandPreprocess(e: PlayerCommandPreprocessEvent) { call(e) }
 
     @EventHandler
@@ -280,11 +277,6 @@ object SEventSubscriberListener2 : SEventSubscriberListener() {
 
     @EventHandler
     fun onEntityCombust(e: EntityCombustEvent) {
-        call(e)
-    }
-
-    @EventHandler
-    fun onEntityCreatePortal(e: EntityCreatePortalEvent) {
         call(e)
     }
 

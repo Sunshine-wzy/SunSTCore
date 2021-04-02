@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import java.io.File
 
 object DataManager : Initable {
-    private val dir = SunSTCore.getPlugin().dataFolder
+    private val dir = SunSTCore.plugin.dataFolder
     private val allReloadData = ArrayList<SAutoSaveData>()
     
     val allAutoSaveData = ArrayList<SAutoSaveData>()
