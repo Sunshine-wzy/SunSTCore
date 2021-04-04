@@ -6,6 +6,8 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Method
+import java.util.function.Consumer
+import java.util.function.Function
 
 object SReflect : Initable {
     val version = Bukkit.getServer().javaClass.getPackage().name.replace(".", ",").split(",")[3]
@@ -30,12 +32,10 @@ object SReflect : Initable {
         }
         val getEntityPlayer: Method = RClass.craftPlayer.getMethod("getHandle")
         val getWorldServer: Method = RClass.craftWorld.getMethod("getHandle")
-        val itemDamage: Method = RClass.itemStack.getMethod("damage", Int::class.java, RClass.entityLiving)
+        val itemDamage: Method = RClass.itemStack.getMethod("damage", Int::class.java, RClass.entityLiving, Consumer::class.java)
         val itemAsNMSCopy: Method = RClass.craftItemStack.getMethod("asNMSCopy", ItemStack::class.java)
         val itemAsBukkitCopy: Method = RClass.craftItemStack.getMethod("asBukkitCopy", RClass.itemStack)
     }
-
-    
     
     
     
@@ -45,7 +45,7 @@ object SReflect : Initable {
     
     
     fun canBuild(world: World, player: Player, x: Int, z: Int): Boolean
-        = RMethod.canBuild.invoke(null, RMethod.getWorldServer(RClass.craftWorld.cast(world)), player, x, z) as Boolean
+        = RMethod.canBuild.invoke(null, RMethod.getWorldServer.invoke(RClass.craftWorld.cast(world)), player, x, z) as Boolean
     
     fun Player.getCraftPlayer(): Any = RClass.craftPlayer.cast(this)
     
@@ -55,7 +55,8 @@ object SReflect : Initable {
     
     fun ItemStack.damage(damage: Int, player: Player): ItemStack {
         val nmsItem = asNMSCopy()
-        RMethod.itemDamage.invoke(nmsItem, damage, player.getEntityPlayer())
+        val entityPlayer = player.getEntityPlayer()
+        RMethod.itemDamage.invoke(nmsItem, damage, entityPlayer, Consumer<Any> {})
         return RMethod.itemAsBukkitCopy(null, nmsItem) as ItemStack
     }
     

@@ -4,10 +4,12 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockState
+import org.bukkit.block.data.BlockData
 import org.bukkit.inventory.ItemStack
 
 class SBlock(val material: Material) {
     var name = ""
+    var data: BlockData? = null
     
     private var displayItem: ItemStack = SItem(material, 1)
     
@@ -25,18 +27,24 @@ class SBlock(val material: Material) {
     constructor(item: ItemStack) : this(item.type)
     
     
+    fun setBlockData(data: BlockData): SBlock {
+        this.data = data
+        return this
+    }
+    
     fun setLocation(loc: Location) {
         val block = loc.block
         block.type = material
+        block.blockData
     }
     
     fun toItem(): ItemStack = SItem(material, 1)
     
-    fun isSimilar(block: BlockState): Boolean = material == block.type && isNameEqual(SBlock(block))
+    fun isSimilar(block: Block): Boolean = this == block.toSBlock()
+
+    fun isSimilar(block: BlockState): Boolean = isSimilar(block.block)
     
-    fun isSimilar(block: Block): Boolean = isSimilar(block.state) && isNameEqual(SBlock(block))
-    
-    fun isSimilar(loc: Location): Boolean = isSimilar(loc.block) && isNameEqual(SBlock(loc))
+    fun isSimilar(loc: Location): Boolean = isSimilar(loc.block)
     
     
     fun hasName(): Boolean = name != ""
@@ -59,9 +67,7 @@ class SBlock(val material: Material) {
             this === other -> true
             other !is SBlock -> false
             
-            else ->
-                if(name != other.name) false
-                else material == other.material
+            else -> material == other.material && name == other.name
         }
 
     override fun hashCode(): Int {
@@ -77,6 +83,7 @@ class SBlock(val material: Material) {
     companion object {
         fun Location.getSBlock(): SBlock = SBlock(this)
         
+        fun Block.toSBlock(): SBlock = SBlock(this)
     }
     
 }

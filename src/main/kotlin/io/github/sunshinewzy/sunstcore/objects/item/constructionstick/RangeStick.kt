@@ -3,6 +3,7 @@ package io.github.sunshinewzy.sunstcore.objects.item.constructionstick
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.utils.*
+import io.github.sunshinewzy.sunstcore.utils.SReflect.asNMSCopy
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -41,8 +42,9 @@ class RangeStick(item: ItemStack, val radius: Int) : ConstructionStick(item) {
                 player.spawnStickSelectParticle(setLoc, face)
                 setLoc.forEach {
                     val placeLoc = it.getFaceLocation(face)
-                    player.tryToPlaceBlock(placeLoc, block, block.state.data.toItemStack(1)) {
-                        val itemBlock = block.state.data.toItemStack(1)
+                    val itemBlock = ItemStack(block.type)
+                    
+                    player.tryToPlaceBlock(placeLoc, block, itemBlock) {
                         if(player.gameMode == GameMode.SURVIVAL || player.gameMode == GameMode.ADVENTURE){
                             val inv = player.inventory
                             if(inv.containsItem(itemBlock)){

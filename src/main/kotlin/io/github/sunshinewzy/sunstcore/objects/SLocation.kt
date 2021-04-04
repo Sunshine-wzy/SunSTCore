@@ -93,5 +93,7 @@ class SLocation {
         
         
         fun Location.toSLocation(): SLocation = SLocation(this)
+        
+        fun Block.getSLocation(): SLocation = SLocation(location)
     }
 }

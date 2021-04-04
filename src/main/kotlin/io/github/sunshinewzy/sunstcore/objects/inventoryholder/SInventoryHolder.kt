@@ -5,7 +5,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 
 open class SInventoryHolder<T>(var data: T) : InventoryHolder {
-    private val inventory: Inventory = Bukkit.createInventory(this, 0)
+    private val inventory: Inventory = Bukkit.createInventory(this, 9)
     
     
     override fun getInventory(): Inventory {

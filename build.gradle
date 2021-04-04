@@ -2,13 +2,15 @@ plugins {
     id 'java'
     id 'io.izzel.taboolib' version '1.3'
     id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id 'maven-publish'
 }
 
-group = 'io.github.sunshinewzy.sunstcore'
+group = 'io.github.sunshine-wzy'
 version = '1.0.5'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+
 
 taboolib {
     tabooLibVersion = '5.6'
@@ -60,6 +62,61 @@ jar {
     destinationDir(file('F:/Kotlin/Workspace/SunSTCore/build/core'))
 }
 
+//sourcesJar {
+//    from sourceSets.main.allSource
+//
+//    classifier 'sources'
+//    destinationDir(file('F:/Kotlin/Workspace/SkyDream/cores'))
+//}
+
+//java {
+//    withSourcesJar()
+//}
+
+//artifacts {
+//    archives sourcesJar
+//}
+
+
+publishing {
+    publications {
+        myPublication(MavenPublication) {
+//            如果是war包填写components.web，如果是jar包填写components.java
+            from components.java
+            
+//            指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
+//            groupId需要注意一下,如果下面仓库的配置是oss.sonatype.org(即中央仓库),那么这里的groupId必须为你在sonatype中申请的ISSUE中设置的ID
+            groupId "io.github.sunshine-wzy"
+            artifactId "$project.name"
+            version "$version"
+
+//            artifact(sourcesJar) {
+//                classifier "sources"
+//            }
+        }
+    }
+    
+    repositories {
+        maven {
+            if (!project.version.endsWith('Release')) {
+//                快照版本地址
+//            这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+//                正式版本地址
+//                这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+            
+            credentials {
+                username = ossUser
+                password = ossPassword
+            }
+        }
+    }
+}
+
+
 task copyOutputJar {
     copy {
         from 'F:/Kotlin/Workspace/SunSTCore/build/core'
@@ -71,3 +128,5 @@ task copyOutputJar {
         into 'F:/Kotlin/Debug/Spigot-1.16.5/plugins'
     }
 }
+
+build.dependsOn copyOutputJar

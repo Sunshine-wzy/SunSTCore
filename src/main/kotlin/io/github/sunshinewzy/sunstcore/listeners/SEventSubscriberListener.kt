@@ -2,6 +2,8 @@ package io.github.sunshinewzy.sunstcore.listeners
 
 import io.github.sunshinewzy.sunstcore.events.SMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.SMenuClickEvent
+import io.github.sunshinewzy.sunstcore.events.SMenuOpenEvent
 import io.github.sunshinewzy.sunstcore.utils.SEventSubscriber
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -726,4 +728,17 @@ object SEventSubscriberListener4 : SEventSubscriberListener() {
     
     //endregion
     
+    //region SMenuEvent
+    
+    @EventHandler
+    fun onSMenuClick(e: SMenuClickEvent) {
+        call(e)
+    }
+    
+    @EventHandler
+    fun onSMenuOpen(e: SMenuOpenEvent) {
+        call(e)
+    }
+    
+    //endregion
 }

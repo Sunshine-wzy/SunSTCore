@@ -39,7 +39,7 @@ abstract class TaskBase(
     init {
         taskStage.taskMap[taskName] = this
         
-        subscribeEvent<InventoryClickEvent> { 
+        subscribeEvent<InventoryClickEvent> {
             val player = view.getSPlayer()
             
             if(inventory.holder == this@TaskBase.holder){

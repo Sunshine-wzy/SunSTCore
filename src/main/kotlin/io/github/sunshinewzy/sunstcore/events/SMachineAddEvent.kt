@@ -6,7 +6,11 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 
-class SMachineAddEvent(sMachine: SMachine, val loc: Location, val player: Player) : SMachineEvent(sMachine), Cancellable {
+class SMachineAddEvent(
+    sMachine: SMachine,
+    val loc: Location,
+    val player: Player
+) : SMachineEvent(sMachine), Cancellable {
     private var cancelledFlag = false
     
     
