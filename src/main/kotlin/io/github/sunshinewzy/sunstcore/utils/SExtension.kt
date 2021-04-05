@@ -17,7 +17,6 @@ import org.bukkit.block.BlockFace.*
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.inventory.*
-import org.bukkit.material.Leaves
 import org.bukkit.material.MaterialData
 import org.bukkit.metadata.MetadataValueAdapter
 import org.bukkit.plugin.java.JavaPlugin

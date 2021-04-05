@@ -3,7 +3,6 @@ package io.github.sunshinewzy.sunstcore.objects.item.constructionstick
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.utils.*
-import io.github.sunshinewzy.sunstcore.utils.SReflect.asNMSCopy
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Method
 import java.util.function.Consumer
-import java.util.function.Function
 
 object SReflect : Initable {
     val version = Bukkit.getServer().javaClass.getPackage().name.replace(".", ",").split(",")[3]
