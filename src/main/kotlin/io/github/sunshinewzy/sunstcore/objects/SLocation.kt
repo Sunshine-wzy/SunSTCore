@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.objects
 
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -62,6 +63,29 @@ class SLocation {
     fun getBlock(): Block? {
         val world = Bukkit.getServer().getWorld(world) ?: return null
         return world.getBlockAt(x, y, z)
+    }
+    
+    
+    fun addData(key: String, value: String) {
+        SLocationData.addData(world, toString(), key, value)
+    }
+    
+    fun removeData(key: String) {
+        SLocationData.removeData(world, toString(), key)
+    }
+    
+    fun clearData() {
+        SLocationData.clearData(world, toString())
+    }
+    
+    fun getData(key: String): String? =
+        SLocationData.getData(world, toString(), key)
+    
+    fun getDataOrFail(key: String): String {
+        getData(key)?.let { 
+            return it
+        }
+        throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data")
     }
     
 

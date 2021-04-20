@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.sunstcore.objects
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.events.SMenuClickEvent
-import io.github.sunshinewzy.sunstcore.events.SMenuOpenEvent
+import io.github.sunshinewzy.sunstcore.events.smenu.SMenuClickEvent
+import io.github.sunshinewzy.sunstcore.events.smenu.SMenuOpenEvent
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.utils.getSPlayer

@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.events
+package io.github.sunshinewzy.sunstcore.events.smenu
 
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList

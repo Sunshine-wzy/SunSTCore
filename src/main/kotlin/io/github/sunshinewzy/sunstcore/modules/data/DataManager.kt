@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.data
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.STaskData
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStickData
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStickData

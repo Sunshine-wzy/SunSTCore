@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity.Companion.getEnergyEntity
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity.Companion.isEnergyBlock
@@ -63,14 +64,18 @@ object BlockListener : Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onBlockBreak(e: BlockBreakEvent) {
-        val block = e.block
+        if(!e.isCancelled) {
+            val block = e.block
 
-        if(SEnergyEntity.hasEnergyBlocks()) {
-            val sBlock = block.toSBlock()
+            if(SEnergyEntity.hasEnergyBlocks()) {
+                val sBlock = block.toSBlock()
 
-            if(sBlock.isEnergyBlock()) {
-                block.removeEnergyBlock()
+                if(sBlock.isEnergyBlock()) {
+                    block.removeEnergyBlock()
+                }
             }
+            
+            SLocationData.clearData(block.world.name, block.getSLocation().toString())
         }
     }
     

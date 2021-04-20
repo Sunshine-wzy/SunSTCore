@@ -1,12 +1,9 @@
-package io.github.sunshinewzy.sunstcore.events
+package io.github.sunshinewzy.sunstcore.events.slocationdata
 
-import org.bukkit.entity.Player
+import io.github.sunshinewzy.sunstcore.objects.SLocation
 import org.bukkit.event.HandlerList
 
-class SMenuOpenEvent(
-    id: String,
-    player: Player
-) : SMenuEvent(id, player) {
+class SLocationDataRemoveEvent(sLocation: SLocation, val key: String) : SLocationDataEvent(sLocation) {
 
     override fun getHandlers(): HandlerList = handlerList
 

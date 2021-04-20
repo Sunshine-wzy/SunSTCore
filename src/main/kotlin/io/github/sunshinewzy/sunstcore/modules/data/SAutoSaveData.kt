@@ -69,7 +69,7 @@ abstract class SAutoSaveData(
      * 创建配置文件
      */
     private fun create() {
-        val config = getConfig()
+        val config = YamlConfiguration()
         config.createConfig()
 
         try {
@@ -82,7 +82,7 @@ abstract class SAutoSaveData(
     /**
      * 保存配置文件
      */
-    fun save() {
+    open fun save() {
         val config = getConfig()
         config.modifyConfig()
         
@@ -96,7 +96,7 @@ abstract class SAutoSaveData(
     /**
      * 加载配置文件
      */
-    fun load() {
+    open fun load() {
         getConfig().loadConfig()
     }
 
@@ -105,6 +105,6 @@ abstract class SAutoSaveData(
         
     }
 
-    private fun getConfig(): YamlConfiguration = YamlConfiguration.loadConfiguration(file)
+    fun getConfig(): YamlConfiguration = YamlConfiguration.loadConfiguration(file)
     
 }

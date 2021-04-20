@@ -1,9 +1,9 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
-import io.github.sunshinewzy.sunstcore.events.SMachineAddEvent
-import io.github.sunshinewzy.sunstcore.events.SMachineRemoveEvent
-import io.github.sunshinewzy.sunstcore.events.SMenuClickEvent
-import io.github.sunshinewzy.sunstcore.events.SMenuOpenEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smenu.SMenuClickEvent
+import io.github.sunshinewzy.sunstcore.events.smenu.SMenuOpenEvent
 import io.github.sunshinewzy.sunstcore.utils.SEventSubscriber
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler

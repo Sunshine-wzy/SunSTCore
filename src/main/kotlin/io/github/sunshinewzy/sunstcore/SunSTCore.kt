@@ -3,14 +3,18 @@ package io.github.sunshinewzy.sunstcore
 import io.github.sunshinewzy.sunstcore.commands.SunSTCommand
 import io.github.sunshinewzy.sunstcore.listeners.*
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
+import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
+import io.github.sunshinewzy.sunstcore.utils.sendMsg
+import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.metrics.BMetrics
 import io.izzel.taboolib.module.dependency.Dependencies
@@ -18,7 +22,11 @@ import io.izzel.taboolib.module.dependency.Dependency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
+import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 
 
 @Dependencies(Dependency(maven = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"))
@@ -57,6 +65,7 @@ object SunSTCore : Plugin() {
         SunSTItem.init()
         SMachineWrench.init()
         SunSTCommand.init()
+        SLocationData.init()
         
     }
     
@@ -84,7 +93,30 @@ object SunSTCore : Plugin() {
     
     @SunSTTestApi
     private fun test() {
-        
+        subscribeEvent<PlayerInteractEvent> { 
+            if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
+                val item = item ?: return@subscribeEvent
+                val block = clickedBlock ?: return@subscribeEvent
+                val sLoc = block.getSLocation()
+                
+                if(item.type != Material.AIR) {
+                    when(item.type) {
+                        Material.ARROW -> {
+                            sLoc.addData(player.name, "233")
+                            player.sendMsg("&eSLocationData", "&a添加成功！")
+                        }
+                        
+                        Material.BLAZE_ROD -> {
+                            sLoc.getData(player.name)?.let {
+                                player.sendMsg("&eSLocationData", it)
+                            }
+                        }
+                        
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
     
 }

@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.events.SMachineAddEvent
-import io.github.sunshinewzy.sunstcore.events.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
-import io.github.sunshinewzy.sunstcore.modules.data.SMachineData
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.getSMetadata

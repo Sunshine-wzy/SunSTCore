@@ -1,6 +1,7 @@
-package io.github.sunshinewzy.sunstcore.modules.data
+package io.github.sunshinewzy.sunstcore.modules.data.sunst
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.modules.data.SAutoSaveData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProject
 import org.bukkit.configuration.file.YamlConfiguration
 

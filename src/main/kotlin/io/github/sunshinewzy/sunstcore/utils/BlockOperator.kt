@@ -34,44 +34,75 @@ class BlockOperator(val block: Block) {
         var flag = false
         
         x(1) {
-            block {
-                flag = operation(block)
-            }
+            flag = operation(block)
         }
         if(flag) return
         
         x(-1) {
-            block {
-                flag = operation(block)
-            }
+            flag = operation(block)
         }
         if(flag) return
 
         y(1) {
-            block {
-                flag = operation(block)
-            }
+            flag = operation(block)
         }
         if(flag) return
 
         y(-1) {
-            block {
-                flag = operation(block)
+            flag = operation(block)
+        }
+        if(flag) return
+
+        z(1) {
+            flag = operation(block)
+        }
+        if(flag) return
+
+        z(-1) {
+            flag = operation(block)
+        }
+    }
+    
+    fun horizontal(around: Boolean = false, operation: Block.() -> Boolean) {
+        var flag = false
+
+        x(1) {
+            flag = operation(block)
+
+            if(around && !flag) {
+                z(1) {
+                    flag = operation(block)
+                }
+
+                z(-1) {
+                    flag = operation(block)
+                }
+            }
+        }
+        if(flag) return
+
+        x(-1) {
+            flag = operation(block)
+
+            if(around && !flag) {
+                z(1) {
+                    flag = operation(block)
+                }
+
+                z(-1) {
+                    flag = operation(block)
+                }
             }
         }
         if(flag) return
 
         z(1) {
-            block {
-                flag = operation(block)
-            }
+            flag = operation(block)
         }
         if(flag) return
 
         z(-1) {
-            block {
-                flag = operation(block)
-            }
+            flag = operation(block)
         }
     }
     

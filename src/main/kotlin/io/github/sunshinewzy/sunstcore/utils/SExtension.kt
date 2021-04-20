@@ -7,8 +7,11 @@ import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProject
 import io.github.sunshinewzy.sunstcore.modules.task.TaskStage
-import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
+import io.github.sunshinewzy.sunstcore.objects.SMetadataValue
+import io.github.sunshinewzy.sunstcore.objects.orderWith
+import io.github.sunshinewzy.sunstcore.objects.toX
+import io.github.sunshinewzy.sunstcore.objects.toY
 import io.github.sunshinewzy.sunstcore.utils.SReflect.damage
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -40,7 +43,7 @@ inline fun <reified T> Any.castList(): ArrayList<T> {
 /**
  * Object转Map
  */
-inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>): MutableMap<K, V>? {
+inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>): HashMap<K, V>? {
     val result = HashMap<K, V>()
     if (this is Map<*, *>) {
         for ((key, value) in this) {
@@ -70,7 +73,7 @@ inline fun <reified K, reified V> Any.castMap(targetMap: MutableMap<K, V>): Bool
     return false
 }
 
-fun Any.castMapBoolean(): MutableMap<String, Boolean> {
+fun Any.castMapBoolean(): HashMap<String, Boolean> {
     val map = HashMap<String, Boolean>()
     
     if(this is Map<*, *>){
@@ -81,6 +84,20 @@ fun Any.castMapBoolean(): MutableMap<String, Boolean> {
         }
     }
     
+    return map
+}
+
+fun Any.castMapString(): HashMap<String, String> {
+    val map = HashMap<String, String>()
+
+    if(this is Map<*, *>){
+        forEach { key, value ->
+            if(key is String && value is String){
+                map[key] = value
+            }
+        }
+    }
+
     return map
 }
 

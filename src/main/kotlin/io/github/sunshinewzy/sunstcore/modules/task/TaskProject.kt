@@ -2,7 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.task
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
-import io.github.sunshinewzy.sunstcore.modules.data.STaskData
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.STaskData
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
@@ -22,7 +22,6 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.HashMap
 
 class TaskProject(
     val projectName: String,

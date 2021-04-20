@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
-import io.github.sunshinewzy.sunstcore.events.SMachineAddEvent
-import io.github.sunshinewzy.sunstcore.events.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMachine
@@ -21,7 +21,6 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
-import kotlin.collections.HashMap
 
 class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
