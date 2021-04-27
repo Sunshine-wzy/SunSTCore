@@ -45,7 +45,8 @@ object SunSTCore : Plugin() {
         
         plugin.logger.info("SunSTCore 加载成功！")
         
-        test()
+        if(System.getProperty("test") == "true") 
+            test()
     }
 
     override fun onDisable() {

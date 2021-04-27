@@ -14,10 +14,18 @@ import org.bukkit.block.Block
  * 
  * 表示一个由能量方块互相连接形成的整体
  */
-class SEnergyEntity(val storage: SEnergyUnit) {
+class SEnergyEntity<EU: SEnergyUnit>(val storage: EU) {
     
     private val locations = HashSet<SLocation>()
     
+    
+    fun addEnergy(unit: EU) {
+        storage += unit
+    }
+    
+    fun removeEnergy(unit: EU) {
+        storage -= unit
+    }
     
     fun addBlock(loc: SLocation) {
         locations += loc
@@ -34,7 +42,7 @@ class SEnergyEntity(val storage: SEnergyUnit) {
     
     
     companion object {
-        private val entities = HashMap<SLocation, SEnergyEntity>()
+        private val entities = HashMap<SLocation, SEnergyEntity<out SEnergyUnit>>()
         private val energyBlocks = ArrayList<SBlock>()
         
         
@@ -44,20 +52,20 @@ class SEnergyEntity(val storage: SEnergyUnit) {
         fun Block.hasEnergyEntity(): Boolean =
             location.hasEnergyEntity()
         
-        fun Location.getEnergyEntity(): SEnergyEntity? {
+        fun Location.getEnergyEntity(): SEnergyEntity<out SEnergyUnit>? {
             val sLoc = toSLocation()
             if(entities.containsKey(sLoc))
                 return entities[sLoc]
             return null
         }
         
-        fun Block.getEnergyEntity(): SEnergyEntity? =
+        fun Block.getEnergyEntity(): SEnergyEntity<out SEnergyUnit>? =
             location.getEnergyEntity()
 
-        fun Location.getEnergyEntityOrFail(): SEnergyEntity =
+        fun Location.getEnergyEntityOrFail(): SEnergyEntity<out SEnergyUnit> =
             getEnergyEntity() ?: throw NoEnergyUnitException(this)
         
-        fun Block.getEnergyEntityOrFail(): SEnergyEntity =
+        fun Block.getEnergyEntityOrFail(): SEnergyEntity<out SEnergyUnit> =
             location.getEnergyEntityOrFail()
         
         

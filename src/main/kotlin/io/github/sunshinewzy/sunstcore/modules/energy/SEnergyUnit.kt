@@ -9,9 +9,13 @@ package io.github.sunshinewzy.sunstcore.modules.energy
  */
 interface SEnergyUnit {
     
-    operator fun plus(unit: SEnergyUnit)
+    operator fun plus(unit: SEnergyUnit): SEnergyUnit
     
-    operator fun minus(unit: SEnergyUnit)
+    operator fun minus(unit: SEnergyUnit): SEnergyUnit
+    
+    operator fun plusAssign(unit: SEnergyUnit)
+    
+    operator fun minusAssign(unit: SEnergyUnit)
     
     fun toSunSTEnergy(): SunSTEnergy
     
