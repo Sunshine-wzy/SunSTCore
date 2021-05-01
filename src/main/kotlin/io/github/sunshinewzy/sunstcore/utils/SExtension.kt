@@ -17,6 +17,7 @@ import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.BlockFace.*
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.inventory.*
@@ -180,16 +181,6 @@ fun Player.completeTask(task: TaskBase, isCompleted: Boolean = true) {
     progress.completeTask(task, isCompleted)
 }
 
-/**
- * 发送消息 (使用 '&' 作为颜色符号)
- */
-fun Player.sendMsg(msg: String) {
-    sendMessage(msg.replace('&', '§'))
-}
-
-fun Player.sendMsg(prefix: String, msg: String) {
-    sendMessage("&f[$prefix&f] ".replace('&', '§') + msg.replace('&', '§'))
-}
 
 /**
  * 生成粒子效果
@@ -645,5 +636,20 @@ fun Random.Default.getInt(st: Int, ed: Int): Int = nextInt(st, ed + 1)
 fun Random.Default.getInt(ed: Int): Int = getInt(1, ed)
 
 fun Random.Default.isInPercent(percent: Int): Boolean = getInt(100) in 1..percent
+
+//endregion
+
+//region CommandSender
+
+/**
+ * 发送消息 (使用 '&' 作为颜色符号)
+ */
+fun CommandSender.sendMsg(msg: String) {
+    sendMessage(msg.replace('&', '§'))
+}
+
+fun CommandSender.sendMsg(prefix: String, msg: String) {
+    sendMessage("&f[$prefix&f] ".replace('&', '§') + msg.replace('&', '§'))
+}
 
 //endregion

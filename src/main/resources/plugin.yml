@@ -17,5 +17,6 @@ loader-version: ${loaderVersion}
 
 
 commands:
-  sun:
+  SunST:
+    aliases: [sun]
     description: SunShine Technology Core
