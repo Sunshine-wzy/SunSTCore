@@ -34,7 +34,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
                 "The center is not a block"
             )
 
-            if(theCenterBlock.material == Material.AIR) throw  MachineStructureException(
+            if(theCenterBlock.type == Material.AIR) throw  MachineStructureException(
                 shape,
                 "The center block cannot be AIR."
             )
@@ -99,7 +99,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
             struct.forEach { (coord, sBlock) -> 
                 theLoc = loc.addClone(coord)
                 
-                if(sBlock.material != Material.AIR && !sBlock.isSimilar(theLoc))
+                if(sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc))
                     return false
             }
             

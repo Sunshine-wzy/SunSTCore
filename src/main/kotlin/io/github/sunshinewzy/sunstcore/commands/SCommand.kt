@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.utils.toLinkedList
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -59,7 +60,7 @@ open class SCommand(val name: String) : CommandExecutor, TabCompleter {
         
         if(commands.containsKey(first)){
             val scWrapper = commands[first] ?: return false
-            scWrapper(SCommandWrapper(sender, cmd, label, args.toList()))
+            scWrapper(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
             return true
         }
         
@@ -90,7 +91,7 @@ open class SCommand(val name: String) : CommandExecutor, TabCompleter {
         
         if(commands.containsKey(first)){
             val scWrapper = commands[first] ?: return list
-            scWrapper(SCommandWrapper(sender, cmd, label, args.toList(), true, list))
+            scWrapper(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first, true, list))
         }
         
         return list

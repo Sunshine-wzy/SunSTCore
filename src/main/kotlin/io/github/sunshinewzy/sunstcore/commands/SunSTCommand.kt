@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.commands
 
+import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
 import io.github.sunshinewzy.sunstcore.commands.SCommand.Companion.sendSeparator
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
@@ -24,20 +25,22 @@ object SunSTCommand : Initable {
                         if(items.containsKey(preArg)){
                             val item = items[preArg] ?: return@empty
                             sender.giveItem(item)
-                            sender.sendMsg("&a您已获得 $preArg")
+                            sender.sendMsg(colorName, "&a您已获得 $preArg")
                             return@empty
                         }
                     }
                 }
                 
                 empty {
-                    sender.sendMsg("give 后加SunST物品名称 (按 TAB 可以自动补全~)")
+                    sender.sendMsg(colorName,"&agive 后加SunST物品名称 (按 TAB 可以自动补全~)")
                 }
             }
                 
             .addCommand("reload") {
-                DataManager.reloadData()
-                sender.sendMessage("§a配置文件重载成功！")
+                empty {
+                    DataManager.reloadData()
+                    sender.sendMsg(colorName, "&a配置文件重载成功！")
+                }
             }
                 
             .setHelper { sender, page ->

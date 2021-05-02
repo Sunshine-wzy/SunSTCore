@@ -129,4 +129,4 @@ task copyOutputJar {
     }
 }
 
-build.dependsOn copyOutputJar
+//build.dependsOn copyOutputJar

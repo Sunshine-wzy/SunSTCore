@@ -25,6 +25,7 @@ import org.bukkit.material.MaterialData
 import org.bukkit.metadata.MetadataValueAdapter
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.util.*
 import kotlin.random.Random
 
 
@@ -650,6 +651,32 @@ fun CommandSender.sendMsg(msg: String) {
 
 fun CommandSender.sendMsg(prefix: String, msg: String) {
     sendMessage("&f[$prefix&f] ".replace('&', '§') + msg.replace('&', '§'))
+}
+
+//endregion
+
+//region Collection
+
+fun <E> Collection<E>.toLinkedList(): LinkedList<E> {
+    val list = LinkedList<E>()
+    list.addAll(this)
+    return list
+}
+
+fun <E> LinkedList<E>.copy(): LinkedList<E> {
+    val list = LinkedList<E>()
+    list.addAll(this)
+    return list
+}
+
+//endregion
+
+//region Array
+
+fun <E> Array<out E>.toLinkedList(): LinkedList<E> {
+    val list = LinkedList<E>()
+    list.addAll(this)
+    return list
 }
 
 //endregion

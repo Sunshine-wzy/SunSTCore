@@ -11,12 +11,3 @@ import kotlin.annotation.AnnotationTarget.*
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, TYPEALIAS, FUNCTION, PROPERTY, FIELD, CONSTRUCTOR)
 annotation class SunSTTestApi(val message: String = "")
-
-/**
- * 只能在抽象类中重写
- * 请勿在普通类中重写
- */
-@Retention(AnnotationRetention.BINARY)
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(CLASS, TYPEALIAS, FUNCTION, PROPERTY, FIELD, CONSTRUCTOR)
-annotation class OnlyOverrideInAbstractClass(val message: String = "")

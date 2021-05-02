@@ -35,6 +35,9 @@ object SunSTCore : Plugin() {
     val pluginManager = Bukkit.getServer().pluginManager
     val logger = plugin.logger
     
+    const val name = "SunSTCore"
+    const val colorName = "&eSunSTCore"
+    
 
     override fun onEnable() {
         registerSerialization()

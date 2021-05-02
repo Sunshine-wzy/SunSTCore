@@ -1,7 +1,18 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
-class SSingleMachine {
+import io.github.sunshinewzy.sunstcore.objects.SLocation
+
+class SSingleMachine(val name: String) {
     
     
+    
+    
+    companion object {
+        /**
+         * 所有机器的位置
+         */
+        private val machines = HashMap<SLocation, SSingleMachine>()
+        
+    }
     
 }
