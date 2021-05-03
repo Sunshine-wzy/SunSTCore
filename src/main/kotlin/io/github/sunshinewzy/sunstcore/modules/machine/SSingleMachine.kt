@@ -2,7 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.machine
 
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 
-class SSingleMachine(val name: String) {
+abstract class SSingleMachine(val name: String) {
     
     
     
