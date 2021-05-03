@@ -6,7 +6,6 @@ abstract class SSingleMachine(val name: String) {
     
     
     
-    
     companion object {
         /**
          * 所有机器的位置

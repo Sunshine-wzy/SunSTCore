@@ -19,10 +19,8 @@ class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, wo
 
     override fun YamlConfiguration.modifyConfig() {
         if(data.containsKey(world)) {
-            data[world]?.let { 
-                it.forEach { (sLoc, data) -> 
-                    set(sLoc, data)
-                }
+            data[world]?.forEach { (sLoc, data) ->
+                set(sLoc, data)
             }
         }
     }
@@ -31,9 +29,8 @@ class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, wo
         val roots = getKeys(false)
         roots.forEach { sLoc ->
             val map = HashMap<String, String>()
-            getMap(sLoc, map)
 
-            if(map.isNotEmpty())
+            if(getMap(sLoc, map) && map.isNotEmpty())
                 addData(world, sLoc, map)
         }
     }
@@ -113,6 +110,19 @@ class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, wo
                 }
             }
             return null
+        }
+
+        fun getDataOrFail(world: String, sLocation: String, key: String): String {
+            if(data.containsKey(world)) {
+                data[world]?.let { worldData ->
+                    if(worldData.containsKey(sLocation)) {
+                        worldData[sLocation]?.let {
+                            return it[key] ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data of $key.")
+                        }
+                    }
+                }
+            }
+            throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data of $key.")
         }
         
         

@@ -81,12 +81,8 @@ class SLocation {
     fun getData(key: String): String? =
         SLocationData.getData(world, toString(), key)
     
-    fun getDataOrFail(key: String): String {
-        getData(key)?.let { 
-            return it
-        }
-        throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data")
-    }
+    fun getDataOrFail(key: String): String =
+        SLocationData.getDataOrFail(world, toString(), key)
     
 
     override fun equals(other: Any?): Boolean =
