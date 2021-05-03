@@ -1,6 +1,6 @@
 # SunSTCore
 * A Bukkit core lib plugin made by SunShine Technology.
-
+* [MCBBS发布帖](https://www.mcbbs.net/thread-1170416-1-1.html)
 
 #  # [modules](https://github.com/Sunshine-wzy/SunSTCore/tree/master/src/main/kotlin/io/github/sunshinewzy/sunstcore/modules)  
 模块 - SunSTCore的核心功能
