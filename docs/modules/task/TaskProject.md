@@ -29,5 +29,6 @@
 ## 示例
 - [SkyDream-SDTask](https://github.com/Sunshine-wzy/SkyDream/blob/master/src/main/kotlin/io/github/sunshinewzy/skydream/tasks/SDTask.kt)  
 ```kotlin
+val openItem = SItem(Material.ENCHANTED_BOOK, "§eSkyDream §a向导", "§b>§f由此开始SkyDream之旅§b<")
 val sdTaskProject = TaskProject("SkyDream", openItem, true, "§eSkyDream §a向导")
 ```
