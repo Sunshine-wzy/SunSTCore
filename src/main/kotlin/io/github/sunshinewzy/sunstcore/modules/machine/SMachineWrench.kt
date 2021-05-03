@@ -89,10 +89,9 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
         
         override fun init() {
             subscribeEvent<PlayerInteractEvent> { 
-                if(isCancelled) return@subscribeEvent
+                val clickedBlock = clickedBlock ?: return@subscribeEvent
                 
-                val clickedBlock = clickedBlock
-                if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR){
+                if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR){
                     val loc = clickedBlock.location
                     val machine = loc.getSMachine()
                     if(machine != null){

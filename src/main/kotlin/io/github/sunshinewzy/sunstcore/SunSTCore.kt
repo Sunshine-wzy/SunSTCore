@@ -5,6 +5,7 @@ import io.github.sunshinewzy.sunstcore.listeners.*
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
+import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
@@ -70,6 +71,7 @@ object SunSTCore : Plugin() {
         SMachineWrench.init()
         SunSTCommand.init()
         SLocationData.init()
+        SSingleMachine.init()
         
     }
     

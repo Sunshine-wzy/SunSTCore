@@ -25,6 +25,7 @@ import org.bukkit.inventory.*
 import org.bukkit.material.MaterialData
 import org.bukkit.metadata.MetadataValueAdapter
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.util.BoundingBox
 import java.io.File
 import java.util.*
 import kotlin.random.Random
@@ -620,6 +621,9 @@ fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false): 
 
     return cnt
 }
+
+operator fun Pair<Location, Location>.contains(location: Location) =
+    location.toVector() in BoundingBox.of(first, second)
 
 //endregion
 

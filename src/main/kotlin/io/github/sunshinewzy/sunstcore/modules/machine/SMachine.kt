@@ -6,6 +6,7 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
 import io.github.sunshinewzy.sunstcore.objects.SLocation
+import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.getSMetadata
 import io.github.sunshinewzy.sunstcore.utils.removeClone
@@ -185,28 +186,14 @@ abstract class SMachine(
         private val machines = HashMap<SLocation, SMachine>()
 
 
-        fun Location.hasSMachine(): Boolean {
-            val sLoc = SLocation(this)
-            
-            if(machines.containsKey(sLoc)){
-                machines[sLoc] ?: kotlin.run { 
-                    machines.remove(sLoc)
-                    return false
-                }
-                return true
-            }
-            
-            return false
-        }
+        fun Location.hasSMachine(): Boolean =
+            machines.containsKey(toSLocation())
         
         fun Location.getSMachine(): SMachine? {
-            val sLoc = SLocation(this)
+            val sLoc = toSLocation()
 
             if(machines.containsKey(sLoc)){
-                return machines[sLoc] ?: kotlin.run {
-                    machines.remove(sLoc)
-                    return null
-                }
+                return machines[sLoc]
             }
 
             return null
