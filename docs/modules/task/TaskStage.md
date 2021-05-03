@@ -3,7 +3,7 @@
 
 ## 示例
 - [SkyDream-SDTask](https://github.com/Sunshine-wzy/SkyDream/blob/master/src/main/kotlin/io/github/sunshinewzy/skydream/tasks/SDTask.kt)  
-```kotlin
+    ```kotlin
     val stage1 = TaskStage(
         sdTaskProject,
         "<第一阶段> §6木器时代",
@@ -46,4 +46,4 @@
         stage2.finalTask = SDTStage2.task5_1
         
     }
-```
+    ```
