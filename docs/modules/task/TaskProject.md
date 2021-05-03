@@ -21,6 +21,13 @@
 - invSize  
 任务书界面行数
 默认为5（即5*9格）
+
 ## 函数
 -     getProgress(p: Player): TaskProgress  
 获取玩家的任务进度
+
+## 示例
+- [SkyDream-SDTask](https://github.com/Sunshine-wzy/SkyDream/blob/master/src/main/kotlin/io/github/sunshinewzy/skydream/tasks/SDTask.kt)  
+```kotlin
+val sdTaskProject = TaskProject("SkyDream", openItem, true, "§eSkyDream §a向导")
+```
