@@ -135,7 +135,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
             
             val item =
                 if(coord == center){
-                    sBlock.getDisplayItem().clone().apply {
+                    sBlock.getItem().clone().apply {
                         addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
                         val meta = getSMeta()
                         val list = listOf("", "§a用扳手右键敲我以构建多方块结构~")
@@ -145,7 +145,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
                         itemMeta = meta
                     }
                 }
-                else sBlock.getDisplayItem()
+                else sBlock.getItem()
             
             when(size) {
                 SMachineSize.SIZE3 -> {
@@ -233,6 +233,6 @@ fun CoordSBlockMap.displayInInventory(inv: Inventory, page: Int, firstLayer: Boo
         val (x, y, z) = coord
         if(y != theY) return@forEach
 
-        inv.setItem(SMachineStructure.invBaseX + x, SMachineStructure.invBaseY + z, sBlock.getDisplayItem())
+        inv.setItem(SMachineStructure.invBaseX + x, SMachineStructure.invBaseY + z, sBlock.getItem())
     }
 }

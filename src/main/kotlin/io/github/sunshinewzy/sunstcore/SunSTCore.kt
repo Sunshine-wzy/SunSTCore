@@ -6,15 +6,16 @@ import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
+import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachineInformation
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
-import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
+import io.github.sunshinewzy.sunstcore.objects.SLocation
+import io.github.sunshinewzy.sunstcore.objects.SMenu
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
-import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.metrics.BMetrics
@@ -94,33 +95,29 @@ object SunSTCore : Plugin() {
         ConfigurationSerialization.registerClass(LineStick::class.java)
         ConfigurationSerialization.registerClass(RangeStick::class.java)
         
+        ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)
+        
     }
     
     
     @SunSTTestApi
     private fun test() {
+        val millstoneMenu = SMenu("Millstone", "Millstone", 3)
+        millstoneMenu.setItem(1, 1, SItem(Material.STONE_BRICKS))
+        
+        val millstone = object : SSingleMachine(SunSTCore.plugin, "Millstone", SItem(Material.STONE_BRICKS)) {
+            override fun onClick(sLocation: SLocation, event: PlayerInteractEvent) {
+                millstoneMenu.openInventory(event.player)
+            }
+        }
+        
+        millstone.register()
+        
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
-                val item = item ?: return@subscribeEvent
                 val block = clickedBlock ?: return@subscribeEvent
-                val sLoc = block.getSLocation()
                 
-                if(item.type != Material.AIR) {
-                    when(item.type) {
-                        Material.ARROW -> {
-                            sLoc.addData(player.name, "233")
-                            player.sendMsg("&eSLocationData", "&a添加成功！")
-                        }
-                        
-                        Material.BLAZE_ROD -> {
-                            sLoc.getData(player.name)?.let {
-                                player.sendMsg("&eSLocationData", it)
-                            }
-                        }
-                        
-                        else -> {}
-                    }
-                }
+                
             }
         }
     }

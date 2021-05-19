@@ -8,8 +8,10 @@ import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager.getMap
 import io.github.sunshinewzy.sunstcore.modules.data.SAutoCoverSaveData
 import io.github.sunshinewzy.sunstcore.objects.SLocation
+import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.event.world.WorldLoadEvent
 
 class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, world, "SLocationData") {
 
@@ -136,6 +138,10 @@ class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, wo
         override fun init() {
             Bukkit.getServer().worlds.forEach { 
                 checkWorldData(it.name)
+            }
+            
+            subscribeEvent<WorldLoadEvent> { 
+                checkWorldData(world.name)
             }
         }
     }

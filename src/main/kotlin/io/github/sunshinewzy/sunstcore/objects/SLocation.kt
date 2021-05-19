@@ -84,6 +84,8 @@ class SLocation {
     fun getDataOrFail(key: String): String =
         SLocationData.getDataOrFail(world, toString(), key)
     
+    fun toLocation(): Location = Location(Bukkit.getWorld(world), x.toDouble(), y.toDouble(), z.toDouble())
+    
 
     override fun equals(other: Any?): Boolean =
         when {

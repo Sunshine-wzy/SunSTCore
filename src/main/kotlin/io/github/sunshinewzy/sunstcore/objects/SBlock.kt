@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.objects
 
+import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Material.*
@@ -9,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 
 class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
     
-    private var displayItem: ItemStack = SItem(type, 1)
+    private var item: ItemStack = SItem(type, 1)
     private val types: ArrayList<Material> by lazy { ArrayList() }
     private var hasTypes: Boolean = false
     
@@ -40,6 +41,9 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
     fun setLocation(loc: Location) {
         val block = loc.block
         block.type = type
+        
+        if(hasName())
+            loc.toSLocation().addData("SBlockName", name)
     }
     
     fun toItem(): ItemStack = SItem(type, 1)
@@ -59,12 +63,12 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
     fun isNameEqual(sBlock: SBlock): Boolean = name == sBlock.name
     
     
-    fun setDisplayItem(item: ItemStack): SBlock {
-        displayItem = item
+    fun setItem(item: ItemStack): SBlock {
+        this.item = item
         return this
     }
     
-    fun getDisplayItem(): ItemStack = displayItem
+    fun getItem(): ItemStack = item
 
 
     
