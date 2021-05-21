@@ -52,7 +52,7 @@ abstract class SAutoSaveData(
     /**
      * 创建文件时调用
      */
-    abstract fun YamlConfiguration.createConfig()
+    open fun YamlConfiguration.createConfig() {}
     
     /**
      * 保存文件前调用

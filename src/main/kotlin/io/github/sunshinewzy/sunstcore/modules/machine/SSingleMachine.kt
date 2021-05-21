@@ -140,11 +140,14 @@ abstract class SSingleMachine(
         }
         
         fun addMachine(location: Location, sSingleMachine: SSingleMachine, player: Player) {
-            addMachine(location.toSLocation(), sSingleMachine)
+            addMachine(location.toSLocation(), sSingleMachine, SSingleMachineInformation(player.uniqueId.toString()))
             SunSTCore.pluginManager.callEvent(SSingleMachineAddEvent(sSingleMachine, location, player))
         }
 
-        fun removeMachine(sLocation: SLocation): SSingleMachine? = machines.remove(sLocation)
+        fun removeMachine(sLocation: SLocation): SSingleMachine? =
+            machines.remove(sLocation)?.also { 
+                it.singleMachines.remove(sLocation)
+            }
         
         fun removeMachine(location: Location): Boolean {
             removeMachine(location.toSLocation())?.let { sSingleMachine ->

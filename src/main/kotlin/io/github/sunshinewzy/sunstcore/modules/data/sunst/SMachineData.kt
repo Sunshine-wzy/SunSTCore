@@ -1,16 +1,12 @@
 package io.github.sunshinewzy.sunstcore.modules.data.sunst
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.modules.data.SAutoSaveData
+import io.github.sunshinewzy.sunstcore.modules.data.SAutoCoverSaveData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import org.bukkit.configuration.file.YamlConfiguration
 
-class SMachineData(val sMachine: SMachine) : SAutoSaveData(sMachine.wrench.plugin, sMachine.name, "SMachine") {
-
-    override fun YamlConfiguration.createConfig() {
-        
-    }
+class SMachineData(val sMachine: SMachine) : SAutoCoverSaveData(sMachine.wrench.plugin, sMachine.name, "SMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
         set(keyPath, sMachine.machineSLocations.toList())

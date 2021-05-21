@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.modules.data.sunst
 
-import io.github.sunshinewzy.sunstcore.modules.data.SAutoSaveData
+import io.github.sunshinewzy.sunstcore.modules.data.SAutoCoverSaveData
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachineInformation
 import io.github.sunshinewzy.sunstcore.objects.SLocation
@@ -10,11 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class SSingleMachineData(
     val plugin: JavaPlugin,
     val sSingleMachine: SSingleMachine
-) : SAutoSaveData(plugin, sSingleMachine.name, "SSingleMachine") {
-
-    override fun YamlConfiguration.createConfig() {
-        
-    }
+) : SAutoCoverSaveData(plugin, sSingleMachine.name, "SSingleMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
         sSingleMachine.singleMachines.forEach { (sLoc, information) -> 

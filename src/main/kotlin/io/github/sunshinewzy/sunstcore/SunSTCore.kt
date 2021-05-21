@@ -9,11 +9,10 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachineInformation
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
-import io.github.sunshinewzy.sunstcore.objects.SLocation
-import io.github.sunshinewzy.sunstcore.objects.SMenu
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
+import io.github.sunshinewzy.sunstcore.test.Millstone
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -24,7 +23,6 @@ import io.izzel.taboolib.module.dependency.Dependency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -102,16 +100,7 @@ object SunSTCore : Plugin() {
     
     @SunSTTestApi
     private fun test() {
-        val millstoneMenu = SMenu("Millstone", "Millstone", 3)
-        millstoneMenu.setItem(1, 1, SItem(Material.STONE_BRICKS))
-        
-        val millstone = object : SSingleMachine(SunSTCore.plugin, "Millstone", SItem(Material.STONE_BRICKS)) {
-            override fun onClick(sLocation: SLocation, event: PlayerInteractEvent) {
-                millstoneMenu.openInventory(event.player)
-            }
-        }
-        
-        millstone.register()
+        Millstone.register()
         
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {

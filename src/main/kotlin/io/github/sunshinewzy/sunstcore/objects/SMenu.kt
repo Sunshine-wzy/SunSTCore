@@ -31,6 +31,7 @@ class SMenu(
 ) {
     private val buttons = HashMap<Int, Pair<String, ItemStack>>()       // 点击触发 SMenuClickEvent 的按钮
     private val items = HashMap<Int, ItemStack>()                       // 普通物品，点击后不会触发事件
+    private val buttonOnClick = HashMap<Int, InventoryClickEvent.() -> Unit>()
 
     var holder = SProtectInventoryHolder(id)
     var openItem: ItemStack? = null
@@ -44,10 +45,9 @@ class SMenu(
             val player = view.getSPlayer()
             
             if(inventory.holder == this@SMenu.holder) {
-                if(buttons.containsKey(slot)) {
-                    buttons[slot]?.let {
-                        SunSTCore.pluginManager.callEvent(SMenuClickEvent(id, player, slot, it.first, it.second))
-                    }
+                buttons[slot]?.let {
+                    buttonOnClick[slot]?.invoke(this)
+                    SunSTCore.pluginManager.callEvent(SMenuClickEvent(id, player, slot, it.first, it.second))
                 }
             }
         }
@@ -67,20 +67,36 @@ class SMenu(
     }
     
     
-    fun setButton(slot: Int, item: ItemStack, name: String) {
+    fun setButton(slot: Int, item: ItemStack, name: String): SMenu {
         buttons[slot] = name to item
+        return this
     }
     
-    fun setButton(x: Int, y: Int, item: ItemStack, name: String) {
+    fun setButton(x: Int, y: Int, item: ItemStack, name: String): SMenu {
         setButton(x orderWith y, item, name)
+        return this
     }
     
-    fun setItem(slot: Int, item: ItemStack) {
+    fun setButton(slot: Int, item: ItemStack, name: String, onClick: InventoryClickEvent.() -> Unit): SMenu {
+        setButton(slot, item, name)
+        buttonOnClick[slot] = onClick
+        return this
+    }
+
+    fun setButton(x: Int, y: Int, item: ItemStack, name: String, onClick: InventoryClickEvent.() -> Unit): SMenu {
+        setButton(x orderWith y, item, name, onClick)
+        return this
+    }
+    
+    
+    fun setItem(slot: Int, item: ItemStack): SMenu {
         items[slot] = item
+        return this
     }
     
-    fun setItem(x: Int, y: Int, item: ItemStack) {
+    fun setItem(x: Int, y: Int, item: ItemStack): SMenu {
         setItem(x orderWith y, item)
+        return this
     }
     
     
