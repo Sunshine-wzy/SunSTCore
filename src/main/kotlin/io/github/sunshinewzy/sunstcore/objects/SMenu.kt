@@ -26,7 +26,7 @@ import org.bukkit.inventory.ItemStack
  */
 class SMenu(
     val id: String,
-    val title: String,
+    var title: String,
     val size: Int
 ) {
     private val buttons = HashMap<Int, Pair<String, ItemStack>>()       // 点击触发 SMenuClickEvent 的按钮
@@ -42,12 +42,10 @@ class SMenu(
     
     init {
         subscribeEvent<InventoryClickEvent> { 
-            val player = view.getSPlayer()
-            
             if(inventory.holder == this@SMenu.holder) {
                 buttons[slot]?.let {
                     buttonOnClick[slot]?.invoke(this)
-                    SunSTCore.pluginManager.callEvent(SMenuClickEvent(id, player, slot, it.first, it.second))
+                    SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.getSPlayer(), slot, it.first, it.second))
                 }
             }
         }
@@ -117,7 +115,7 @@ class SMenu(
     fun openInventory(player: Player) {
         player.openInventory(getInventory())
         
-        SunSTCore.pluginManager.callEvent(SMenuOpenEvent(id, player))
+        SunSTCore.pluginManager.callEvent(SMenuOpenEvent(this, id, title, player))
     }
     
     fun openInventoryWithSound(player: Player, sound: Sound, volume: Float = 1f, pitch: Float = 1f) {

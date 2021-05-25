@@ -9,6 +9,7 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachineInformation
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.randItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
@@ -23,10 +24,12 @@ import io.izzel.taboolib.module.dependency.Dependency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 
 
 @Dependencies(Dependency(maven = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"))
@@ -109,6 +112,9 @@ object SunSTCore : Plugin() {
                 
             }
         }
+        
+        val items = Array<ItemStack>(5) { SItem(Material.STONE) }
+        val randItem = items.randItem()
     }
     
 }

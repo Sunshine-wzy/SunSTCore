@@ -46,7 +46,7 @@ object BlockListener : Listener {
 
             if(sBlock.isEnergyBlock()) {
                 block.operate {
-                    surroundings {
+                    val flag= surroundings {
                         if(sBlock.isSimilar(this)) {
                             getEnergyEntity()?.let {
                                 it.addBlock(getSLocation())
@@ -55,6 +55,10 @@ object BlockListener : Listener {
                         }
 
                         false
+                    }
+                    
+                    if(!flag) {
+//                        block.addEnergyEntity()
                     }
                 }
             }

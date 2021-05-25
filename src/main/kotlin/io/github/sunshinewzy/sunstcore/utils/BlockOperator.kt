@@ -30,39 +30,45 @@ class BlockOperator(val block: Block) {
         operator(block)
     }
     
-    fun surroundings(operation: Block.() -> Boolean) {
+    fun surroundings(operation: Block.() -> Boolean): Boolean {
         var flag = false
         
         x(1) {
             flag = operation(block)
         }
-        if(flag) return
+        if(flag) return true
         
         x(-1) {
             flag = operation(block)
         }
-        if(flag) return
+        if(flag) return true
 
         y(1) {
             flag = operation(block)
         }
-        if(flag) return
+        if(flag) return true
 
         y(-1) {
             flag = operation(block)
         }
-        if(flag) return
+        if(flag) return true
 
         z(1) {
             flag = operation(block)
         }
-        if(flag) return
+        if(flag) return true
 
         z(-1) {
             flag = operation(block)
         }
+        if(flag) return true
+        
+        return false
     }
-    
+
+    /**
+     * 水平面四周
+     */
     fun horizontal(around: Boolean = false, operation: Block.() -> Boolean) {
         var flag = false
 

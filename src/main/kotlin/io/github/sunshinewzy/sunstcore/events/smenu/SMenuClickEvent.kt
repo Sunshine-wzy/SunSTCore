@@ -1,16 +1,19 @@
 package io.github.sunshinewzy.sunstcore.events.smenu
 
+import io.github.sunshinewzy.sunstcore.objects.SMenu
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
 
 class SMenuClickEvent(
+    sMenu: SMenu,
     id: String,
+    title: String,
     player: Player,
     val slot: Int,
     val buttonName: String,
     val button: ItemStack,
-) : SMenuEvent(id, player) {
+) : SMenuEvent(sMenu, id, title, player) {
 
     override fun getHandlers(): HandlerList = handlerList
 

@@ -46,6 +46,19 @@ class SEnergyEntity<EU: SEnergyUnit>(val storage: EU) {
         private val energyBlocks = ArrayList<SBlock>()
         
         
+        fun <EU: SEnergyUnit> Location.addEnergyEntity(entity: SEnergyEntity<EU>): Boolean {
+            val sLoc = toSLocation()
+            
+            entities[sLoc] ?: run {
+                entities[sLoc] = entity
+            }
+            
+            return false
+        }
+        
+        fun <EU: SEnergyUnit> Block.addEnergyEntity(entity: SEnergyEntity<EU>): Boolean =
+            location.addEnergyEntity(entity)
+        
         fun Location.hasEnergyEntity(): Boolean =
             entities.containsKey(toSLocation())
         
