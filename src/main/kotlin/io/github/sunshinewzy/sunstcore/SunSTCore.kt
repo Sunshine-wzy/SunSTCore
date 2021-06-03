@@ -1,7 +1,8 @@
 package io.github.sunshinewzy.sunstcore
 
 import io.github.sunshinewzy.sunstcore.commands.SunSTCommand
-import io.github.sunshinewzy.sunstcore.listeners.*
+import io.github.sunshinewzy.sunstcore.listeners.BlockListener
+import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
@@ -79,10 +80,10 @@ object SunSTCore : Plugin() {
     
     private fun registerListeners() {
         pluginManager.apply {
-            registerEvents(SEventSubscriberListener1, plugin)
-            registerEvents(SEventSubscriberListener2, plugin)
-            registerEvents(SEventSubscriberListener3, plugin)
-            registerEvents(SEventSubscriberListener4, plugin)
+//            registerEvents(SEventSubscriberListener1, plugin)
+//            registerEvents(SEventSubscriberListener2, plugin)
+//            registerEvents(SEventSubscriberListener3, plugin)
+//            registerEvents(SEventSubscriberListener4, plugin)
             
             registerEvents(BlockListener, plugin)
         }
@@ -107,8 +108,6 @@ object SunSTCore : Plugin() {
         
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
-                val block = clickedBlock ?: return@subscribeEvent
-                
                 
             }
         }
