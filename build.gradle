@@ -130,3 +130,7 @@ task copyOutputJar {
 }
 
 //build.dependsOn copyOutputJar
+
+task buildAndCopy {
+    
+}

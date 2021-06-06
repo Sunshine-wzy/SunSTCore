@@ -355,8 +355,5 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
         
-        
-        fun Array<ItemStack>.randItem(): ItemStack = random()
-        
     }
 }

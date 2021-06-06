@@ -3,7 +3,6 @@ package io.github.sunshinewzy.sunstcore.objects
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.Material.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockState
 import org.bukkit.inventory.ItemStack
@@ -135,14 +134,4 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
         fun BlockState.toSBlock(): SBlock = SBlock(this)
     }
 
-    object Types {
-        val FENCE = SBlock(OAK_FENCE, ACACIA_FENCE, BIRCH_FENCE, CRIMSON_FENCE, DARK_OAK_FENCE, JUNGLE_FENCE, NETHER_BRICK_FENCE, SPRUCE_FENCE, WARPED_FENCE)
-        val FENCE_WOOD = SBlock(OAK_FENCE, ACACIA_FENCE, BIRCH_FENCE, CRIMSON_FENCE, DARK_OAK_FENCE, JUNGLE_FENCE, SPRUCE_FENCE)
-        
-        val WOOD = SBlock(OAK_WOOD, JUNGLE_WOOD, ACACIA_WOOD, BIRCH_WOOD, DARK_OAK_WOOD, SPRUCE_WOOD)
-        
-        val WOOL = SBlock(BLACK_WOOL, BLUE_WOOL, BROWN_WOOL, CYAN_WOOL, GRAY_WOOL, GREEN_WOOL, LIGHT_BLUE_WOOL, LIGHT_GRAY_WOOL, LIME_WOOL, MAGENTA_WOOL, ORANGE_WOOL, PINK_WOOL, PURPLE_WOOL, RED_WOOL, WHITE_WOOL, YELLOW_WOOL)
-        
-    }
-    
 }
