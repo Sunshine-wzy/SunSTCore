@@ -19,4 +19,13 @@ enum class SMaterial(val types: List<Material>) {
     constructor(vararg types: Material) : this(types.toList())
 
 
+    
+    companion object {
+        val leavesToSapling = mapOf(ACACIA_LEAVES to ACACIA_SAPLING, BIRCH_LEAVES to BIRCH_SAPLING, DARK_OAK_LEAVES to DARK_OAK_SAPLING, JUNGLE_LEAVES to JUNGLE_SAPLING, OAK_LEAVES to OAK_SAPLING, SPRUCE_LEAVES to SPRUCE_SAPLING)
+        
+        
+        fun Material.getSapling(): Material =
+            leavesToSapling[this] ?: OAK_SAPLING
+    }
+    
 }
