@@ -698,4 +698,10 @@ fun <E> Array<out E>.toLinkedList(): LinkedList<E> {
     return list
 }
 
+fun <E> Array<out E>.toArrayList(): ArrayList<E> {
+    val list = ArrayList<E>()
+    list.addAll(this)
+    return list
+}
+
 //endregion

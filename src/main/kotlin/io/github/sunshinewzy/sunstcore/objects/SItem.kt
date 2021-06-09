@@ -225,6 +225,21 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
         
+        fun ItemStack.addShapedRecipeByChoice(
+            plugin: JavaPlugin,
+            key: String,
+            ingredient: Map<Char, SRecipeChoice>,
+            line1: String = "",
+            line2: String = "",
+            line3: String = ""
+        ): ItemStack {
+            addRecipe(plugin, SShapedRecipe.byChoice(
+                plugin, key, this, ingredient, line1, line2, line3
+            ))
+            
+            return this
+        }
+        
         fun ItemStack.addShapelessRecipe(
             plugin: JavaPlugin,
             key: String,

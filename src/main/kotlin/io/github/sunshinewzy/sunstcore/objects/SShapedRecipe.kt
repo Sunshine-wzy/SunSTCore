@@ -32,5 +32,33 @@ class SShapedRecipe(key: NamespacedKey, result: ItemStack) : ShapedRecipe(key, r
         line2: String = "",
         line3: String = ""
     ) : this(NamespacedKey(plugin, key), result, ingredient, line1, line2, line3)
-    
+
+
+    companion object {
+        fun byChoice(
+            key: NamespacedKey,
+            result: ItemStack,
+            ingredient: Map<Char, SRecipeChoice>,
+            line1: String = "",
+            line2: String = "",
+            line3: String = ""
+        ): SShapedRecipe =
+            SShapedRecipe(key, result).apply { 
+                shape(line1, line2, line3)
+                ingredient.forEach { (char, choice) -> 
+                    setIngredient(char, choice.getChoice())
+                }
+            }
+        
+        fun byChoice(
+            plugin: JavaPlugin,
+            key: String,
+            result: ItemStack,
+            ingredient: Map<Char, SRecipeChoice>,
+            line1: String = "",
+            line2: String = "",
+            line3: String = ""
+        ): SShapedRecipe = byChoice(NamespacedKey(plugin, key), result, ingredient, line1, line2, line3)
+        
+    }
 }
