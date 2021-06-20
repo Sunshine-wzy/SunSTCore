@@ -23,9 +23,11 @@ import io.izzel.taboolib.module.dependency.Dependency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 
 
@@ -76,11 +78,6 @@ object SunSTCore : Plugin() {
     
     private fun registerListeners() {
         pluginManager.apply {
-//            registerEvents(SEventSubscriberListener1, plugin)
-//            registerEvents(SEventSubscriberListener2, plugin)
-//            registerEvents(SEventSubscriberListener3, plugin)
-//            registerEvents(SEventSubscriberListener4, plugin)
-            
             registerEvents(BlockListener, plugin)
         }
         
@@ -104,6 +101,12 @@ object SunSTCore : Plugin() {
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
                 
+            }
+        }
+        
+        subscribeEvent<PlayerJoinEvent> { 
+            if(player.isOp) {
+                player.gameMode = GameMode.CREATIVE
             }
         }
         

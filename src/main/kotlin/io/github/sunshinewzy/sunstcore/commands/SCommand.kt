@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.toLinkedList
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -14,7 +15,7 @@ import org.bukkit.command.TabCompleter
  * 使用前需要在 plugin.yml 中填写 [name] 指令的信息
  */
 open class SCommand(val name: String) : CommandExecutor, TabCompleter {
-    private val commands = HashMap<String, SCWrapper>()
+    private val commands = HashMap<String, Pair<SCWrapper, Boolean>>()
 
     private var helper: (CommandSender, Int) -> Unit = { sender, page ->
         sender.sendSeparator()
@@ -60,7 +61,12 @@ open class SCommand(val name: String) : CommandExecutor, TabCompleter {
         
         if(commands.containsKey(first)){
             val scWrapper = commands[first] ?: return false
-            scWrapper(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
+            if(scWrapper.second && !sender.isOp) {
+                sender.sendMsg(SunSTCore.colorName, "&c您没有使用该命令的权限！")
+                return false
+            }
+            
+            scWrapper.first(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
             return true
         }
         
@@ -91,15 +97,17 @@ open class SCommand(val name: String) : CommandExecutor, TabCompleter {
         
         if(commands.containsKey(first)){
             val scWrapper = commands[first] ?: return list
-            scWrapper(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first, true, list))
+            if(scWrapper.second && !sender.isOp) return list
+            
+            scWrapper.first(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first, true, list))
         }
         
         return list
     }
 
     
-    fun addCommand(cmd: String, wrapper: SCWrapper): SCommand {
-        commands[cmd.toLowerCase()] = wrapper
+    fun addCommand(cmd: String, isOp: Boolean = false, wrapper: SCWrapper): SCommand {
+        commands[cmd.toLowerCase()] = wrapper to isOp
         return this
     }
 

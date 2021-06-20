@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ItemCraftTask(
     taskStage: TaskStage,
@@ -51,7 +50,7 @@ class ItemCraftTask(
             setSlotItem(4, i, whiteGlass)
         
         
-        val recipes = Bukkit.getServer().getRecipesFor(craftItem) ?: throw NoRecipeException(craftItem)
+        val recipes = Bukkit.getServer().getRecipesFor(craftItem)
         if(recipes.isEmpty()) throw NoRecipeException(craftItem)
         
         val shapedRecipes = ArrayList<ShapedRecipe>()
@@ -279,11 +278,7 @@ class ItemCraftTask(
             val inv = Bukkit.createInventory(holder, 5 * 9, "合成表")
             inv.setItem(9, 5, TaskGuideItem.BACK)
 
-            val recipes = Bukkit.getServer().getRecipesFor(this) ?: kotlin.run {
-                inv.setItem(5, 3, SItem(Material.STRUCTURE_VOID, "§c这个物品没有合成表！"))
-                player.openInventoryWithSound(inv)
-                return
-            }
+            val recipes = Bukkit.getServer().getRecipesFor(this)
             if(recipes.isEmpty()){
                 inv.setItem(5, 3, SItem(Material.STRUCTURE_VOID, "§c这个物品没有合成表！"))
                 player.openInventoryWithSound(inv)

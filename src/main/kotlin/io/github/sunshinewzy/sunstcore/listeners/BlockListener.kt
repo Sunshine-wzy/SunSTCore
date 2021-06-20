@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity.Companion.getEnergyEntity
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity.Companion.isEnergyBlock
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyEntity.Companion.removeEnergyBlock
+import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell
+import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.getEnergyCell
+import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.isEnergyBlock
+import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.removeEnergyBlock
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SBlock.Companion.toSBlock
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
@@ -41,14 +41,14 @@ object BlockListener : Listener {
             }
         }
 
-        if(SEnergyEntity.hasEnergyBlocks()) {
+        if(SEnergyCell.hasEnergyBlocks()) {
             val sBlock = SBlock(item)
 
             if(sBlock.isEnergyBlock()) {
                 block.operate {
                     val flag= surroundings {
                         if(sBlock.isSimilar(this)) {
-                            getEnergyEntity()?.let {
+                            getEnergyCell()?.let {
                                 it.addBlock(getSLocation())
                                 return@surroundings true
                             }
@@ -71,7 +71,7 @@ object BlockListener : Listener {
         if(!e.isCancelled) {
             val block = e.block
 
-            if(SEnergyEntity.hasEnergyBlocks()) {
+            if(SEnergyCell.hasEnergyBlocks()) {
                 val sBlock = block.toSBlock()
 
                 if(sBlock.isEnergyBlock()) {

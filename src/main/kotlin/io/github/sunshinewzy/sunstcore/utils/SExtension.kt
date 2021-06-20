@@ -8,11 +8,8 @@ import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProject
 import io.github.sunshinewzy.sunstcore.modules.task.TaskStage
+import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
-import io.github.sunshinewzy.sunstcore.objects.SMetadataValue
-import io.github.sunshinewzy.sunstcore.objects.orderWith
-import io.github.sunshinewzy.sunstcore.objects.toX
-import io.github.sunshinewzy.sunstcore.objects.toY
 import io.github.sunshinewzy.sunstcore.utils.SReflect.damage
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -482,6 +479,9 @@ fun Location.addClone(x: Int, y: Int, z: Int): Location =
 fun Location.addClone(coord: Triple<Int, Int, Int>): Location =
     clone().add(coord.first.toDouble(), coord.second.toDouble(), coord.third.toDouble())
 
+fun Location.addClone(coord: SCoordinate): Location =
+    clone().add(coord.x.toDouble(), coord.y.toDouble(), coord.z.toDouble())
+
 fun Location.addClone(y: Int): Location =
     addClone(0, y, 0)
 
@@ -490,6 +490,9 @@ fun Location.removeClone(x: Int, y: Int, z: Int): Location =
 
 fun Location.removeClone(coord: Triple<Int, Int, Int>): Location =
     clone().add(-coord.first.toDouble(), -coord.second.toDouble(), -coord.third.toDouble())
+
+fun Location.removeClone(coord: SCoordinate): Location =
+    clone().add(-coord.x.toDouble(), -coord.y.toDouble(), -coord.z.toDouble())
 
 fun Location.removeClone(y: Int): Location =
     removeClone(0, y, 0)

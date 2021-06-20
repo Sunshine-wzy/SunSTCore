@@ -54,10 +54,11 @@ abstract class SMachine(
      * 
      * @param loc 机器中心位置
      */
-    fun judgeStructure(loc: Location, isFirst: Boolean = false): Boolean {
+    fun judgeStructure(loc: Location, isFirst: Boolean = false, level: Short = 0): Boolean {
         val baseLoc = loc.removeClone(structure.center)
-        if(structure.judge(baseLoc))
-            return specialJudge(baseLoc, isFirst)
+        
+        if(structure.judgeStructure(baseLoc, level))
+            return specialJudge(baseLoc, isFirst, level)
         
         return false
     }
@@ -68,7 +69,7 @@ abstract class SMachine(
      * 
      * @param loc 机器基准位置，一般为机器底部中心位置
      */
-    open fun specialJudge(loc: Location, isFirst: Boolean): Boolean = true
+    open fun specialJudge(loc: Location, isFirst: Boolean, level: Short = 0): Boolean = true
 
 
     /**
@@ -172,7 +173,7 @@ abstract class SMachine(
         var theLoc: Location
         structure.structure.forEach { (coord, sBlock) -> 
             theLoc = loc.clone()
-            theLoc.add(coord.first.toDouble(), coord.second.toDouble(), coord.third.toDouble())
+            theLoc.add(coord.x.toDouble(), coord.y.toDouble(), coord.z.toDouble())
             
             sBlock.setLocation(theLoc)
         }
@@ -199,7 +200,7 @@ abstract class SMachine(
             return null
         }
         
-        fun Location.judgeSMachineStructure(player: Player): Boolean {
+        fun Location.judgeSMachineStructure(player: Player, level: Short = 0): Boolean {
             val sLoc = SLocation(this)
 
             if(machines.containsKey(sLoc)){

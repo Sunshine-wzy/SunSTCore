@@ -370,5 +370,9 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
         
+        fun ItemStack.removeOne() {
+            amount--
+        }
+        
     }
 }

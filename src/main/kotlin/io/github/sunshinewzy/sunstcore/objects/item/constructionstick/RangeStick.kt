@@ -26,12 +26,12 @@ class RangeStick(item: ItemStack, val radius: Int) : ConstructionStick(item) {
             if(clickedBlock != null && action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND){
                 if(player.location.add(0.0, 1.0, 0.0).block.type != Material.AIR) return@addAction
 
-                val block = player.getTargetBlock(null, 5) ?: return@addAction
+                val block = player.getTargetBlock(null, 5)
                 if(block.type == Material.AIR) return@addAction
 
-                val lastBlocks = player.getLastTwoTargetBlocks(null, 5) ?: return@addAction
+                val lastBlocks = player.getLastTwoTargetBlocks(null, 5)
                 val face = lastBlocks[1].getFace(lastBlocks[0]) ?: return@addAction
-                block.getRelative(face) ?: return@addAction
+                block.getRelative(face)
                 val setLoc = hashSetOf(block.location)
 
                 face.transform().forEach {
@@ -74,19 +74,19 @@ class RangeStick(item: ItemStack, val radius: Int) : ConstructionStick(item) {
                 if(sticks.isEmpty()) return@Runnable
 
                 Bukkit.getServer().onlinePlayers.forEach players@{ player ->
-                    val handItem = player.inventory.itemInMainHand ?: return@players
+                    val handItem = player.inventory.itemInMainHand
                     if(handItem.type == Material.AIR || player.location.add(0.0, 1.0, 0.0).block.type != Material.AIR) return@players
 
                     sticks.forEach { stick ->
                         if(!handItem.isItemSimilar(stick)) return@forEach
 
-                        val block = player.getTargetBlock(null, 5) ?: return@forEach
+                        val block = player.getTargetBlock(null, 5)
                         if(block.type == Material.AIR) return@forEach
 
-                        val lastBlocks = player.getLastTwoTargetBlocks(null, 5) ?: return@forEach
+                        val lastBlocks = player.getLastTwoTargetBlocks(null, 5)
                         if(lastBlocks.size < 2) return@forEach
                         val face = lastBlocks[1].getFace(lastBlocks[0]) ?: return@forEach
-                        block.getRelative(face) ?: return@forEach
+                        block.getRelative(face)
                         val setLoc = hashSetOf(block.location)
 
                         face.transform().forEach {

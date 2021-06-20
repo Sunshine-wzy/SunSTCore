@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.objects
 
+import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import org.bukkit.Location
 import org.bukkit.Material
@@ -22,6 +23,8 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
         hasTypes = true
         this.types += types
     }
+    
+    constructor(types: Materialsable) : this(types.types())
     
     constructor(vararg types: Material) : this(types.first()) {
         hasTypes = true

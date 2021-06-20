@@ -13,7 +13,7 @@ object SunSTCommand : Initable {
     
     override fun init() {
         SCommand("SunST")
-            .addCommand("give") {
+            .addCommand("give", true) {
                 SItem.items.keys {
                     empty {
                         if(sender !is Player){
@@ -36,7 +36,7 @@ object SunSTCommand : Initable {
                 }
             }
                 
-            .addCommand("reload") {
+            .addCommand("reload", true) {
                 empty {
                     DataManager.reloadData()
                     sender.sendMsg(colorName, "&a配置文件重载成功！")
@@ -50,8 +50,10 @@ object SunSTCommand : Initable {
                 when(page) {
                     1 -> {
                         sender.apply {
-                            sendMessage("§e/sun give [SunST物品名称]  §a>> 获得一个SunST物品")
-                            sendMessage("§e/sun reload  §a>> 重载配置文件")
+                            if(sender.isOp) {
+                                sendMessage("§e/sun give [SunST物品名称]  §a>> 获得一个SunST物品")
+                                sendMessage("§e/sun reload  §a>> 重载配置文件")
+                            }
                         }
                     }
 

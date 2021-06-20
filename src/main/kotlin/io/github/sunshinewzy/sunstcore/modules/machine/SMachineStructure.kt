@@ -3,6 +3,7 @@ package io.github.sunshinewzy.sunstcore.modules.machine
 import io.github.sunshinewzy.sunstcore.exceptions.MachineStructureException
 import io.github.sunshinewzy.sunstcore.exceptions.NoIngredientException
 import io.github.sunshinewzy.sunstcore.objects.SBlock
+import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getSMeta
 import io.github.sunshinewzy.sunstcore.utils.addClone
 import io.github.sunshinewzy.sunstcore.utils.setItem
@@ -18,15 +19,20 @@ import org.bukkit.inventory.Inventory
  * @param ingredients [shape] 中每个字符指代的方块 [SBlock] (推荐使用 mapOf('x' to SBlock(Material.XXX), 'y' to SBlock(Material.XXX)) 的形式构造)
  * @param center 机器构造(和使用)的中心坐标, 请确保该坐标对应的方块不为空气
  */
-abstract class SMachineStructure(val size: SMachineSize, val shape: String, val ingredients: Map<Char, SBlock>, val center: Triple<Int, Int, Int>) {
-    private val upgrade = ArrayList<CoordSBlockMap>()
+abstract class SMachineStructure(
+    val size: SMachineSize,
+    val shape: String,
+    val ingredients: Map<Char, SBlock>,
+    val center: SCoordinate
+) {
+    protected val upgrade = ArrayList<CoordSBlockMap>()
     
     val structure = CoordSBlockMap()
     val centerBlock: SBlock
     
     
     init {
-        shapeStructure()
+        shapeStructure(structure, shape)
 
         centerBlock = if(structure.containsKey(center)){
             val theCenterBlock = structure[center] ?: throw MachineStructureException(
@@ -48,9 +54,9 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
         
     }
 
-    abstract fun specialStructure(x: Int, y: Int, z: Int, sBlock: SBlock)
+    protected abstract fun specialStructure(structure: CoordSBlockMap, x: Int, y: Int, z: Int, sBlock: SBlock)
 
-    abstract fun judge(loc: Location, struct: CoordSBlockMap = structure): Boolean
+    protected abstract fun judge(loc: Location, struct: CoordSBlockMap = structure): Boolean
     
     /**
      * 中心对称
@@ -74,23 +80,23 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
         size: SMachineSize,
         shape: String,
         ingredients: Map<Char, SBlock>,
-        center: Triple<Int, Int, Int>
+        center: SCoordinate
     ) : SMachineStructure(size, shape, ingredients, center) {
         
-        override fun specialStructure(x: Int, y: Int, z: Int, sBlock: SBlock) {
+        override fun specialStructure(structure: CoordSBlockMap, x: Int, y: Int, z: Int, sBlock: SBlock) {
             if(z == 0){
                 if(x > 0) throw MachineStructureException(
                     shape,
                     "The first line of CentralSymmetry's layer is the central block, which cannot have more than one char."
                 )
                 
-                structure[Triple(0, y, 0)] = sBlock
+                structure[SCoordinate(0, y, 0)] = sBlock
             }
             else{
-                structure[Triple(x, y, z)] = sBlock
-                structure[Triple(-z, y, x)] = sBlock
-                structure[Triple(z, y, -x)] = sBlock
-                structure[Triple(-x, y, -z)] = sBlock
+                structure[SCoordinate(x, y, z)] = sBlock
+                structure[SCoordinate(-z, y, x)] = sBlock
+                structure[SCoordinate(z, y, -x)] = sBlock
+                structure[SCoordinate(-x, y, -z)] = sBlock
             }
         }
 
@@ -114,10 +120,10 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
         size: SMachineSize,
         shape: String,
         ingredients: Map<Char, SBlock>,
-        center: Triple<Int, Int, Int>
+        center: SCoordinate
     ) : SMachineStructure(size, shape, ingredients, center) {
         
-        override fun specialStructure(x: Int, y: Int, z: Int, sBlock: SBlock) {
+        override fun specialStructure(structure: CoordSBlockMap, x: Int, y: Int, z: Int, sBlock: SBlock) {
             
         }
 
@@ -127,6 +133,19 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
         }
     }
 
+    
+    fun judgeStructure(loc: Location, level: Short = 0): Boolean {
+        if(level == 0.toShort()) {
+            return judge(loc)
+        }
+        
+        val index = level - 1
+        if(index in upgrade.indices) {
+            return judge(loc, upgrade[index])
+        }
+        
+        return false
+    }
     
     fun displayInInventory(inv: Inventory, layer: Int) {
         structure.forEach { (coord, sBlock) -> 
@@ -162,8 +181,14 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
     }
     
     
+    protected open fun upgrade() {
+        
+    }
+    
+    
     fun addUpgrade(struct: CoordSBlockMap): SMachineStructure {
         upgrade += struct
+        
         return this
     }
     
@@ -181,7 +206,6 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
     
     fun hasUpgrade(level: Int = 1): Boolean {
         if(upgrade.isEmpty()) return false
-        
         return upgrade.size >= level
     }
     
@@ -191,7 +215,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
         else null
     
 
-    private fun shapeStructure() {
+    fun shapeStructure(structure: CoordSBlockMap, shape: String) {
         val layers = shape.split("\n\n")
         
         layers.forEachIndexed forEachY@{ y, layer ->
@@ -205,7 +229,7 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
                     if(ingredients.containsKey(char)){
                         val sBlock = ingredients[char] ?: throw NoIngredientException(shape, char)
                         
-                        specialStructure(x, y, z, sBlock)
+                        specialStructure(structure, x, y, z, sBlock)
                     }
                     else throw NoIngredientException(shape, char)
                 }
@@ -223,10 +247,10 @@ abstract class SMachineStructure(val size: SMachineSize, val shape: String, val 
     
 }
 
-typealias CoordSBlockMap = HashMap<Triple<Int, Int, Int>, SBlock>
+typealias CoordSBlockMap = HashMap<SCoordinate, SBlock>
 
 fun CoordSBlockMap.displayInInventory(inv: Inventory, page: Int, firstLayer: Boolean = true, layer: Int = 0) {
-    val theY = if(firstLayer) keys.first().second else layer - 1
+    val theY = if(firstLayer) keys.first().y else layer - 1
     if(page != 0 && page != theY + 1) return
     
     forEach { (coord, sBlock) -> 
@@ -235,4 +259,9 @@ fun CoordSBlockMap.displayInInventory(inv: Inventory, page: Int, firstLayer: Boo
 
         inv.setItem(SMachineStructure.invBaseX + x, SMachineStructure.invBaseY + z, sBlock.getItem())
     }
+}
+
+fun CoordSBlockMap.put(x: Int, y:Int, z: Int, sBlock: SBlock): CoordSBlockMap {
+    put(SCoordinate(x, y, z), sBlock)
+    return this
 }
