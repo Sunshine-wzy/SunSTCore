@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin
 /**
  * 自动机器
  */
-abstract class MachineTimer(
+abstract class SMachineTimer(
     name: String,
     wrench: SMachineWrench,
     structure: SMachineStructure,

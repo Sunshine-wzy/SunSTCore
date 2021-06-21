@@ -3,7 +3,7 @@ package io.github.sunshinewzy.sunstcore.modules.machine
 /**
  * 手动机器
  */
-abstract class MachineManual(
+abstract class SMachineManual(
     name: String,
     wrench: SMachineWrench,
     structure: SMachineStructure

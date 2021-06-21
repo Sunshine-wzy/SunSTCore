@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
+import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player
  * @param loc 触发位置
  */
 sealed class SMachineRunEvent(val loc: Location) {
+    val sLoc = loc.toSLocation()
 
     /**
      * 手动机器运行事件

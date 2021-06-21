@@ -1,30 +1,25 @@
 package io.github.sunshinewzy.sunstcore.modules.data.sunst
 
-import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.SAutoCoverSaveData
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine
+import io.github.sunshinewzy.sunstcore.modules.machine.SMachineInformation
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import org.bukkit.configuration.file.YamlConfiguration
 
 class SMachineData(val sMachine: SMachine) : SAutoCoverSaveData(sMachine.wrench.plugin, sMachine.name, "SMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
-        set(keyPath, sMachine.machineSLocations.toList())
+        sMachine.sMachines.forEach { (sLoc, information) ->
+            set(sLoc.toString(), information)
+        }
     }
 
     override fun YamlConfiguration.loadConfig() {
-        if(contains(keyPath)){
-            val list = getStringList(keyPath)
-            sMachine.machineSLocations.addAll(list)
-            
-            list.forEach { 
-                sMachine.addMachine(SLocation(it))
-            }
-        } else SunSTCore.logger.warning("$file 中不含键 $keyPath, 加载失败")
+        val roots = getKeys(false)
+        roots.forEach { sLoc ->
+            val information = get(sLoc) as? SMachineInformation ?: SMachineInformation()
+            sMachine.addMachine(SLocation(sLoc), information)
+        }
     }
     
-    
-    companion object {
-        const val keyPath = "SLocation"
-    }
 }

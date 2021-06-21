@@ -40,7 +40,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
                 
                 val loc = clickedBlock.location
                 if(loc.hasSMachine()){
-                    if(loc.judgeSMachineStructure(player)){
+                    if(loc.judgeSMachineStructure(player, true)){
                         player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
                         player.sendMsg(prefix, msgAlreadyExist)
                     }
@@ -96,7 +96,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
                     val machine = loc.getSMachine()
                     if(machine != null){
                         if(loc.judgeSMachineStructure(player)){
-                            if(machine is MachineManual){
+                            if(machine is SMachineManual){
                                 machine.runMachine(SMachineRunEvent.Manual(loc, player))
                             }
                             
@@ -107,14 +107,14 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
             }
             
             subscribeEvent<SMachineAddEvent> {
-                sMachine.machineSLocations.add(SLocation(loc).toString())
+                sMachine.sMachines[SLocation(loc)] = SMachineInformation(player.uniqueId.toString())
                 
                 playerLastAddMachine[player.uniqueId] = sMachine.name
                 
             }
             
             subscribeEvent<SMachineRemoveEvent> { 
-                sMachine.machineSLocations.remove(SLocation(loc).toString())
+                sMachine.sMachines.remove(SLocation(loc))
                 
             }
             

@@ -45,9 +45,11 @@ abstract class SSingleMachine(
 
     
     fun getOwner(sLocation: SLocation): String = singleMachines[sLocation]?.owner ?: ""
-    
-    
-    fun addData(sLocation: SLocation, key: String, value: String): Boolean {
+
+    /**
+     * 数据
+     */
+    fun setData(sLocation: SLocation, key: String, value: Any): Boolean {
         singleMachines[sLocation]?.data?.let { information ->
             information[key] = value
             return true
@@ -64,7 +66,7 @@ abstract class SSingleMachine(
         singleMachines[sLocation]?.data?.clear()
     }
 
-    fun getData(sLocation: SLocation, key: String): String? {
+    fun getData(sLocation: SLocation, key: String): Any? {
         singleMachines[sLocation]?.data?.let { data ->
             if(data.containsKey(key)) {
                 return data[key]
@@ -73,9 +75,33 @@ abstract class SSingleMachine(
         return null
     }
 
-    fun getDataOrFail(sLocation: SLocation, key: String): String =
+    fun getDataOrFail(sLocation: SLocation, key: String): Any =
         getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SSingleMachine($name) data of $key.")
 
+    inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
+        singleMachines[sLocation]?.data?.let { data ->
+            if(data.containsKey(key)) {
+                data[key]?.let { 
+                    if(it is T) {
+                        return it
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    inline fun <reified T> getDataByTypeOrFail(sLocation: SLocation, key: String): T {
+        getDataOrFail(sLocation, key).let {
+            if(it is T) {
+                return it
+            }
+        }
+        
+        throw IllegalArgumentException("Cannot cast data of $key to ${T::class.java.name}.")
+    }
+    
+    
     
     /**
      * 必须调用该方法以注册机器
@@ -90,7 +116,7 @@ abstract class SSingleMachine(
         /**
          * 所有机器的位置
          */
-        private val machines = HashMap<SLocation, SSingleMachine>()
+        private val allSingleMachines = HashMap<SLocation, SSingleMachine>()
         private val machineItemTypes = HashMap<Material, ArrayList<SSingleMachine>>()
 
 
@@ -124,18 +150,19 @@ abstract class SSingleMachine(
                 val loc = block.location
                 val sLoc = loc.toSLocation()
 
-                machines[sLoc]?.let {
+                allSingleMachines[sLoc]?.let {
                     if(removeMachine(loc)) {
                         isDropItems = false
                         loc.world?.dropItemNaturally(loc, it.item)
                     }
                 }
             }
+            
         }
         
         
         fun addMachine(sLocation: SLocation, sSingleMachine: SSingleMachine, information: SSingleMachineInformation = SSingleMachineInformation()) {
-            machines[sLocation] = sSingleMachine
+            allSingleMachines[sLocation] = sSingleMachine
             sSingleMachine.singleMachines[sLocation] = information
         }
         
@@ -145,7 +172,7 @@ abstract class SSingleMachine(
         }
 
         fun removeMachine(sLocation: SLocation): SSingleMachine? =
-            machines.remove(sLocation)?.also { 
+            allSingleMachines.remove(sLocation)?.also { 
                 it.singleMachines.remove(sLocation)
             }
         
@@ -161,11 +188,11 @@ abstract class SSingleMachine(
         fun Location.getSSingleMachine(): SSingleMachine? {
             val sLoc = toSLocation()
 
-            return machines[sLoc]
+            return allSingleMachines[sLoc]
         }
         
         fun Location.hasSSingleMachine(): Boolean =
-            machines.containsKey(toSLocation())
+            allSingleMachines.containsKey(toSLocation())
     }
     
 }
@@ -173,7 +200,7 @@ abstract class SSingleMachine(
 
 data class SSingleMachineInformation(
     var owner: String = "",
-    val data: HashMap<String, String> = HashMap()
+    val data: HashMap<String, Any> = HashMap()
 ) : ConfigurationSerializable {
     
     override fun serialize(): HashMap<String, Any> {

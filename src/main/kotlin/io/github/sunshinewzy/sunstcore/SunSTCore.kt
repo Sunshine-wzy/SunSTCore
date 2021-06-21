@@ -5,17 +5,15 @@ import io.github.sunshinewzy.sunstcore.listeners.BlockListener
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
-import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachineInformation
+import io.github.sunshinewzy.sunstcore.modules.machine.*
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
+import io.github.sunshinewzy.sunstcore.objects.SBlock
+import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
-import io.github.sunshinewzy.sunstcore.utils.SReflect
-import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
-import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
+import io.github.sunshinewzy.sunstcore.utils.*
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.metrics.BMetrics
 import io.izzel.taboolib.module.dependency.Dependencies
@@ -24,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -91,12 +90,39 @@ object SunSTCore : Plugin() {
         ConfigurationSerialization.registerClass(RangeStick::class.java)
         
         ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)
+        ConfigurationSerialization.registerClass(SMachineInformation::class.java)
         
     }
     
     
     @SunSTTestApi
     private fun test() {
+        val wrench = SMachineWrench(plugin, SItem(Material.BONE, "§e扳手", "§a适合安装多方块机器"))
+        
+        val millStone = object : SMachineManual("MillStone", wrench, SMachineStructure.CentralSymmetry(
+            SMachineSize.SIZE3,
+            """
+                a
+                
+                b
+            """.trimIndent(),
+            mapOf('a' to SBlock(Material.STONE_SLAB), 'b' to SBlock(Material.COBBLESTONE_WALL)),
+            SCoordinate(0, 1, 0)
+        )) {
+            override fun manualRun(event: SMachineRunEvent.Manual) {
+                var cnt = getDataByType<Int>(event.sLoc, "cnt") ?: 0
+
+                if(cnt >= 4) {
+                    event.player.giveItem(SItem(Material.GRAVEL))
+                    event.player.sendMsg("Yes!")
+                    
+                    cnt = 0
+                } else cnt++
+
+                setData(event.sLoc, "cnt", cnt)
+            }
+        }
+        
         
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
@@ -107,6 +133,7 @@ object SunSTCore : Plugin() {
         subscribeEvent<PlayerJoinEvent> { 
             if(player.isOp) {
                 player.gameMode = GameMode.CREATIVE
+                player.giveItem(wrench)
             }
         }
         

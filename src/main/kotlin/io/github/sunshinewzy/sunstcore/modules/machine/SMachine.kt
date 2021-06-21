@@ -27,7 +27,7 @@ abstract class SMachine(
     val wrench: SMachineWrench,
     val structure: SMachineStructure
 ) : Initable {
-    val machineSLocations = HashSet<String>()
+    val sMachines = HashMap<SLocation, SMachineInformation>()
     
     
     init {
@@ -40,11 +40,11 @@ abstract class SMachine(
     /**
      * 运行机器
      * 
-     * 如果您不在新建一个 像 [MachineManual] 和 [MachineTimer] 的 [SMachine] API，请不要重写此函数。
-     * 请优先重写函数 [MachineManual.manualRun] 或 [MachineTimer.timerRun]
+     * 如果您不在新建一个 像 [SMachineManual] 和 [SMachineTimer] 的 [SMachine] API，请不要重写此函数。
+     * 请优先重写函数 [SMachineManual.manualRun] 或 [SMachineTimer.timerRun]
      * 
-     * If you are not writing a new [SMachine] API like [MachineManual] and [MachineTimer] , please do not override this function.
-     * Override the function [MachineManual.manualRun] or [MachineTimer.timerRun] first.
+     * If you are not writing a new [SMachine] API like [SMachineManual] and [SMachineTimer] , please do not override this function.
+     * Override the function [SMachineManual.manualRun] or [SMachineTimer.timerRun] first.
      */
     abstract fun runMachine(event: SMachineRunEvent)
 
@@ -72,16 +72,20 @@ abstract class SMachine(
     open fun specialJudge(loc: Location, isFirst: Boolean, level: Short = 0): Boolean = true
 
 
+    fun getOwner(sLocation: SLocation): String = sMachines[sLocation]?.owner ?: ""
+    
     /**
      * 添加机器
      */
     fun addMachine(loc: Location, player: Player) {
-        machines[SLocation(loc)] = this
+        val sLoc = loc.toSLocation()
+        allSMachines[sLoc] = this
         SunSTCore.pluginManager.callEvent(SMachineAddEvent(this, loc, player))
     }
     
-    fun addMachine(sLocation: SLocation) {
-        machines[sLocation] = this
+    fun addMachine(sLocation: SLocation, information: SMachineInformation = SMachineInformation()) {
+        allSMachines[sLocation] = this
+        sMachines[sLocation] = information
     }
 
     /**
@@ -90,13 +94,14 @@ abstract class SMachine(
     fun removeMachine(loc: Location) {
         val sLoc = SLocation(loc)
         
-        if(machines.containsKey(sLoc)){
-            val machine = machines[sLoc] ?: kotlin.run { 
-                machines.remove(sLoc)
+        if(allSMachines.containsKey(sLoc)){
+            val machine = allSMachines[sLoc] ?: kotlin.run { 
+                allSMachines.remove(sLoc)
                 return
             }
+            
             if(machine.name == name) {
-                machines.remove(sLoc)
+                allSMachines.remove(sLoc)
                 SunSTCore.pluginManager.callEvent(SMachineRemoveEvent(machine, loc))
             }
         }
@@ -163,7 +168,64 @@ abstract class SMachine(
     protected fun setMetaCnt(event: SMachineRunEvent, cnt: Int) {
         setMetaCnt(event.loc, cnt)
     }
-    
+
+
+    /**
+     * 数据
+     */
+    fun setData(sLocation: SLocation, key: String, value: Any): Boolean {
+        sMachines[sLocation]?.data?.let { information ->
+            information[key] = value
+            return true
+        }
+
+        return false
+    }
+
+    fun removeData(sLocation: SLocation, key: String) {
+        sMachines[sLocation]?.data?.remove(key)
+    }
+
+    fun clearData(sLocation: SLocation) {
+        sMachines[sLocation]?.data?.clear()
+    }
+
+    fun getData(sLocation: SLocation, key: String): Any? {
+        sMachines[sLocation]?.data?.let { data ->
+            if(data.containsKey(key)) {
+                return data[key]
+            }
+        }
+        return null
+    }
+
+    fun getDataOrFail(sLocation: SLocation, key: String): Any =
+        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SMachine($name) data of $key.")
+
+    inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
+        sMachines[sLocation]?.data?.let { data ->
+            if(data.containsKey(key)) {
+                data[key]?.let {
+                    if(it is T) {
+                        return it
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    inline fun <reified T> getDataByTypeOrFail(sLocation: SLocation, key: String): T {
+        getDataOrFail(sLocation, key).let {
+            if(it is T) {
+                return it
+            }
+        }
+
+        throw IllegalArgumentException("Cannot cast data of $key to ${T::class.java.name}.")
+    }
+
+
 
     /**
      * 在 [loc] 位置生成该机器的结构 (不会构建机器)
@@ -184,34 +246,34 @@ abstract class SMachine(
         /**
          * 所有机器的位置
          */
-        private val machines = HashMap<SLocation, SMachine>()
+        private val allSMachines = HashMap<SLocation, SMachine>()
 
 
         fun Location.hasSMachine(): Boolean =
-            machines.containsKey(toSLocation())
+            allSMachines.containsKey(toSLocation())
         
         fun Location.getSMachine(): SMachine? {
             val sLoc = toSLocation()
 
-            if(machines.containsKey(sLoc)){
-                return machines[sLoc]
+            if(allSMachines.containsKey(sLoc)){
+                return allSMachines[sLoc]
             }
 
             return null
         }
         
-        fun Location.judgeSMachineStructure(player: Player, level: Short = 0): Boolean {
+        fun Location.judgeSMachineStructure(player: Player, isWrench: Boolean = false): Boolean {
             val sLoc = SLocation(this)
 
-            if(machines.containsKey(sLoc)){
-                val machine = machines[sLoc] ?: kotlin.run {
-                    machines.remove(sLoc)
+            if(allSMachines.containsKey(sLoc)){
+                val machine = allSMachines[sLoc] ?: kotlin.run {
+                    allSMachines.remove(sLoc)
                     return true
                 }
                 
                 if(!machine.judgeStructure(this)){
                     player.sendMsg(machine.wrench.msgDestroy)
-                    machines.remove(sLoc)
+                    allSMachines.remove(sLoc)
                     world?.playSound(this, Sound.ENTITY_ITEM_BREAK, 1f, 0.2f)
 
                     SunSTCore.pluginManager.callEvent(SMachineRemoveEvent(machine, this))
