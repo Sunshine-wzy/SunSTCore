@@ -181,27 +181,18 @@ abstract class SMachineStructure(
     }
     
     
-    protected open fun upgrade() {
+    fun addUpgrade(shape: String, ingredients: Map<Char, SBlock>): SMachineStructure {
+        val map = CoordSBlockMap()
+        shapeStructure(map, shape)
         
+        addUpgrade(map)
+        return this
     }
-    
     
     fun addUpgrade(struct: CoordSBlockMap): SMachineStructure {
         upgrade += struct
         
         return this
-    }
-    
-    fun judgeUpgrade(loc: Location): Int {
-        var level = 0
-        
-        upgrade.forEach { coordMap ->
-            if(judge(loc, coordMap))
-                level++
-            else return level
-        }
-        
-        return level
     }
     
     fun hasUpgrade(level: Int = 1): Boolean {
@@ -237,6 +228,34 @@ abstract class SMachineStructure(
             }
             
         }
+    }
+    
+    fun copyIngredients(): HashMap<Char, SBlock> {
+        val map = HashMap<Char, SBlock>()
+        map += ingredients
+        return map
+    }
+
+    fun copyIngredients(vararg replace: Pair<Char, SBlock>): HashMap<Char, SBlock> {
+        val map = HashMap<Char, SBlock>()
+        map += ingredients
+        
+        replace.forEach { 
+            map[it.first] = it.second
+        }
+        
+        return map
+    }
+
+    fun copyIngredients(replace: Map<Char, SBlock>): HashMap<Char, SBlock> {
+        val map = HashMap<Char, SBlock>()
+        map += ingredients
+
+        replace.forEach { (ch, sBlock) ->
+            map[ch] = sBlock
+        }
+
+        return map
     }
     
     

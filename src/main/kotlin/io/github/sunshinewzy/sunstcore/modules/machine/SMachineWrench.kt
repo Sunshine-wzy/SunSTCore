@@ -30,6 +30,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     var msgAlreadyExist = "&e这里已经有多方块机器了~"
     var msgBuildSuccessful = "&a构建成功！"
     var msgIncorrectStructure = "&f多方块机器&c结构不正确"
+    var msgMachineUpgrade = "&a多方块机器升级成功！"
     
     
     init {

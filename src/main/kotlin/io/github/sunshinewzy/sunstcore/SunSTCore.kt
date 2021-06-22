@@ -49,7 +49,7 @@ object SunSTCore : Plugin() {
         
         plugin.logger.info("SunSTCore 加载成功！")
         
-        if(System.getProperty("test") == "true") 
+        if(System.getProperty("SunSTDebug") == "true") 
             test()
     }
 

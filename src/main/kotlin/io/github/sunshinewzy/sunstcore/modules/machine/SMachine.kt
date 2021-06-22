@@ -3,14 +3,15 @@ package io.github.sunshinewzy.sunstcore.modules.machine
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.getSMetadata
-import io.github.sunshinewzy.sunstcore.utils.removeClone
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
+import io.github.sunshinewzy.sunstcore.utils.subtractClone
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.block.Block
@@ -55,10 +56,19 @@ abstract class SMachine(
      * @param loc 机器中心位置
      */
     fun judgeStructure(loc: Location, isFirst: Boolean = false, level: Short = 0): Boolean {
-        val baseLoc = loc.removeClone(structure.center)
+        val baseLoc = loc.subtractClone(structure.center)
         
-        if(structure.judgeStructure(baseLoc, level))
-            return specialJudge(baseLoc, isFirst, level)
+        if(structure.judgeStructure(baseLoc, level)) {
+            val res = specialJudge(baseLoc, isFirst, level)
+            
+            if(res) {
+                sMachines[loc.toSLocation()]?.let { 
+                    it.level = level
+                }
+            }
+            
+            return res
+        }
         
         return false
     }
@@ -265,23 +275,33 @@ abstract class SMachine(
         fun Location.judgeSMachineStructure(player: Player, isWrench: Boolean = false): Boolean {
             val sLoc = SLocation(this)
 
-            if(allSMachines.containsKey(sLoc)){
-                val machine = allSMachines[sLoc] ?: kotlin.run {
-                    allSMachines.remove(sLoc)
-                    return true
+            allSMachines[sLoc]?.let { machine ->
+                var level: Short = 0
+                machine.sMachines[sLoc]?.let { 
+                    level = it.level
                 }
                 
-                if(!machine.judgeStructure(this)){
-                    player.sendMsg(machine.wrench.msgDestroy)
+                return if(isWrench && machine.judgeStructure(this, level = (level + 1).toShort())) {
+                    SunSTCore.pluginManager.callEvent(SMachineUpgradeEvent(machine, this, player, (level + 1).toShort()))
+                    
+                    world?.playSound(this, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.2f)
+                    player.sendMsg(machine.wrench.prefix, machine.wrench.msgMachineUpgrade)
+                    
+                    false
+                } else if(machine.judgeStructure(this, level = level)) {
+                    true
+                } else {
                     allSMachines.remove(sLoc)
-                    world?.playSound(this, Sound.ENTITY_ITEM_BREAK, 1f, 0.2f)
-
                     SunSTCore.pluginManager.callEvent(SMachineRemoveEvent(machine, this))
-                    return false
+                    
+                    world?.playSound(this, Sound.ENTITY_ITEM_BREAK, 1f, 0.2f)
+                    player.sendMsg(machine.wrench.msgDestroy)
+
+                    false
                 }
             }
-
-            return true
+            
+            return false
         }
     }
     

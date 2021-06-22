@@ -485,17 +485,17 @@ fun Location.addClone(coord: SCoordinate): Location =
 fun Location.addClone(y: Int): Location =
     addClone(0, y, 0)
 
-fun Location.removeClone(x: Int, y: Int, z: Int): Location =
+fun Location.subtractClone(x: Int, y: Int, z: Int): Location =
     clone().add(-x.toDouble(), -y.toDouble(), -z.toDouble())
 
-fun Location.removeClone(coord: Triple<Int, Int, Int>): Location =
+fun Location.subtractClone(coord: Triple<Int, Int, Int>): Location =
     clone().add(-coord.first.toDouble(), -coord.second.toDouble(), -coord.third.toDouble())
 
-fun Location.removeClone(coord: SCoordinate): Location =
+fun Location.subtractClone(coord: SCoordinate): Location =
     clone().add(-coord.x.toDouble(), -coord.y.toDouble(), -coord.z.toDouble())
 
-fun Location.removeClone(y: Int): Location =
-    removeClone(0, y, 0)
+fun Location.subtractClone(y: Int): Location =
+    subtractClone(0, y, 0)
 
 
 fun Location.judgePlaneAround(type: Material, includeCorners: Boolean = false): Boolean {
