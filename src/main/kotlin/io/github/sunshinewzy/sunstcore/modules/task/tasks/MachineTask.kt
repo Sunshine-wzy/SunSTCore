@@ -38,6 +38,8 @@ class MachineTask(
     
     init {
         openSound = Sound.UI_BUTTON_CLICK
+        edgeItem = SItem(greenGlassPane)
+        
         volume = 1f
         pitch = 1f
         

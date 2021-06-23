@@ -23,8 +23,8 @@ abstract class SMachineTimer(
     
     final override fun runMachine(event: SMachineRunEvent) {
         if(event is SMachineRunEvent.Timer)
-            timerRun(event)
+            timerRun(event, getLevel(event.sLoc))
     }
     
-    abstract fun timerRun(event: SMachineRunEvent.Timer)
+    abstract fun timerRun(event: SMachineRunEvent.Timer, level: Short)
 }

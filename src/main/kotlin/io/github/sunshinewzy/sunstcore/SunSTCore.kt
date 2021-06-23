@@ -109,7 +109,7 @@ object SunSTCore : Plugin() {
             mapOf('a' to SBlock(Material.STONE_SLAB), 'b' to SBlock(Material.COBBLESTONE_WALL)),
             SCoordinate(0, 1, 0)
         )) {
-            override fun manualRun(event: SMachineRunEvent.Manual) {
+            override fun manualRun(event: SMachineRunEvent.Manual, level: Short) {
                 var cnt = getDataByType<Int>(event.sLoc, "cnt") ?: 0
 
                 if(cnt >= 4) {

@@ -34,6 +34,7 @@ abstract class TaskBase(
     var pitch = taskStage.pitch
     var submitItem = TaskGuideItem.SUBMIT.item.clone().setLore(*descriptionLore)
     var isCreateEdge = true
+    var edgeItem = taskStage.edgeItem
     
     
     init {
@@ -96,7 +97,7 @@ abstract class TaskBase(
     override fun getTaskInv(p: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, taskName)
         if(isCreateEdge)
-            inv.createEdge(invSize, taskStage.edgeItem)
+            inv.createEdge(invSize, edgeItem)
         
         slotItems.forEach { (slotOrder, item) -> 
             inv.setItem(slotOrder, item)

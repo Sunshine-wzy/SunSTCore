@@ -84,6 +84,9 @@ abstract class SMachine(
 
     fun getOwner(sLocation: SLocation): String = sMachines[sLocation]?.owner ?: ""
     
+    fun getLevel(sLocation: SLocation): Short = sMachines[sLocation]?.level ?: 0
+    
+    
     /**
      * 添加机器
      */

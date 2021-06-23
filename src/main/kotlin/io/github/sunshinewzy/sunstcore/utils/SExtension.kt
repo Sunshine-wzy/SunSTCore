@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
+import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.listeners.BlockListener
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
@@ -283,6 +284,24 @@ fun Inventory.containsItem(items: Array<ItemStack>): Boolean {
     return true
 }
 
+fun Inventory.containsItem(types: List<Material>, amount: Int = 1): Boolean {
+    if(amount <= 0) return true
+    var cnt = amount
+
+    storageContents.forEach {
+        if(it == null) return@forEach
+
+        if (it.type in types) {
+            cnt -= it.amount
+            if (cnt <= 0) return true
+        }
+    }
+
+    return false
+}
+
+fun Inventory.containsItem(types: Materialsable, amount: Int = 1): Boolean = containsItem(types.types(), amount)
+
 /**
  * 移除物品栏中 [amount] 数量的物品 [item]
  */
@@ -317,7 +336,7 @@ fun Inventory.removeSItem(items: Array<ItemStack>): Boolean {
     return true
 }
 
-fun Inventory.removeSItem(type: Material, amount: Int): Boolean {
+fun Inventory.removeSItem(type: Material, amount: Int = 1): Boolean {
     if(amount <= 0) return true
     var cnt = amount
 
@@ -337,6 +356,30 @@ fun Inventory.removeSItem(type: Material, amount: Int): Boolean {
 
     return false
 }
+
+fun Inventory.removeSItem(types: List<Material>, amount: Int = 1): Boolean {
+    if(amount <= 0) return true
+    var cnt = amount
+
+    storageContents.forEach {
+        if(it == null) return@forEach
+
+        if (it.type in types) {
+            val theCnt = cnt
+            cnt -= it.amount
+
+            if(it.amount > theCnt) it.amount -= theCnt
+            else it.amount = 0
+
+            if (cnt <= 0) return true
+        }
+    }
+
+    return false
+}
+
+fun Inventory.removeSItem(types: Materialsable, amount: Int = 1): Boolean = removeSItem(types.types(), amount)
+
 
 fun Inventory.isFull(): Boolean = firstEmpty() > size
 

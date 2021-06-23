@@ -11,9 +11,9 @@ abstract class SMachineManual(
 
     final override fun runMachine(event: SMachineRunEvent) {
         if(event is SMachineRunEvent.Manual)
-            manualRun(event)
+            manualRun(event, getLevel(event.sLoc))
     }
     
-    abstract fun manualRun(event: SMachineRunEvent.Manual)
+    abstract fun manualRun(event: SMachineRunEvent.Manual, level: Short)
     
 }
