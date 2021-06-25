@@ -7,12 +7,13 @@ import org.bukkit.plugin.java.JavaPlugin
  * 自动机器
  */
 abstract class SMachineTimer(
+    id: String,
     name: String,
     wrench: SMachineWrench,
     structure: SMachineStructure,
     val plugin: JavaPlugin,
-    private val period: Long,
-) : SMachine(name, wrench, structure) {
+    val period: Long,
+) : SMachine(id, name, wrench, structure) {
     
     init {
         Bukkit.getScheduler().runTaskTimer(plugin, Runnable {

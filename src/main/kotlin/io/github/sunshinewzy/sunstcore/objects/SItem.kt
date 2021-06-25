@@ -99,9 +99,17 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         private val itemActions = HashMap<SItem, ArrayList<PlayerInteractEvent.() -> Unit>>()
         
         val items = HashMap<String, ItemStack>()
+
+
+        fun createTaskSymbol(type: Material, vararg lore: String = arrayOf()): SItem {
+            val loreList = arrayListOf("§a>点我查看任务<")
+            if(lore.isNotEmpty())
+                loreList.addAll(lore)
+
+            return SItem(type,"", loreList)
+        }
         
-        
-        fun createTaskSymbol(type: Material, damage: Short, vararg lore: String = arrayOf()): SItem {
+        fun createTaskSymbolWithDamage(type: Material, damage: Short, vararg lore: String = arrayOf()): SItem {
             val loreList = arrayListOf("§a>点我查看任务<")
             if(lore.isNotEmpty())
                 loreList.addAll(lore)

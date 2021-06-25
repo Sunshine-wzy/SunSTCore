@@ -24,11 +24,14 @@ import org.bukkit.entity.Player
  * @param structure 该多方块机器的结构
  */
 abstract class SMachine(
+    val id: String,
     val name: String,
     val wrench: SMachineWrench,
     val structure: SMachineStructure
 ) : Initable {
     val sMachines = HashMap<SLocation, SMachineInformation>()
+    
+    var isCancelInteract = true
     
     
     init {
@@ -113,7 +116,7 @@ abstract class SMachine(
                 return
             }
             
-            if(machine.name == name) {
+            if(machine.id == id) {
                 allSMachines.remove(sLoc)
                 SunSTCore.pluginManager.callEvent(SMachineRemoveEvent(machine, loc))
             }
@@ -136,7 +139,7 @@ abstract class SMachine(
      * · >= [maxCnt] -> 设置为 [addCnt] 并返回 [SMachineStatus.FINISH]
      */
     protected fun addMetaCnt(block: Block, maxCnt: Int, addCnt: Int = 1): SMachineStatus {
-        val meta = block.getSMetadata(wrench.plugin, name)
+        val meta = block.getSMetadata(wrench.plugin, id)
         var cnt = meta.asInt()
         
         val status = when {
@@ -155,7 +158,7 @@ abstract class SMachine(
         }
         
         meta.data = cnt
-        block.setMetadata(name, meta)
+        block.setMetadata(id, meta)
         return status
     }
     
@@ -169,9 +172,9 @@ abstract class SMachine(
      * 设置 [block] 的 Metadata 中的整型数据
      */
     protected fun setMetaCnt(block: Block, cnt: Int) {
-        val meta = block.getSMetadata(wrench.plugin, name)
+        val meta = block.getSMetadata(wrench.plugin, id)
         meta.data = cnt
-        block.setMetadata(name, meta)
+        block.setMetadata(id, meta)
     }
     
     protected fun setMetaCnt(loc: Location, cnt: Int) {
@@ -213,7 +216,7 @@ abstract class SMachine(
     }
 
     fun getDataOrFail(sLocation: SLocation, key: String): Any =
-        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SMachine($name) data of $key.")
+        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SMachine($id) data of $key.")
 
     inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
         sMachines[sLocation]?.data?.let { data ->

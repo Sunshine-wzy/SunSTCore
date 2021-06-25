@@ -36,27 +36,27 @@ class TaskProgress() : ConfigurationSerializable {
     
     
     fun completeTask(task: TaskBase, isCompleted: Boolean = true) {
-        val stageName = task.taskStage.stageName
-        val taskName = task.taskName
+        val stageId = task.taskStage.id
+        val taskId = task.id
 
-        if(progress.containsKey(stageName)){
-            val stagePro = progress[stageName] ?: kotlin.run { 
+        if(progress.containsKey(stageId)){
+            val stagePro = progress[stageId] ?: kotlin.run { 
                 val map = HashMap<String, Boolean>()
-                progress[stageName] = map
+                progress[stageId] = map
                 map
             }
-            stagePro[taskName] = isCompleted
+            stagePro[taskId] = isCompleted
         }
-        else progress[stageName] = hashMapOf(taskName to isCompleted)
+        else progress[stageId] = hashMapOf(taskId to isCompleted)
     }
     
     fun hasCompleteTask(task: TaskBase): Boolean {
         val taskStage = task.taskStage
         
-        if(progress.containsKey(taskStage.stageName)){
-            val stagePro = progress[taskStage.stageName]
-            if(stagePro?.containsKey(task.taskName) == true){
-                val taskPro = stagePro[task.taskName]
+        if(progress.containsKey(taskStage.id)){
+            val stagePro = progress[taskStage.id]
+            if(stagePro?.containsKey(task.id) == true){
+                val taskPro = stagePro[task.id]
                 if(taskPro == true){
                     return true
                 }
@@ -69,10 +69,10 @@ class TaskProgress() : ConfigurationSerializable {
     fun hasCompleteStage(taskStage: TaskStage): Boolean {
         val finalTask = taskStage.finalTask ?: return true
 
-        if(progress.containsKey(taskStage.stageName)){
-            val stagePro = progress[taskStage.stageName]
-            if(stagePro?.containsKey(finalTask.taskName) == true){
-                val taskPro = stagePro[finalTask.taskName]
+        if(progress.containsKey(taskStage.id)){
+            val stagePro = progress[taskStage.id]
+            if(stagePro?.containsKey(finalTask.id) == true){
+                val taskPro = stagePro[finalTask.id]
                 if(taskPro == true){
                     return true
                 }

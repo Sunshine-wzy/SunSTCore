@@ -99,7 +99,7 @@ object SunSTCore : Plugin() {
     private fun test() {
         val wrench = SMachineWrench(plugin, SItem(Material.BONE, "§e扳手", "§a适合安装多方块机器"))
         
-        val millStone = object : SMachineManual("MillStone", wrench, SMachineStructure.CentralSymmetry(
+        val millStone = object : SMachineManual("MillStone", "磨盘", wrench, SMachineStructure.CentralSymmetry(
             SMachineSize.SIZE3,
             """
                 a
@@ -131,10 +131,11 @@ object SunSTCore : Plugin() {
         }
         
         subscribeEvent<PlayerJoinEvent> { 
-            if(player.isOp) {
-                player.gameMode = GameMode.CREATIVE
-                player.giveItem(wrench)
-            }
+            Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                if(player.isOp) {
+                    player.gameMode = GameMode.CREATIVE
+                }
+            }, 20)
         }
         
     }

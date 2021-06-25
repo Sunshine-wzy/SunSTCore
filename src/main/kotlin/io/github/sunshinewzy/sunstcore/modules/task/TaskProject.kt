@@ -1,9 +1,7 @@
 package io.github.sunshinewzy.sunstcore.modules.task
 
-import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.STaskData
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.modules.data.DataManager.getTaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
@@ -24,6 +22,7 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 class TaskProject(
+    val id: String,
     val projectName: String,
     val openItem: ItemStack = SItem(Material.ENCHANTED_BOOK, "§e$projectName §a向导"),
     val isFirstJoinGive: Boolean = true,
@@ -34,16 +33,16 @@ class TaskProject(
     val pitch: Float = 1.2f,
     val invSize: Int = 5
 ) : TaskInventory {
-    private val holder = SProtectInventoryHolder(projectName)
+    private val holder = SProtectInventoryHolder(id)
     
     val stageMap = HashMap<String, TaskStage>()
     val lastTaskInv = HashMap<UUID, TaskInventory>()
     
     init {
-        DataManager.sTaskData[projectName] = STaskData(this)
+//        DataManager.sTaskData[projectName] = STaskData(this)
         
         if(isFirstJoinGive)
-            DataManager.firstJoinGiveOpenItems[projectName] = openItem
+            DataManager.firstJoinGiveOpenItems[id] = openItem
 
         subscribeEvent<PlayerInteractEvent> {
             val item = item ?: return@subscribeEvent
@@ -94,20 +93,20 @@ class TaskProject(
     }
 
 
-    override fun openTaskInv(p: Player, inv: Inventory) {
-        lastTaskProject[p.uniqueId] = this
-        lastTaskInv[p.uniqueId] = this
+    override fun openTaskInv(player: Player, inv: Inventory) {
+        lastTaskProject[player.uniqueId] = this
+        lastTaskInv[player.uniqueId] = this
         
-        p.playSound(p.location, openSound, volume, pitch)
-        p.openInventory(inv)
+        player.playSound(player.location, openSound, volume, pitch)
+        player.openInventory(inv)
     }
     
-    override fun getTaskInv(p: Player): Inventory {
+    override fun getTaskInv(player: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, title)
         inv.createEdge(invSize, edgeItem)
         stageMap.values.forEach {
             val pre = it.predecessor
-            if(pre == null || p.hasCompleteStage(pre)){
+            if(pre == null || player.hasCompleteStage(pre)){
                 inv.setItem(it.order, it.symbol)
             }
         }
@@ -115,28 +114,10 @@ class TaskProject(
         return inv
     }
     
-    fun getProgress(p: Player): TaskProgress {
-        val uid = p.uniqueId.toString()
+    fun getProgress(player: Player): TaskProgress {
+        val uid = player.uniqueId.toString()
         
-        if(DataManager.sPlayerData.containsKey(uid)){
-            val taskProgresses = DataManager.sPlayerData[uid]!!.taskProgress
-            
-            return if(taskProgresses.containsKey(projectName))
-                taskProgresses[projectName]!!
-            else{
-                val progress = TaskProgress()
-                taskProgresses[projectName] = progress
-                progress
-            }
-        }
-        else{
-            val sPlayerData = SunSTPlayerData(SunSTCore.getPlugin(), uid)
-            DataManager.sPlayerData[uid] = sPlayerData
-
-            val progress = TaskProgress()
-            sPlayerData.taskProgress[projectName] = progress
-            return progress
-        }
+        return player.getTaskProgress(id)
     }
     
     

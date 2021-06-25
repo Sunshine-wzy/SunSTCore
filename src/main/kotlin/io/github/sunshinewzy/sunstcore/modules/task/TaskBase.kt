@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack
 
 abstract class TaskBase(
     val taskStage: TaskStage,
+    val id: String,
     val taskName: String,
     val order: Int,
     val predecessor: TaskBase?,
@@ -38,7 +39,7 @@ abstract class TaskBase(
     
     
     init {
-        taskStage.taskMap[taskName] = this
+        taskStage.taskMap[id] = this
         
         subscribeEvent<InventoryClickEvent> {
             val player = view.getSPlayer()
@@ -70,10 +71,10 @@ abstract class TaskBase(
     override fun serialize(): MutableMap<String, Any> {
         val map = HashMap<String, Any>()
 
-        map["taskStage"] = taskStage.stageName
-        map["taskName"] = taskName
+        map["taskStage"] = taskStage.id
+        map["taskName"] = id
         map["order"] = order
-        map["predecessor"] = predecessor?.taskName ?: "null"
+        map["predecessor"] = predecessor?.id ?: "null"
         map["symbol"] = symbol
         map["reward"] = reward
         map["openSound"] = openSound
@@ -86,15 +87,15 @@ abstract class TaskBase(
     }
     
     
-    override fun openTaskInv(p: Player, inv: Inventory) {
-        TaskProject.lastTaskProject[p.uniqueId] = taskStage.taskProject
-        taskStage.taskProject.lastTaskInv[p.uniqueId] = this
+    override fun openTaskInv(player: Player, inv: Inventory) {
+        TaskProject.lastTaskProject[player.uniqueId] = taskStage.taskProject
+        taskStage.taskProject.lastTaskInv[player.uniqueId] = this
         
-        p.playSound(p.location, openSound, volume, pitch)
-        p.openInventory(inv)
+        player.playSound(player.location, openSound, volume, pitch)
+        player.openInventory(inv)
     }
     
-    override fun getTaskInv(p: Player): Inventory {
+    override fun getTaskInv(player: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, taskName)
         if(isCreateEdge)
             inv.createEdge(invSize, edgeItem)

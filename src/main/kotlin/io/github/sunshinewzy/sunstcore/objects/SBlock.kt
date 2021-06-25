@@ -8,7 +8,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockState
 import org.bukkit.inventory.ItemStack
 
-class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
+class SBlock(val type: Material, val damage: Short = -1, var name: String = "") {
     
     private var item: ItemStack = SItem(type, 1)
     private val types: ArrayList<Material> by lazy { ArrayList() }
@@ -51,9 +51,21 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
     fun toItem(): ItemStack = SItem(type, 1)
     
     
-    fun isSimilar(material: Material): Boolean = this == SBlock(material)
+    fun isSimilar(material: Material): Boolean {
+        if(hasTypes) {
+            return material in types
+        }
+        
+        return this == SBlock(material)
+    }
     
-    fun isSimilar(block: Block): Boolean = this == block.toSBlock()
+    fun isSimilar(block: Block): Boolean {
+        if(hasTypes) {
+            return block.type in types
+        }
+        
+        return this == block.toSBlock()
+    }
 
     fun isSimilar(block: BlockState): Boolean = isSimilar(block.block)
     
@@ -80,7 +92,7 @@ class SBlock(val type: Material, val damage: Short = 0, var name: String = "") {
             this === other -> true
             other !is SBlock -> false
             
-            else -> type == other.type && damage == other.damage && name == other.name
+            else -> type == other.type && (damage == (-1).toShort() || other.damage == (-1).toShort() || damage == other.damage) && name == other.name
                     && if(hasTypes && types.isNotEmpty()) {
                         if(other.hasTypes && other.types.isNotEmpty()) {
                             if(types.size == other.types.size) {

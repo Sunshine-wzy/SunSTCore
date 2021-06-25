@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack
 
 class MachineUpgradeTask(
     taskStage: TaskStage,
+    id: String,
     taskName: String,
     order: Int,
     predecessor: TaskBase?,
@@ -31,7 +32,7 @@ class MachineUpgradeTask(
     val level: Int,
     val requireItems: Array<ItemStack>,
     vararg descriptionLore: String
-) : TaskBase(taskStage, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
+) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
     private val size = sMachine.structure.size
     private var flag = true
 
@@ -58,7 +59,7 @@ class MachineUpgradeTask(
 
         
         val upgrade = sMachine.structure.getUpgrade(level) ?: throw IllegalArgumentException(
-            "[MachineUpgradeTask] $taskName: ${sMachine.name} 没有 $level 级"
+            "[MachineUpgradeTask] $taskName: ${sMachine.id} 没有 $level 级"
         )
         
         for(coord in upgrade.keys){
@@ -105,17 +106,17 @@ class MachineUpgradeTask(
     }
 
 
-    override fun openTaskInv(p: Player, inv: Inventory) {
-        taskStage.taskProject.lastTaskInv[p.uniqueId] = this
+    override fun openTaskInv(player: Player, inv: Inventory) {
+        taskStage.taskProject.lastTaskInv[player.uniqueId] = this
 
-        p.playSound(p.location, openSound, volume, pitch)
+        player.playSound(player.location, openSound, volume, pitch)
         if(flag && inv.getItem(1 orderWith 3)?.type == Material.GREEN_STAINED_GLASS_PANE){
-            p.openInventory(pageInvIn(p, 1))
+            player.openInventory(pageInvIn(player, 1))
             return
         }
 
         sMachine.structure.getUpgrade(level)?.displayInInventory(inv, 0)
-        p.openInventory(inv)
+        player.openInventory(inv)
     }
 
     override fun clickInventory(e: InventoryClickEvent) {

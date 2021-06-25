@@ -101,7 +101,8 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
                                 machine.runMachine(SMachineRunEvent.Manual(loc, player))
                             }
                             
-                            isCancelled = true
+                            if(machine.isCancelInteract)
+                                isCancelled = true
                         }
                     }
                 }
@@ -110,7 +111,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
             subscribeEvent<SMachineAddEvent> {
                 sMachine.sMachines[SLocation(loc)] = SMachineInformation(player.uniqueId.toString())
                 
-                playerLastAddMachine[player.uniqueId] = sMachine.name
+                playerLastAddMachine[player.uniqueId] = sMachine.id
                 
             }
             

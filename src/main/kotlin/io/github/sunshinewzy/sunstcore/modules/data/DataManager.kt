@@ -2,8 +2,9 @@ package io.github.sunshinewzy.sunstcore.modules.data
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.STaskData
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.SCustomTaskData
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStickData
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStickData
 import io.github.sunshinewzy.sunstcore.utils.giveItem
@@ -21,7 +22,7 @@ object DataManager : Initable {
     val allAutoSaveData = ArrayList<SAutoSaveData>()
     
     val sPlayerData = HashMap<String, SunSTPlayerData>()
-    val sTaskData = HashMap<String, STaskData>()
+    val sTaskData = HashMap<String, SCustomTaskData>()
     
     val firstJoinGiveOpenItems = HashMap<String, ItemStack>()
     
@@ -97,14 +98,26 @@ object DataManager : Initable {
     fun Player.getSunSTData(): SunSTPlayerData {
         val uid = uniqueId.toString()
         
-        if(sPlayerData.containsKey(uid))
-            return sPlayerData[uid]!!
+        sPlayerData[uid]?.let { 
+            return it
+        }
         
-        val data = SunSTPlayerData(SunSTCore.getPlugin(), uid)
+        val data = SunSTPlayerData(SunSTCore.plugin, uid)
         data.load()
         
         sPlayerData[uid] = data
         return data
+    }
+    
+    fun Player.getTaskProgress(id: String): TaskProgress {
+        val data = getSunSTData()
+        data.taskProgress[id]?.let { 
+            return it
+        }
+        
+        val progress = TaskProgress()
+        data.taskProgress[id] = progress
+        return progress
     }
     
     inline fun <reified V> YamlConfiguration.getMap(

@@ -32,7 +32,7 @@ abstract class SMachineStructure(
     
     
     init {
-        shapeStructure(structure, shape)
+        shapeStructure(structure, shape, ingredients)
 
         centerBlock = if(structure.containsKey(center)){
             val theCenterBlock = structure[center] ?: throw MachineStructureException(
@@ -183,7 +183,7 @@ abstract class SMachineStructure(
     
     fun addUpgrade(shape: String, ingredients: Map<Char, SBlock>): SMachineStructure {
         val map = CoordSBlockMap()
-        shapeStructure(map, shape)
+        shapeStructure(map, shape, ingredients)
         
         addUpgrade(map)
         return this
@@ -206,7 +206,7 @@ abstract class SMachineStructure(
         else null
     
 
-    fun shapeStructure(structure: CoordSBlockMap, shape: String) {
+    fun shapeStructure(structure: CoordSBlockMap, shape: String, ingredients: Map<Char, SBlock>) {
         val layers = shape.split("\n\n")
         
         layers.forEachIndexed forEachY@{ y, layer ->

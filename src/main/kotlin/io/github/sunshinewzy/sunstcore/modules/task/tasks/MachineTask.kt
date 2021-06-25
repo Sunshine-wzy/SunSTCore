@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack
 
 class MachineTask(
     taskStage: TaskStage,
+    id: String,
     taskName: String,
     order: Int,
     predecessor: TaskBase?,
@@ -31,7 +32,7 @@ class MachineTask(
     val sMachine: SMachine,
     val requireItems: Array<ItemStack>,
     vararg descriptionLore: String
-) : TaskBase(taskStage, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
+) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
     private val size = sMachine.structure.size
     private val greenGlassPane = Material.GREEN_STAINED_GLASS_PANE
     
@@ -86,16 +87,16 @@ class MachineTask(
     }
 
 
-    override fun openTaskInv(p: Player, inv: Inventory) {
-        taskStage.taskProject.lastTaskInv[p.uniqueId] = this
+    override fun openTaskInv(player: Player, inv: Inventory) {
+        taskStage.taskProject.lastTaskInv[player.uniqueId] = this
 
-        p.playSound(p.location, openSound, volume, pitch)
+        player.playSound(player.location, openSound, volume, pitch)
         if(inv.getItem(1 orderWith 3)?.type == greenGlassPane){
-            p.openInventory(pageInvIn(p, 1))
+            player.openInventory(pageInvIn(player, 1))
             return
         }
 
-        p.openInventory(inv)
+        player.openInventory(inv)
     }
 
     override fun clickInventory(e: InventoryClickEvent) {
@@ -159,7 +160,7 @@ class MachineTask(
         val inv = player.inventory
         val lastAddMachine = player.getLastAddMachine()
         
-        if(lastAddMachine == sMachine.name){
+        if(lastAddMachine == sMachine.id){
             if(requireItems.isNotEmpty()){
                 if(inv.containsItem(requireItems))
                     completeTask(player)

@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack
 
 class TaskStage(
     val taskProject: TaskProject,
+    val id: String,
     val stageName: String,
     val order: Int,
     val predecessor: TaskStage?,
@@ -28,14 +29,14 @@ class TaskStage(
     val invSize: Int = 5
 ): TaskInventory {
     private val holder = SProtectInventoryHolder(
-        Pair(taskProject.projectName, stageName)
+        Pair(taskProject.id, id)
     )
     val taskMap = HashMap<String, TaskBase>()
     var finalTask: TaskBase? = null
     
     
     init {
-        taskProject.stageMap[stageName] = this
+        taskProject.stageMap[id] = this
 
         subscribeEvent<InventoryClickEvent> {
             if(inventory.holder == this@TaskStage.holder){
@@ -55,15 +56,15 @@ class TaskStage(
         }
     }
 
-    override fun openTaskInv(p: Player, inv: Inventory) {
-        TaskProject.lastTaskProject[p.uniqueId] = taskProject
-        taskProject.lastTaskInv[p.uniqueId] = this
+    override fun openTaskInv(player: Player, inv: Inventory) {
+        TaskProject.lastTaskProject[player.uniqueId] = taskProject
+        taskProject.lastTaskInv[player.uniqueId] = this
         
-        p.playSound(p.location, openSound, volume, pitch)
-        p.openInventory(inv)
+        player.playSound(player.location, openSound, volume, pitch)
+        player.openInventory(inv)
     }
 
-    override fun getTaskInv(p: Player): Inventory {
+    override fun getTaskInv(player: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, stageName)
         inv.createEdge(invSize, edgeItem)
         inv.setItem(5, 5, TaskGuideItem.HOME.item)
@@ -72,17 +73,17 @@ class TaskStage(
             val pre = it.predecessor
             var name = "§f[§"
             
-            if(pre == null || p.hasCompleteTask(pre)){
+            if(pre == null || player.hasCompleteTask(pre)){
                 val symbol = it.getSymbol()
                 
-                name += if(p.hasCompleteTask(it)) "a" else "e"
+                name += if(player.hasCompleteTask(it)) "a" else "e"
                 name += it.taskName + "§f]"
                 
                 inv.setItem(it.order, symbol.setName(name))
             }
             else{
                 val pPre = pre.predecessor
-                if(pPre == null || p.hasCompleteTask(pPre)){
+                if(pPre == null || player.hasCompleteTask(pPre)){
                     val symbol = it.getSymbol()
                     name += "c" + it.taskName + "§f]"
 

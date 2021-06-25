@@ -4,10 +4,11 @@ package io.github.sunshinewzy.sunstcore.modules.machine
  * 手动机器
  */
 abstract class SMachineManual(
+    id: String,
     name: String,
     wrench: SMachineWrench,
     structure: SMachineStructure
-) : SMachine(name, wrench, structure) {
+) : SMachine(id, name, wrench, structure) {
 
     final override fun runMachine(event: SMachineRunEvent) {
         if(event is SMachineRunEvent.Manual)

@@ -22,6 +22,7 @@ import java.util.*
 
 class ItemCraftTask(
     taskStage: TaskStage,
+    id: String,
     taskName: String,
     order: Int,
     predecessor: TaskBase?,
@@ -29,7 +30,7 @@ class ItemCraftTask(
     reward: Array<ItemStack>,
     val craftItem: ItemStack,
     vararg descriptionLore: String,
-) : TaskBase(taskStage, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
+) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
     private var hasMultiPages = false
     private val pages = ArrayList<Array<ItemStack>>()
     

@@ -6,7 +6,7 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachineInformation
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import org.bukkit.configuration.file.YamlConfiguration
 
-class SMachineData(val sMachine: SMachine) : SAutoCoverSaveData(sMachine.wrench.plugin, sMachine.name, "SMachine") {
+class SMachineData(val sMachine: SMachine) : SAutoCoverSaveData(sMachine.wrench.plugin, sMachine.id, "SMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
         sMachine.sMachines.forEach { (sLoc, information) ->

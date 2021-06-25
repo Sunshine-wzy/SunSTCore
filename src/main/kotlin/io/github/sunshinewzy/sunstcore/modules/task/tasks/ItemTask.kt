@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack
 
 class ItemTask(
     taskStage: TaskStage,
+    id: String,
     taskName: String,
     order: Int,
     predecessor: TaskBase?,
@@ -16,7 +17,7 @@ class ItemTask(
     reward: Array<ItemStack>,
     val requireItems: Array<ItemStack>,
     vararg descriptionLore: String,
-) : TaskBase(taskStage, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
+) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
     
     init {
         setSubmitItemOrder(5, 2)
