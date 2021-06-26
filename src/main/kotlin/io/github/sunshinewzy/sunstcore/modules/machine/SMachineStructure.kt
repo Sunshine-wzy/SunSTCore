@@ -147,7 +147,7 @@ abstract class SMachineStructure(
         return false
     }
     
-    fun displayInInventory(inv: Inventory, layer: Int) {
+    fun displayInInventory(inv: Inventory, layer: Int, structure: CoordSBlockMap = this.structure) {
         structure.forEach { (coord, sBlock) -> 
             val (x, y, z) = coord
             if(y != layer - 1) return@forEach
@@ -195,15 +195,26 @@ abstract class SMachineStructure(
         return this
     }
     
-    fun hasUpgrade(level: Int = 1): Boolean {
+    fun hasUpgrade(level: Short = 1): Boolean {
         if(upgrade.isEmpty()) return false
         return upgrade.size >= level
     }
     
-    fun getUpgrade(level: Int): CoordSBlockMap? =
-        if(hasUpgrade(level))
-            upgrade[level - 1]
-        else null
+    fun getUpgrade(level: Short): CoordSBlockMap? =
+        when {
+            level == 0.toShort() -> structure
+            hasUpgrade(level) -> upgrade[level - 1]
+            else -> null
+        }
+    
+    fun getUpgradeOrFail(level: Short): CoordSBlockMap =
+        getUpgrade(level) ?: throw IllegalArgumentException("""
+            The machine structure:
+            ----------------------
+            $structure
+            ----------------------
+            doesn't have the level of $level.
+        """.trimIndent())
     
 
     fun shapeStructure(structure: CoordSBlockMap, shape: String, ingredients: Map<Char, SBlock>) {

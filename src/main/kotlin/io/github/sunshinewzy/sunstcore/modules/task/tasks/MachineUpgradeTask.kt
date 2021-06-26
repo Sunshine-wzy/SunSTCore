@@ -58,7 +58,7 @@ class MachineUpgradeTask(
         setBackItemOrder(8, 5)
 
         
-        val upgrade = sMachine.structure.getUpgrade(level) ?: throw IllegalArgumentException(
+        val upgrade = sMachine.structure.getUpgrade(level.toShort()) ?: throw IllegalArgumentException(
             "[MachineUpgradeTask] $taskName: ${sMachine.id} 没有 $level 级"
         )
         
@@ -115,7 +115,7 @@ class MachineUpgradeTask(
             return
         }
 
-        sMachine.structure.getUpgrade(level)?.displayInInventory(inv, 0)
+        sMachine.structure.getUpgrade(level.toShort())?.displayInInventory(inv, 0)
         player.openInventory(inv)
     }
 
@@ -172,7 +172,7 @@ class MachineUpgradeTask(
         }
 
         structure.displayInInventory(inv, page)
-        sMachine.structure.getUpgrade(level)?.displayInInventory(inv, page)
+        sMachine.structure.getUpgrade(level.toShort())?.displayInInventory(inv, page)
 
         return inv
     }

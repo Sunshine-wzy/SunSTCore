@@ -34,6 +34,8 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     
     
     init {
+        wrenches += this
+        
         addAction { 
             val clickedBlock = clickedBlock
             if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR){
@@ -86,6 +88,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     
     companion object : Initable {
         private val playerLastAddMachine = HashMap<UUID, String>()
+        private val wrenches = ArrayList<SMachineWrench>()
         
         
         override fun init() {
@@ -93,6 +96,14 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
                 val clickedBlock = clickedBlock ?: return@subscribeEvent
                 
                 if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR){
+                    item?.let { item ->
+                        if(item.type != Material.AIR) {
+                            wrenches.forEach { 
+                                if(item.isItemSimilar(it)) return@subscribeEvent
+                            }
+                        }
+                    }
+                    
                     val loc = clickedBlock.location
                     val machine = loc.getSMachine()
                     if(machine != null){

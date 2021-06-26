@@ -50,8 +50,20 @@ class TaskProject(
             if(hand == EquipmentSlot.HAND){
                 when(action) {
                     Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
-                        if(player.isSneaking){
-                            openTaskInv(player)
+                        if(item.isItemSimilar(openItem)){
+                            isCancelled = true
+
+                            lastTaskInv[player.uniqueId]?.let { lastInv ->
+                                lastInv.openTaskInv(player)
+                                val holder = player.openInventory.topInventory.holder
+                                if(holder is TaskInventoryHolder && holder.value > 1)
+                                    holder.value = 1
+                                return@subscribeEvent
+                            }
+
+                            if(player.isSneaking){
+                                openTaskInv(player)
+                            }
                         }
                     }
                     
@@ -59,16 +71,12 @@ class TaskProject(
                         if(item.isItemSimilar(openItem)){
                             isCancelled = true
 
-                            val uuid = player.uniqueId
-                            if(lastTaskInv.containsKey(uuid)){
-                                val lastInv = lastTaskInv[uuid]
-                                if(lastInv != null){
-                                    lastInv.openTaskInv(player)
-                                    val holder = player.openInventory.topInventory.holder
-                                    if(holder is TaskInventoryHolder && holder.value > 1)
-                                        holder.value = 1
-                                    return@subscribeEvent
-                                }
+                            lastTaskInv[player.uniqueId]?.let { lastInv ->
+                                lastInv.openTaskInv(player)
+                                val holder = player.openInventory.topInventory.holder
+                                if(holder is TaskInventoryHolder && holder.value > 1)
+                                    holder.value = 1
+                                return@subscribeEvent
                             }
 
                             openTaskInv(player)

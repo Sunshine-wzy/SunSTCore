@@ -30,10 +30,12 @@ class MachineTask(
     symbol: ItemStack,
     reward: Array<ItemStack>,
     val sMachine: SMachine,
+    val level: Short,
     val requireItems: Array<ItemStack>,
     vararg descriptionLore: String
 ) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
     private val size = sMachine.structure.size
+    private val upgradeStructure = sMachine.structure.getUpgradeOrFail(level)
     private val greenGlassPane = Material.GREEN_STAINED_GLASS_PANE
     
     
@@ -149,7 +151,7 @@ class MachineTask(
                     "§7Tip:","§f层数自下而上显示"
                 ))
 
-                structure.displayInInventory(inv, page)
+                structure.displayInInventory(inv, page, upgradeStructure)
             }
         }
         

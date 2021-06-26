@@ -38,10 +38,10 @@ object DataManager : Initable {
             
             val data = player.getSunSTData()
             val isFirstJoinGive = data.isFirstJoinGive
-            firstJoinGiveOpenItems.forEach { (projectName, openItem) -> 
-                if(!isFirstJoinGive.containsKey(projectName) || isFirstJoinGive[projectName] != true){
+            firstJoinGiveOpenItems.forEach { (projectId, openItem) -> 
+                if(!isFirstJoinGive.containsKey(projectId) || isFirstJoinGive[projectId] != true){
                     player.giveItem(openItem)
-                    isFirstJoinGive[projectName] = true
+                    isFirstJoinGive[projectId] = true
                 }
             }
         }
