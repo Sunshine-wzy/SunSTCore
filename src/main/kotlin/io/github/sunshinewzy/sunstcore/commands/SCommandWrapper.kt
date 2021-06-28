@@ -5,6 +5,7 @@ import io.github.sunshinewzy.sunstcore.commands.SCommandWrapper.Type.NORMAL
 import io.github.sunshinewzy.sunstcore.utils.copy
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.*
 
 typealias SCWrapper = SCommandWrapper.() -> Unit
@@ -72,6 +73,9 @@ class SCommandWrapper(
     fun empty(wrapper: SCWrapper) {
         wrap("", wrapper, EMPTY)
     }
+    
+    
+    fun getPlayer(): Player? = sender as? Player
 
 
     enum class Type {

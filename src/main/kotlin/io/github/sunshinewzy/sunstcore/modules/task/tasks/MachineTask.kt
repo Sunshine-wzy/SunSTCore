@@ -141,7 +141,7 @@ class MachineTask(
                     "§7Tip:","§f层数自下而上显示"
                 ))
                 
-                structure.displayInInventory(inv, page)
+                structure.displayInInventory(inv, page, upgradeStructure)
             }
             
             SMachineSize.SIZE5 -> {

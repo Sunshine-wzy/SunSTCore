@@ -37,7 +37,7 @@ object SunSTCore : Plugin() {
     val logger = plugin.logger
     
     const val name = "SunSTCore"
-    const val colorName = "&eSunSTCore"
+    const val colorName = "§eSunSTCore"
     
 
     override fun onEnable() {
@@ -126,7 +126,10 @@ object SunSTCore : Plugin() {
         
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
-                
+                val item = item ?: return@subscribeEvent
+                if(item.type == Material.ARROW) {
+                    player.sendMsg("Ohhhh!")
+                }
             }
         }
         

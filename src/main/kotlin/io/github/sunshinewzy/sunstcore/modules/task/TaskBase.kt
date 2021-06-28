@@ -151,8 +151,11 @@ abstract class TaskBase(
         player.sendMsg("&c您的背包中没有所需物品！")
     }
     
-    open fun completeTask(player: Player) {
+    open fun completeTask(player: Player, isSilent: Boolean = false) {
         player.completeTask(this)
+        
+        if(isSilent) return
+        
         player.giveItem(reward)
         player.world.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1f, 0.2f)
         player.sendTitle("§f[§e$taskName§f]", "§a任务完成", 10, 70, 20)

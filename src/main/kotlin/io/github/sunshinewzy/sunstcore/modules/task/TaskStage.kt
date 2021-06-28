@@ -102,4 +102,10 @@ class TaskStage(
     
     
     fun hasPredecessor(): Boolean = predecessor != null
+    
+    fun completeAllTask(player: Player, isSilent: Boolean = true) {
+        taskMap.values.forEach {
+            it.completeTask(player, isSilent)
+        }
+    }
 }

@@ -13,6 +13,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -44,7 +45,8 @@ class TaskProject(
         if(isFirstJoinGive)
             DataManager.firstJoinGiveOpenItems[id] = openItem
 
-        subscribeEvent<PlayerInteractEvent> {
+        
+        subscribeEvent<PlayerInteractEvent>(EventPriority.LOWEST) {
             val item = item ?: return@subscribeEvent
 
             if(hand == EquipmentSlot.HAND){
@@ -126,6 +128,12 @@ class TaskProject(
         val uid = player.uniqueId.toString()
         
         return player.getTaskProgress(id)
+    }
+
+    fun completeAllTask(player: Player, isSilent: Boolean = true) {
+        stageMap.values.forEach { 
+            it.completeAllTask(player, isSilent)
+        }
     }
     
     
