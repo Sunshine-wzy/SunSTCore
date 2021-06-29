@@ -162,7 +162,7 @@ class MachineTask(
         val inv = player.inventory
         val lastAddMachine = player.getLastAddMachine()
         
-        if(lastAddMachine == sMachine.id){
+        if(lastAddMachine.first == sMachine.id && lastAddMachine.second == level){
             if(requireItems.isNotEmpty()){
                 if(inv.containsItem(requireItems))
                     completeTask(player)
@@ -171,7 +171,7 @@ class MachineTask(
         }
         else{
             player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, 1f, 1.2f)
-            player.sendMsg("&c您上一次构建的多方块机器不是 &f[${sMachine.name}&f] &c！" )
+            player.sendMsg("&c您上一次构建的多方块机器不是 &f[${sMachine.name} &f- &aLevel $level&f] &c！" )
         }
         
     }

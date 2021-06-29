@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.machine
 
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMachine
@@ -87,7 +88,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     
     
     companion object : Initable {
-        private val playerLastAddMachine = HashMap<UUID, String>()
+        private val playerLastAddMachine = HashMap<UUID, Pair<String, Short>>()
         private val wrenches = ArrayList<SMachineWrench>()
         
         
@@ -122,8 +123,12 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
             subscribeEvent<SMachineAddEvent> {
                 sMachine.sMachines[SLocation(loc)] = SMachineInformation(player.uniqueId.toString())
                 
-                playerLastAddMachine[player.uniqueId] = sMachine.id
+                playerLastAddMachine[player.uniqueId] = sMachine.id to 0
                 
+            }
+            
+            subscribeEvent<SMachineUpgradeEvent> { 
+                playerLastAddMachine[player.uniqueId] = sMachine.id to level
             }
             
             subscribeEvent<SMachineRemoveEvent> { 
@@ -133,9 +138,7 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
             
         }
         
-        fun Player.getLastAddMachine(): String =
-            if(playerLastAddMachine.containsKey(uniqueId))
-                playerLastAddMachine[uniqueId] ?: ""
-            else ""
+        fun Player.getLastAddMachine(): Pair<String, Short> =
+            playerLastAddMachine[uniqueId] ?: "" to 0
     }
 }

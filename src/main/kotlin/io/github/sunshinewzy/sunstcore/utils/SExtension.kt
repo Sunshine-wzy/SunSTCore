@@ -625,6 +625,48 @@ fun Location.judgePlaneAround(types: List<Material>, includeCorners: Boolean = f
     return true
 }
 
+fun Location.judgePlaneAround(type: Material, includeCorners: Boolean = false, judge: Block.() -> Boolean): Boolean {
+    val loc = clone()
+
+    loc.x = x + 1
+    loc.block.let { if(it.type != type || !judge(it)) return false }
+
+    loc.x = x - 1
+    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.x = x
+
+    loc.z = z + 1
+    loc.block.let { if(it.type != type || !judge(it)) return false }
+
+    loc.z = z - 1
+    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.z = z
+
+    if(includeCorners){
+        loc.x = x + 1
+
+        loc.z = z + 1
+        loc.block.let { if(it.type != type || !judge(it)) return false }
+
+        loc.z = z - 1
+        loc.block.let { if(it.type != type || !judge(it)) return false }
+
+
+        loc.x = x - 1
+
+        loc.z = z + 1
+        loc.block.let { if(it.type != type || !judge(it)) return false }
+
+        loc.z = z - 1
+        loc.block.let { if(it.type != type || !judge(it)) return false }
+
+        loc.x = x
+        loc.z = z
+    }
+
+    return true
+}
+
 fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false): Int {
     val loc = clone()
     var cnt = 0
@@ -660,6 +702,49 @@ fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false): 
 
         loc.z = z - 1
         if(loc.block.type == type) cnt++
+
+        loc.x = x
+        loc.z = z
+    }
+
+    return cnt
+}
+
+fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false, judge: Block.() -> Boolean): Int {
+    val loc = clone()
+    var cnt = 0
+
+    loc.x = x + 1
+    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+
+    loc.x = x - 1
+    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.x = x
+
+    loc.z = z + 1
+    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+
+    loc.z = z - 1
+    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.z = z
+
+    if(includeCorners){
+        loc.x = x + 1
+
+        loc.z = z + 1
+        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+
+        loc.z = z - 1
+        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+
+
+        loc.x = x - 1
+
+        loc.z = z + 1
+        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+
+        loc.z = z - 1
+        loc.block.let { if(it.type == type && judge(it)) cnt++ }
 
         loc.x = x
         loc.z = z
