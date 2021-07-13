@@ -1,19 +1,19 @@
 package io.github.sunshinewzy.sunstcore.modules.data.sunst
 
 import io.github.sunshinewzy.sunstcore.modules.data.SAutoCoverSaveData
+import io.github.sunshinewzy.sunstcore.modules.machine.SFlatMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SFlatMachineInformation
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 
-class SSingleMachineData(
+class SFlatMachineData(
     val plugin: JavaPlugin,
-    val sSingleMachine: SSingleMachine
-) : SAutoCoverSaveData(plugin, sSingleMachine.id, "SSingleMachine") {
+    val sFlatMachine: SFlatMachine
+) : SAutoCoverSaveData(plugin, sFlatMachine.id, "SFlatMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
-        sSingleMachine.singleMachines.forEach { (sLoc, information) -> 
+        sFlatMachine.flatMachines.forEach { (sLoc, information) -> 
             set(sLoc.toString(), information)
         }
     }
@@ -22,7 +22,7 @@ class SSingleMachineData(
         val roots = getKeys(false)
         roots.forEach { sLoc ->
             val information = get(sLoc) as? SFlatMachineInformation ?: SFlatMachineInformation()
-            SSingleMachine.addMachine(SLocation(sLoc), sSingleMachine, information)
+            SFlatMachine.addMachine(SLocation(sLoc), sFlatMachine, information)
         }
     }
     

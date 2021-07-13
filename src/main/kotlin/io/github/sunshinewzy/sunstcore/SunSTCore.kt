@@ -72,6 +72,7 @@ object SunSTCore : Plugin() {
         SunSTCommand.init()
         SLocationData.init()
         SSingleMachine.init()
+        SFlatMachine.init()
         
     }
     
@@ -89,7 +90,7 @@ object SunSTCore : Plugin() {
         ConfigurationSerialization.registerClass(LineStick::class.java)
         ConfigurationSerialization.registerClass(RangeStick::class.java)
         
-        ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)
+        ConfigurationSerialization.registerClass(SFlatMachineInformation::class.java)
         ConfigurationSerialization.registerClass(SMachineInformation::class.java)
         
     }

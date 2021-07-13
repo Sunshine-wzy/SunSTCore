@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.events.ssinglemachine.SSingleMachineAddEvent
-import io.github.sunshinewzy.sunstcore.events.ssinglemachine.SSingleMachineRemoveEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineAddEvent
+import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.interfaces.Registrable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SSingleMachineData
@@ -25,10 +25,10 @@ import org.bukkit.plugin.java.JavaPlugin
 
 abstract class SSingleMachine(
     val plugin: JavaPlugin,
-    val name: String,
+    val id: String,
     val item: ItemStack
 ) : Registrable {
-    val singleMachines = HashMap<SLocation, SSingleMachineInformation>()
+    val singleMachines = HashMap<SLocation, SFlatMachineInformation>()
     
     
     init {
@@ -76,7 +76,7 @@ abstract class SSingleMachine(
     }
 
     fun getDataOrFail(sLocation: SLocation, key: String): Any =
-        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SSingleMachine($name) data of $key.")
+        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SSingleMachine($id) data of $key.")
 
     inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
         singleMachines[sLocation]?.data?.let { data ->
@@ -161,13 +161,13 @@ abstract class SSingleMachine(
         }
         
         
-        fun addMachine(sLocation: SLocation, sSingleMachine: SSingleMachine, information: SSingleMachineInformation = SSingleMachineInformation()) {
+        fun addMachine(sLocation: SLocation, sSingleMachine: SSingleMachine, information: SFlatMachineInformation = SFlatMachineInformation()) {
             allSingleMachines[sLocation] = sSingleMachine
             sSingleMachine.singleMachines[sLocation] = information
         }
         
         fun addMachine(location: Location, sSingleMachine: SSingleMachine, player: Player) {
-            addMachine(location.toSLocation(), sSingleMachine, SSingleMachineInformation(player.uniqueId.toString()))
+            addMachine(location.toSLocation(), sSingleMachine, SFlatMachineInformation(player.uniqueId.toString()))
             SunSTCore.pluginManager.callEvent(SSingleMachineAddEvent(sSingleMachine, location, player))
         }
 
@@ -213,8 +213,8 @@ data class SSingleMachineInformation(
     
     companion object {
         @JvmStatic
-        fun deserialize(map: Map<String, Any>): SSingleMachineInformation {
-            val information = SSingleMachineInformation()
+        fun deserialize(map: Map<String, Any>): SFlatMachineInformation {
+            val information = SFlatMachineInformation()
             
             map["owner"]?.let { 
                 if(it is String)

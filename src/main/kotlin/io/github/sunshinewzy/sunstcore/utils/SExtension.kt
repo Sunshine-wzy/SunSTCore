@@ -516,6 +516,15 @@ fun BlockFace.transform(excludeFace: BlockFace): MutableList<BlockFace> {
 fun Location.getFaceLocation(face: BlockFace): Location = clone().add(face.modX.toDouble(), face.modY.toDouble(), face.modZ.toDouble())
 
 
+fun Location.add(flatCoord: SFlatCoord, face: BlockFace): Location =
+    when(face) {
+        EAST -> add(flatCoord.x.toDouble(), flatCoord.y.toDouble(), 0.0)
+        WEST -> subtract(flatCoord.x.toDouble(), flatCoord.y.toDouble(), 0.0)
+        SOUTH -> add(0.0, flatCoord.y.toDouble(), flatCoord.x.toDouble())
+        NORTH -> subtract(0.0, flatCoord.y.toDouble(), flatCoord.x.toDouble())
+        else -> this
+    }
+
 fun Location.addClone(x: Int, y: Int, z: Int): Location =
     clone().add(x.toDouble(), y.toDouble(), z.toDouble())
 
@@ -527,6 +536,10 @@ fun Location.addClone(coord: SCoordinate): Location =
 
 fun Location.addClone(y: Int): Location =
     addClone(0, y, 0)
+
+fun Location.addClone(flatCoord: SFlatCoord, face: BlockFace): Location =
+    clone().add(flatCoord, face)
+
 
 fun Location.subtractClone(x: Int, y: Int, z: Int): Location =
     clone().add(-x.toDouble(), -y.toDouble(), -z.toDouble())

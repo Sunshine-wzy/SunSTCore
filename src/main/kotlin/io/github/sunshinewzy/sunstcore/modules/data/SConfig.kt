@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.data
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
+import io.github.sunshinewzy.sunstcore.utils.SManager
 import io.github.sunshinewzy.sunstcore.utils.getDataPath
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
@@ -9,43 +10,34 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
 
-/**
- * @param plugin 插件实例
- * @param name 保存的文件名
- * @param path 保存的路径(保存到 plugins/插件名/路径 下)
- * @param saveTime 自动保存时间间隔
- */
-abstract class SAutoSaveData(
+abstract class SConfig(
     private val plugin: JavaPlugin,
     val name: String,
     val path: String = "",
-    val saveTime: Long = 12_000
 ) : Initable {
     protected val file = File(
         plugin.dataFolder,
-        if (path == "") "data/$name.yml"
+        "config/" + if (path == "") "$name.yml"
         else "${path.replace("\\", "/")}/$name.yml"
     )
     
-    
+    val config: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
+
+
     constructor(plugin: JavaPlugin, name: String, file: File): this(
         plugin,
         name,
         file.getDataPath(plugin)
     )
-    
+
     init {
-        DataManager.allAutoSaveData.add(this)
-        
+
         if(file.exists()){
             Bukkit.getScheduler().runTaskLater(SunSTCore.plugin, Runnable {
                 load()
             }, 1)
         } else create()
-        
-        Bukkit.getScheduler().runTaskTimer(SunSTCore.plugin, Runnable {
-            save()
-        }, saveTime, saveTime)
+
     }
 
 
@@ -53,17 +45,22 @@ abstract class SAutoSaveData(
      * 创建文件时调用
      */
     open fun YamlConfiguration.createConfig() { }
-    
-    /**
-     * 保存文件前调用
-     */
-    abstract fun YamlConfiguration.modifyConfig()
+
 
     /**
      * 加载文件后调用
      */
-    abstract fun YamlConfiguration.loadConfig()
+    open fun YamlConfiguration.loadConfig() { }
 
+    
+    fun get(key: String, default: Any): Any {
+        config.get(key)?.let { 
+            return it
+        }
+        
+        return default
+    }
+    
 
     /**
      * 创建配置文件
@@ -79,32 +76,44 @@ abstract class SAutoSaveData(
         }
     }
 
-    /**
-     * 保存配置文件
-     */
-    open fun save() {
-        val config = getConfig()
-        config.modifyConfig()
-        
-        try {
-            config.save(file)
-        } catch (ex: IOException){
-            ex.printStackTrace()
-        }
-    }
 
     /**
      * 加载配置文件
      */
     open fun load() {
-        getConfig().loadConfig()
+        config.loadConfig()
     }
 
 
     override fun init() {
-        
+
     }
 
-    fun getConfig(): YamlConfiguration = YamlConfiguration.loadConfiguration(file)
+    
+    companion object {
+        inline fun <reified T> File.loadYamlConfig(target: MutableList<T>, keys: List<String>) {
+            val fileConfig = YamlConfiguration.loadConfiguration(this)
+
+            keys.forEach {
+                if(fileConfig.contains(it)){
+                    val list = SManager.castList(fileConfig.get(it), T::class.java) ?: return@forEach
+                    target.addAll(list)
+                }
+            }
+        }
+
+        inline fun <reified T> File.loadYamlConfig(target: MutableMap<String, MutableList<T>>) {
+            val fileConfig = YamlConfiguration.loadConfiguration(this)
+
+            target.forEach { (key, value) ->
+                if(fileConfig.contains(key)){
+                    val list = SManager.castList(key, T::class.java) ?: return@forEach
+                    value.addAll(list)
+                }
+            }
+
+        }
+    }
+    
     
 }

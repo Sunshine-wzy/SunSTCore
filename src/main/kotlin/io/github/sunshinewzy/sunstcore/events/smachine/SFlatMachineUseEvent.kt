@@ -1,15 +1,15 @@
-package io.github.sunshinewzy.sunstcore.events.ssinglemachine
+package io.github.sunshinewzy.sunstcore.events.smachine
 
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
+import io.github.sunshinewzy.sunstcore.modules.machine.SFlatMachine
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 
-class SSingleMachineAddEvent(
-    sSingleMachine: SSingleMachine,
-    val loc: Location,
+class SFlatMachineUseEvent(
+    sFlatMachine: SFlatMachine,
+    loc: Location,
     val player: Player
-) : SSingleMachineEvent(sSingleMachine) {
+) : SFlatMachineEvent(sFlatMachine, loc) {
     
     override fun getHandlers(): HandlerList = handlerList
 

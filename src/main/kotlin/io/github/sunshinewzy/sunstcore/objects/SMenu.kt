@@ -123,4 +123,19 @@ class SMenu(
         player.playSound(player.location, sound, volume, pitch)
     }
     
+    fun createEdge(edgeItem: ItemStack) {
+        val meta = (if (edgeItem.hasItemMeta()) edgeItem.itemMeta else Bukkit.getItemFactory().getItemMeta(edgeItem.type)) ?: return
+        meta.setDisplayName(" ")
+        edgeItem.itemMeta = meta
+
+        for(i in 0..8) {
+            setItem(i, edgeItem)
+            setItem(i + 9 * (size - 1), edgeItem)
+        }
+        for(i in 9..9*(size - 2) step 9) {
+            setItem(i, edgeItem)
+            setItem(i + 8, edgeItem)
+        }
+    }
+    
 }

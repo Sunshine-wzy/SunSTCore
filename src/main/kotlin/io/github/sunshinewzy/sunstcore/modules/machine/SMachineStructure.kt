@@ -227,13 +227,9 @@ abstract class SMachineStructure(
                 
                 line.forEachIndexed forEachX@{ x, char ->
                     if(char == ' ') return@forEachX
-                    
-                    if(ingredients.containsKey(char)){
-                        val sBlock = ingredients[char] ?: throw NoIngredientException(shape, char)
-                        
-                        specialStructure(structure, x, y, z, sBlock)
-                    }
-                    else throw NoIngredientException(shape, char)
+
+                    val sBlock = ingredients[char] ?: throw NoIngredientException(shape, char)
+                    specialStructure(structure, x, y, z, sBlock)
                 }
                 
             }
