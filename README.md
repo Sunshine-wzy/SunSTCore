@@ -27,9 +27,6 @@ SunSTCore的核心功能
     搭建指定多方块机器  
     会显示多方块机器结构  
     玩家最近一次构建的机器是指定机器才能提交任务
-    - [MachineUpgradeTask](https://github.com/Sunshine-wzy/SunSTCore/tree/master/src/main/kotlin/io/github/sunshinewzy/sunstcore/modules/task/tasks/MachineUpgradeTask.kt)  
-    机器升级任务  
-    提交任务时玩家背包中需含有指定物品
 
 ## [machine](https://github.com/Sunshine-wzy/SunSTCore/tree/master/src/main/kotlin/io/github/sunshinewzy/sunstcore/modules/machine)
 
