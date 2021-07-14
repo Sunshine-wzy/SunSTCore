@@ -1,19 +1,46 @@
 package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
-import io.github.sunshinewzy.sunstcore.commands.SCommand.Companion.sendSeparator
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
+import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.objects.SItem
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
+import org.bukkit.Material
 import org.bukkit.entity.Player
 
 object SunSTCommand : Initable {
     
     override fun init() {
-        SCommand("SunST")
-            .addCommand("give", true) {
+        SCommand("SunST", "sun")
+            .addCommand("machine", "多方块机器") {
+                "book" {
+                    empty {
+                        val player = getPlayer() ?: return@empty
+                        val handItem = player.inventory.itemInMainHand
+                        if(handItem.type == Material.AIR) return@empty
+
+                        for(wrench in SMachineWrench.wrenches) {
+                            if(handItem.isItemSimilar(wrench)) {
+                                player.giveItem(wrench.illustratedBook)
+                                player.sendMsg(colorName, "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}]")
+                                
+                                return@empty
+                            }
+                        }
+                        
+                        sender.sendMsg("&c请拿着&a扳手&c输入此命令以获得该扳手可构建的机器图鉴！")
+                    }
+                }
+
+                empty {
+                    sender.sendMsg(colorName, "&a拿着扳手输入 /sun machine book 即可获得该扳手可构建的机器图鉴！")
+                }
+            }
+                
+            .addCommand("give", "获得一个SunST物品", isOp = true) {
                 SItem.items.keys {
                     empty {
                         if(sender !is Player){
@@ -36,32 +63,13 @@ object SunSTCommand : Initable {
                 }
             }
                 
-            .addCommand("reload", true) {
+            .addCommand("reload", "重载配置文件", isOp = true) {
                 empty {
                     DataManager.reloadData()
                     sender.sendMsg(colorName, "&a配置文件重载成功！")
                 }
             }
-                
-            .setHelper { sender, page ->
-                sender.sendSeparator()
-                sender.sendMessage("§6§lSunSTCore §b命令指南 §d第 $page 页")
-
-                when(page) {
-                    1 -> {
-                        sender.apply {
-                            if(sender.isOp) {
-                                sendMessage("§e/sun give [SunST物品名称]  §a>> 获得一个SunST物品")
-                                sendMessage("§e/sun reload  §a>> 重载配置文件")
-                            }
-                        }
-                    }
-
-                    else -> sender.sendMessage("§cSunSTCore 命令指南没有此页！")
-                }
-
-                sender.sendSeparator()
-            }
+            
     }
     
 }

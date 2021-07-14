@@ -14,14 +14,31 @@ import org.bukkit.command.TabCompleter
  * 
  * 使用前需要在 plugin.yml 中填写 [name] 指令的信息
  */
-open class SCommand(val name: String) : CommandExecutor, TabCompleter {
+open class SCommand(val name: String, val alias: String = name) : CommandExecutor, TabCompleter {
     private val commands = HashMap<String, Pair<SCWrapper, Boolean>>()
 
     private var helper: (CommandSender, Int) -> Unit = { sender, page ->
         sender.sendSeparator()
-        sender.sendMessage("§6§l$name §b命令指南 §d第 $page 页")
+        sender.sendMsg("&6&l$name &b命令指南 &d第 $page 页")
+        
+        var end = page * 6
+        val start = end - 6
+        
+        if(start in descriptions.indices) {
+            end = if(descriptions.size > end) end else descriptions.size
+            for(i in start until end) {
+                descriptions[i].let { 
+                    if(!it.second || (it.second && sender.isOp)) {
+                        sender.sendMsg(it.first)
+                    }
+                }
+            }
+        }
+        
+        
         sender.sendSeparator()
     }
+    private val descriptions = ArrayList<Pair<String, Boolean>>()
 
     
     init {
@@ -106,8 +123,31 @@ open class SCommand(val name: String) : CommandExecutor, TabCompleter {
     }
 
     
-    fun addCommand(cmd: String, isOp: Boolean = false, wrapper: SCWrapper): SCommand {
+    fun addCommand(
+        cmd: String,
+        description: String = "",
+        format: String = "&e/$alias $cmd  &a>> ",
+        isOp: Boolean = false,
+        wrapper: SCWrapper
+    ): SCommand {
         commands[cmd.toLowerCase()] = wrapper to isOp
+        descriptions += (format + description) to isOp
+        
+        return this
+    }
+    
+    fun addDescription(description: String, isOp: Boolean = false): SCommand {
+        descriptions += description to isOp
+        return this
+    }
+    
+    fun addDescription(
+        cmd: String,
+        description: String,
+        format: String = "&e/$alias $cmd  &a>> ",
+        isOp: Boolean = commands[cmd]?.second ?: false
+    ): SCommand {
+        descriptions += (format + description) to isOp
         return this
     }
 

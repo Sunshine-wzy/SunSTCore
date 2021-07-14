@@ -6,6 +6,7 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
@@ -30,7 +31,7 @@ abstract class SMachine(
     val structure: SMachineStructure
 ) : Initable {
     val sMachines = HashMap<SLocation, SMachineInformation>()
-    
+    val displayItem = structure.centerBlock.toItem().setNameAndLore(name, "§7----------", "§fID: §a$id", "§7----------")
     var isCancelInteract = true
     
     

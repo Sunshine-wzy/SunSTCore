@@ -101,7 +101,7 @@ object SunSTCore : Plugin() {
     
     @SunSTTestApi
     private fun test() {
-        val wrench = SMachineWrench(plugin, SItem(Material.BONE, "§e扳手", "§a适合安装多方块机器"))
+        val wrench = SMachineWrench(plugin, SItem(Material.BONE, "§e扳手", "§a适合安装多方块机器"), "基础机器")
         
         val millStone = object : SFlatMachine(plugin, "MillStone",
             """
@@ -121,14 +121,13 @@ object SunSTCore : Plugin() {
                     if(cnt >= 4) {
                         block.type = Material.AIR
                         loc.world?.dropItemNaturally(loc, SItem(Material.GRAVEL))
-
+                        
                         cnt = 0
                     } else cnt++
                 }
 
                 setData(sLocation, "cnt", cnt)
             }
-            
         }
         
         

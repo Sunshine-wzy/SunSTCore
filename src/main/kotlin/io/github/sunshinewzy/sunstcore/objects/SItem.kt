@@ -68,13 +68,18 @@ open class SItem(item: ItemStack) : ItemStack(item) {
      * 此函数已经帮您判断好了 [PlayerInteractEvent] 事件的物品(确保为你的 [SItem])
      * 无需重复判断
      */
-    fun addAction(block: PlayerInteractEvent.() -> Unit): SItem {
+    fun addAction(filter: PlayerInteractEvent.() -> Boolean = { true }, block: PlayerInteractEvent.() -> Unit): SItem {
         val actions = itemActions[this] ?: kotlin.run {
-            itemActions[this] = arrayListOf(block)
+            itemActions[this] = filter to arrayListOf(block)
             return this
         }
         
-        actions.add(block)
+        actions.second.add(block)
+        return this
+    }
+    
+    fun addAction(block: PlayerInteractEvent.() -> Unit): SItem {
+        addAction({ true }, block)
         return this
     }
     
@@ -96,7 +101,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
     }
 
     companion object {
-        private val itemActions = HashMap<SItem, ArrayList<PlayerInteractEvent.() -> Unit>>()
+        private val itemActions = HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
         
         val items = HashMap<String, ItemStack>()
 
@@ -123,9 +128,9 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                 val item = item
                 if(item == null || item.type == Material.AIR) return@subscribeEvent
                 
-                itemActions.forEach { (sItem, blocks) -> 
-                    if(item.isItemSimilar(sItem)){
-                        blocks.forEach { it(this) }
+                itemActions.forEach { (sItem, pair) -> 
+                    if(pair.first(this) && item.isItemSimilar(sItem)){
+                        pair.second.forEach { it(this) }
                     }
                 }
             }

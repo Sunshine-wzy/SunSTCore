@@ -10,7 +10,10 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeS
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SLocation
+import io.github.sunshinewzy.sunstcore.objects.SMenu
+import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
+import io.github.sunshinewzy.sunstcore.utils.setItems
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Effect
 import org.bukkit.Material
@@ -23,8 +26,21 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
+class SMachineWrench(
+    val plugin: JavaPlugin,
+    item: ItemStack,
+    name: String,
+    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§d$name §a机器图鉴"),
+    val edgeItem: ItemStack = SItem(Material.WHITE_STAINED_GLASS_PANE),
+    val openSound: Sound = Sound.ENTITY_HORSE_ARMOR,
+    val volume: Float = 1f,
+    val pitch: Float = 1.2f
+) : SItem(item) {
+    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§d$name §a机器图鉴"
+    
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
+    private val holder = SPartProtectInventoryHolder(arrayListOf(), 0)
+    private val menu = SMenu("SMachineWrench-illustratedBook-$name", illustratedBookName, 6)
     
     var prefix = "&b扳手"
     var msgDestroy = "&c多方块机器已被破坏！"
@@ -34,42 +50,63 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
     var msgMachineUpgrade = "&a多方块机器升级成功！"
     
     
+    constructor(plugin: JavaPlugin, item: ItemStack, name: String, illustratedBookName: String) : this(plugin, item, name, SItem(Material.ENCHANTED_BOOK, illustratedBookName))
+    
+    
     init {
         wrenches += this
         
-        addAction { 
+        menu.createEdge(edgeItem)
+        menu.holder = holder
+
+        val machineItems = ArrayList<ItemStack>()
+        machines.values.forEach { list ->
+            list.forEach { sMachine ->
+                machineItems += sMachine.displayItem
+            }
+        }
+        menu.setAction {
+            setItems(2, 2, 7, machineItems)
+        }
+        
+        addAction({
             val clickedBlock = clickedBlock
-            if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR){
-                isCancelled = true
-                
-                val loc = clickedBlock.location
-                if(loc.hasSMachine()){
-                    if(loc.judgeSMachineStructure(player, true)){
-                        player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
-                        player.sendMsg(prefix, msgAlreadyExist)
-                    }
-                    
-                    return@addAction
-                }
-                
-                machines.forEach machines@{ (sBlock, listMachine) -> 
-                    if(!sBlock.isSimilar(clickedBlock)) return@machines
-                    
-                    listMachine.forEach machine@{ sMachine -> 
-                        if(sMachine.judgeStructure(loc, true)){
-                            sMachine.addMachine(loc, player)
-                            
-                            loc.world?.playEffect(loc, Effect.ENDER_SIGNAL, 1)
-                            loc.world?.playEffect(loc, Effect.CLICK1, 1)
-                            player.sendMsg(sMachine.name, msgBuildSuccessful)
-                            return@addAction
-                        }
-                    }
+            action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR
+        }) { 
+            val clickedBlock = clickedBlock ?: return@addAction
+            isCancelled = true
+
+            val loc = clickedBlock.location
+            if(loc.hasSMachine()){
+                if(loc.judgeSMachineStructure(player, true)){
+                    player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
+                    player.sendMsg(prefix, msgAlreadyExist)
                 }
 
-                player.playEffect(loc, Effect.STEP_SOUND, 1)
-                player.sendMsg(prefix, msgIncorrectStructure)
+                return@addAction
             }
+
+            machines.forEach machines@{ (sBlock, listMachine) ->
+                if(!sBlock.isSimilar(clickedBlock)) return@machines
+
+                listMachine.forEach machine@{ sMachine ->
+                    if(sMachine.judgeStructure(loc, true)){
+                        sMachine.addMachine(loc, player)
+
+                        loc.world?.playEffect(loc, Effect.ENDER_SIGNAL, 1)
+                        loc.world?.playEffect(loc, Effect.CLICK1, 1)
+                        player.sendMsg(sMachine.name, msgBuildSuccessful)
+                        return@addAction
+                    }
+                }
+            }
+
+            player.playEffect(loc, Effect.STEP_SOUND, 1)
+            player.sendMsg(prefix, msgIncorrectStructure)
+        }
+        
+        illustratedBook.addAction({ hand == EquipmentSlot.HAND }) {
+            openIllustratedBook(player)
         }
     }
     
@@ -86,10 +123,14 @@ class SMachineWrench(val plugin: JavaPlugin, item: ItemStack) : SItem(item) {
         } else machines[centerBlock] = arrayListOf(machine)
     }
     
+    fun openIllustratedBook(player: Player) {
+        menu.openInventoryWithSound(player, openSound, volume, pitch)
+    }
+    
     
     companion object : Initable {
         private val playerLastAddMachine = HashMap<UUID, Pair<String, Short>>()
-        private val wrenches = ArrayList<SMachineWrench>()
+        val wrenches = ArrayList<SMachineWrench>()
         
         
         override fun init() {

@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -32,8 +33,9 @@ class SMenu(
     private val buttons = HashMap<Int, Pair<String, ItemStack>>()       // 点击触发 SMenuClickEvent 的按钮
     private val items = HashMap<Int, ItemStack>()                       // 普通物品，点击后不会触发事件
     private val buttonOnClick = HashMap<Int, InventoryClickEvent.() -> Unit>()
+    private var action: Inventory.() -> Unit = { }
 
-    var holder = SProtectInventoryHolder(id)
+    var holder: InventoryHolder = SProtectInventoryHolder(id)
     var openItem: ItemStack? = null
     var openSound: Sound? = null
     var volume = 1f
@@ -62,6 +64,7 @@ class SMenu(
                 }
             }
         }
+        
     }
     
     
@@ -97,6 +100,11 @@ class SMenu(
         return this
     }
     
+    fun setAction(action: Inventory.() -> Unit): SMenu {
+        this.action = action
+        return this
+    }
+    
     
     fun getInventory(): Inventory {
         val inv = Bukkit.createInventory(holder, size * 9, title)
@@ -108,6 +116,8 @@ class SMenu(
         items.forEach { (slot, item) ->
             inv.setItem(slot, item)
         }
+        
+        action(inv)
         
         return inv
     }
