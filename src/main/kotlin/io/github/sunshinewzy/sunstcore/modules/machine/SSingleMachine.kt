@@ -28,7 +28,7 @@ abstract class SSingleMachine(
     val id: String,
     val item: ItemStack
 ) : Registrable {
-    val singleMachines = HashMap<SLocation, SFlatMachineInformation>()
+    val singleMachines = HashMap<SLocation, SSingleMachineInformation>()
     
     
     init {
@@ -161,13 +161,13 @@ abstract class SSingleMachine(
         }
         
         
-        fun addMachine(sLocation: SLocation, sSingleMachine: SSingleMachine, information: SFlatMachineInformation = SFlatMachineInformation()) {
+        fun addMachine(sLocation: SLocation, sSingleMachine: SSingleMachine, information: SSingleMachineInformation = SSingleMachineInformation()) {
             allSingleMachines[sLocation] = sSingleMachine
             sSingleMachine.singleMachines[sLocation] = information
         }
         
         fun addMachine(location: Location, sSingleMachine: SSingleMachine, player: Player) {
-            addMachine(location.toSLocation(), sSingleMachine, SFlatMachineInformation(player.uniqueId.toString()))
+            addMachine(location.toSLocation(), sSingleMachine, SSingleMachineInformation(player.uniqueId.toString()))
             SunSTCore.pluginManager.callEvent(SSingleMachineAddEvent(sSingleMachine, location, player))
         }
 
@@ -213,8 +213,8 @@ data class SSingleMachineInformation(
     
     companion object {
         @JvmStatic
-        fun deserialize(map: Map<String, Any>): SFlatMachineInformation {
-            val information = SFlatMachineInformation()
+        fun deserialize(map: Map<String, Any>): SSingleMachineInformation {
+            val information = SSingleMachineInformation()
             
             map["owner"]?.let { 
                 if(it is String)

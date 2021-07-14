@@ -9,6 +9,8 @@ class TaskInventoryHolder(task: TaskBase, var value: Int = 0, var max: Int = 0) 
         task.id
     )
 ) {
+    var isEditMode = false
+    
     
     fun getPage(): Int {
         if(value > 0){

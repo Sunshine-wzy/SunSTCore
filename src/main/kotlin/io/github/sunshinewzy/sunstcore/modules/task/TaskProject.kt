@@ -55,17 +55,7 @@ class TaskProject(
                         if(item.isItemSimilar(openItem)){
                             isCancelled = true
 
-                            lastTaskInv[player.uniqueId]?.let { lastInv ->
-                                lastInv.openTaskInv(player)
-                                val holder = player.openInventory.topInventory.holder
-                                if(holder is TaskInventoryHolder && holder.value > 1)
-                                    holder.value = 1
-                                return@subscribeEvent
-                            }
-
-                            if(player.isSneaking){
-                                openTaskInv(player)
-                            }
+                            openTaskInv(player)
                         }
                     }
                     
@@ -76,8 +66,14 @@ class TaskProject(
                             lastTaskInv[player.uniqueId]?.let { lastInv ->
                                 lastInv.openTaskInv(player)
                                 val holder = player.openInventory.topInventory.holder
-                                if(holder is TaskInventoryHolder && holder.value > 1)
+                                if(holder is TaskInventoryHolder && holder.value > 1) {
                                     holder.value = 1
+                                    if(player.isSneaking && player.isOp) {
+                                        holder.isEditMode = true
+                                        
+                                    }
+                                }
+                                
                                 return@subscribeEvent
                             }
 
@@ -139,6 +135,7 @@ class TaskProject(
     
     companion object {
         val lastTaskProject = HashMap<UUID, TaskProject>()
+        val editItem = SItem(Material.NETHER_STAR, "§f> §c编辑模式 §f<", "§a----------", "§a点我自定义任务！", "§a----------")
     }
     
 }

@@ -8,12 +8,14 @@ import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.machine.*
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SBlock
-import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem
+import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
-import io.github.sunshinewzy.sunstcore.utils.*
+import io.github.sunshinewzy.sunstcore.utils.SReflect
+import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
+import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.metrics.BMetrics
 import io.izzel.taboolib.module.dependency.Dependencies
@@ -90,8 +92,9 @@ object SunSTCore : Plugin() {
         ConfigurationSerialization.registerClass(LineStick::class.java)
         ConfigurationSerialization.registerClass(RangeStick::class.java)
         
-        ConfigurationSerialization.registerClass(SFlatMachineInformation::class.java)
         ConfigurationSerialization.registerClass(SMachineInformation::class.java)
+        ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)
+        ConfigurationSerialization.registerClass(SFlatMachineInformation::class.java)
         
     }
     
@@ -100,37 +103,38 @@ object SunSTCore : Plugin() {
     private fun test() {
         val wrench = SMachineWrench(plugin, SItem(Material.BONE, "§e扳手", "§a适合安装多方块机器"))
         
-        val millStone = object : SMachineManual("MillStone", "磨盘", wrench, SMachineStructure.CentralSymmetry(
-            SMachineSize.SIZE3,
+        val millStone = object : SFlatMachine(plugin, "MillStone",
             """
-                a
-                
-                b
+                  a
+                xbb
+                  ba
+                cbbb
             """.trimIndent(),
-            mapOf('a' to SBlock(Material.STONE_SLAB), 'b' to SBlock(Material.COBBLESTONE_WALL)),
-            SCoordinate(0, 1, 0)
-        )) {
-            override fun manualRun(event: SMachineRunEvent.Manual, level: Short) {
-                var cnt = getDataByType<Int>(event.sLoc, "cnt") ?: 0
+            mapOf('a' to SBlock(Material.SMOOTH_STONE_SLAB), 'b' to SBlock(Material.COBBLESTONE_WALL), 'c' to SBlock(Material.STONE_BRICKS), 'x' to SBlock(Material.COBBLESTONE_WALL))
+        ) {
+            override fun onClick(sLocation: SLocation, event: PlayerInteractEvent) {
+                var cnt = getDataByType<Int>(sLocation, "cnt") ?: 0
 
-                if(cnt >= 4) {
-                    event.player.giveItem(SItem(Material.GRAVEL))
-                    event.player.sendMsg("Yes!")
-                    
-                    cnt = 0
-                } else cnt++
+                val loc = sLocation.toLocation().also { it.y-- }
+                val block = loc.block
+                if(block.type == Material.COBBLESTONE) {
+                    if(cnt >= 4) {
+                        block.type = Material.AIR
+                        loc.world?.dropItemNaturally(loc, SItem(Material.GRAVEL))
 
-                setData(event.sLoc, "cnt", cnt)
+                        cnt = 0
+                    } else cnt++
+                }
+
+                setData(sLocation, "cnt", cnt)
             }
+            
         }
         
         
         subscribeEvent<PlayerInteractEvent> { 
             if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
-                val item = item ?: return@subscribeEvent
-                if(item.type == Material.ARROW) {
-                    player.sendMsg("Ohhhh!")
-                }
+                
             }
         }
         

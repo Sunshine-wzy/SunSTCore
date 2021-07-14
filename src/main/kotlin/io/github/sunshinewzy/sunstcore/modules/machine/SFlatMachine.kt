@@ -235,21 +235,23 @@ abstract class SFlatMachine(
             val tempStructure = FlatCoordSBlockMap()
             var center: SFlatCoord? = null
             
-            lines.forEachIndexed forEachY@{ y, line ->
-                
-                line.forEachIndexed forEachX@{ x, char -> 
+            var y = -1
+            for(i in lines.lastIndex downTo 0) {
+                y++
+                val line = lines[i]
+
+                line.forEachIndexed forEachX@{ x, char ->
                     if(char == ' ') return@forEachX
 
                     val sBlock = ingredients[char] ?: throw NoIngredientException(shape, char)
                     tempStructure[SFlatCoord(x, y)] = sBlock
-                    
+
                     if(char == 'x') {
                         if(center == null) {
                             center = SFlatCoord(x, y)
                         } else throw MachineStructureException(shape, "The center block (marked as 'x') cannot exist more than one.")
                     }
                 }
-                
             }
             
             if(center == null) {
@@ -314,7 +316,7 @@ data class SFlatMachineInformation(
     override fun serialize(): HashMap<String, Any> {
         val map = HashMap<String, Any>()
         map["owner"] = owner
-        map["face"] = face
+        map["face"] = face.name
         map["data"] = data
         return map
     }
@@ -331,8 +333,8 @@ data class SFlatMachineInformation(
             }
             
             map["face"]?.let { 
-                if(it is BlockFace)
-                    information.face = it
+                if(it is String)
+                    information.face = BlockFace.valueOf(it)
             }
 
             map["data"]?.castMap(information.data)
