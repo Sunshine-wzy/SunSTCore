@@ -66,7 +66,7 @@ jar {
     from("LICENSE") {
         rename { "${it}_${rootProject.name}" }
     }
-    destinationDir(file('F:/Kotlin/Workspace/SunSTCore/build/core'))
+    destinationDir(file('build/core'))
 }
 
 //sourcesJar {
@@ -136,12 +136,12 @@ publishing {
 
 task copyOutputJar {
     copy {
-        from 'F:/Kotlin/Workspace/SunSTCore/build/core'
+        from 'build/core'
         into 'F:/Kotlin/Workspace/SkyDream/cores'
     }
 
     copy {
-        from 'F:/Kotlin/Workspace/SunSTCore/build/core'
+        from 'build/core'
         into 'F:/Kotlin/Debug/Spigot-1.16.5/plugins'
     }
 }
