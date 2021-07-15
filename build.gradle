@@ -133,17 +133,4 @@ uploadArchives {
 //    }
 //}
 
-
-//task copyOutputJar {
-//    copy {
-//        from 'build/core'
-//        into 'F:/Kotlin/Workspace/SkyDream/cores'
-//    }
-//
-//    copy {
-//        from 'build/core'
-//        into 'F:/Kotlin/Debug/Spigot-1.16.5/plugins'
-//    }
-//}
-
 //build.dependsOn copyOutputJar
