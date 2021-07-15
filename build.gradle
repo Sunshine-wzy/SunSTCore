@@ -95,43 +95,43 @@ uploadArchives {
 }
 
 
-publishing {
-    publications {
-        myPublication(MavenPublication) {
-//            如果是war包填写components.web，如果是jar包填写components.java
-            from components.java
-            
-//            指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
-//            groupId需要注意一下,如果下面仓库的配置是oss.sonatype.org(即中央仓库),那么这里的groupId必须为你在sonatype中申请的ISSUE中设置的ID
-            groupId "io.github.sunshine-wzy"
-            artifactId "$project.name"
-            version "$version"
-
-//            artifact(sourcesJar) {
-//                classifier "sources"
+//publishing {
+//    publications {
+//        myPublication(MavenPublication) {
+////            如果是war包填写components.web，如果是jar包填写components.java
+//            from components.java
+//            
+////            指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
+////            groupId需要注意一下,如果下面仓库的配置是oss.sonatype.org(即中央仓库),那么这里的groupId必须为你在sonatype中申请的ISSUE中设置的ID
+//            groupId "io.github.sunshine-wzy"
+//            artifactId "$project.name"
+//            version "$version"
+//
+////            artifact(sourcesJar) {
+////                classifier "sources"
+////            }
+//        }
+//    }
+//    
+//    repositories {
+//        maven {
+//            if (!project.version.endsWith('Release')) {
+////                快照版本地址
+////            这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
+//                url "https://oss.sonatype.org/content/repositories/snapshots"
+//            } else {
+////                正式版本地址
+////                这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
+//                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 //            }
-        }
-    }
-    
-    repositories {
-        maven {
-            if (!project.version.endsWith('Release')) {
-//                快照版本地址
-//            这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
-                url "https://oss.sonatype.org/content/repositories/snapshots"
-            } else {
-//                正式版本地址
-//                这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
-                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            }
-            
-            credentials {
-                username = ossUser
-                password = ossPassword
-            }
-        }
-    }
-}
+//            
+//            credentials {
+//                username = ossUser
+//                password = ossPassword
+//            }
+//        }
+//    }
+//}
 
 
 task copyOutputJar {
