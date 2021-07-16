@@ -7,11 +7,9 @@ import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeSMachineStructure
-import io.github.sunshinewzy.sunstcore.objects.SBlock
-import io.github.sunshinewzy.sunstcore.objects.SItem
-import io.github.sunshinewzy.sunstcore.objects.SLocation
-import io.github.sunshinewzy.sunstcore.objects.SMenu
+import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
+import io.github.sunshinewzy.sunstcore.objects.item.TaskGuideItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.setItems
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -30,13 +28,13 @@ class SMachineWrench(
     val plugin: JavaPlugin,
     item: ItemStack,
     name: String,
-    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§d$name §a机器图鉴"),
+    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§f$name §f机器图鉴"),
     val edgeItem: ItemStack = SItem(Material.WHITE_STAINED_GLASS_PANE),
     val openSound: Sound = Sound.ENTITY_HORSE_ARMOR,
     val volume: Float = 1f,
     val pitch: Float = 1.2f
 ) : SItem(item) {
-    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§d$name §a机器图鉴"
+    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§f$name §f机器图鉴"
     
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
     private val holder = SPartProtectInventoryHolder(arrayListOf(), 0)
@@ -65,9 +63,20 @@ class SMachineWrench(
                 machineItems += sMachine.displayItem
             }
         }
-        menu.setAction {
-            setItems(2, 2, 7, machineItems)
-        }
+        
+        var page = 0
+        var itemList = ArrayList<ItemStack>()
+        do {
+            page++
+            menu.setPage(page) {
+                itemList = setItems(2, 2, 2, 5, 7, machineItems)
+            }
+        } while(itemList.isNotEmpty())
+        menu.maxPage = page
+        
+        menu.setAllPageButton(9, 6, SPageButton.NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
+        menu.setAllPageButton(1, 6, SPageButton.PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
+        
         
         addAction({
             val clickedBlock = clickedBlock
@@ -124,7 +133,7 @@ class SMachineWrench(
     }
     
     fun openIllustratedBook(player: Player) {
-        menu.openInventoryWithSound(player, openSound, volume, pitch)
+        menu.openInventoryByPageWithSound(player, 1, openSound, volume, pitch)
     }
     
     

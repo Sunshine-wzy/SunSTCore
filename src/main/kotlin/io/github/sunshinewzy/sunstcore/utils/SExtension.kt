@@ -395,11 +395,11 @@ fun Inventory.setItem(x: Int, y: Int, item: Itemable) {
     setItem(x orderWith y, item.getSItem())
 }
 
-fun Inventory.setItems(order: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> {
+fun Inventory.setItems(start: Int, end: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> {
     var j = 0
     val list = arrayListOf<ItemStack>()
     
-    for(ptr in order until size step 9) {
+    for(ptr in start..end step 9) {
         for(i in ptr until ptr + width) {
             if(j in items.indices)
                 setItem(i, items[j])
@@ -415,9 +415,9 @@ fun Inventory.setItems(order: Int, width: Int, items: List<ItemStack>): ArrayLis
     return list
 }
 
-fun Inventory.setItems(x: Int, y: Int, width: Int, items: List<ItemStack>) {
-    setItems(x orderWith y, width, items)
-}
+fun Inventory.setItems(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> =
+    setItems(startX orderWith startY, endX orderWith endY, width, items)
+
 
 /**
  * 快速创建 5*9 边框

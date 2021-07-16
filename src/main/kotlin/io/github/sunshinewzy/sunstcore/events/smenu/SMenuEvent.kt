@@ -8,5 +8,6 @@ abstract class SMenuEvent(
     val sMenu: SMenu,
     val id: String,
     val title: String,
-    val player: Player
+    val player: Player,
+    val page: Int
 ) : Event()

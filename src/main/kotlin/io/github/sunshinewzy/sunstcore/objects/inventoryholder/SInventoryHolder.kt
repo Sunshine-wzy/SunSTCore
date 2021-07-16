@@ -6,6 +6,9 @@ import org.bukkit.inventory.InventoryHolder
 
 open class SInventoryHolder<T>(var data: T) : InventoryHolder {
     private val inventory: Inventory = Bukkit.createInventory(this, 9)
+
+    var page: Int = 0
+    var maxPage: Int = 0
     
     
     override fun getInventory(): Inventory {
@@ -18,8 +21,45 @@ open class SInventoryHolder<T>(var data: T) : InventoryHolder {
                 return true
             }
         }
-
+        
         return false
+    }
+
+    fun getTruePage(): Int {
+        if(page > 0){
+            if(maxPage in 1 until page){
+                page = 1
+            }
+        }
+        else page = 1
+
+        return page
+    }
+
+    fun nextPage(isLoop: Boolean = false): Int {
+        getTruePage()
+
+        if(page < maxPage) page++
+        else if(isLoop) page = 1
+
+        return page
+    }
+
+    fun prePage(isLoop: Boolean = false): Int {
+        getTruePage()
+
+        if(page > 1) page--
+        else if(isLoop) page = maxPage
+
+        return page
+    }
+
+    fun toPage(index: Int): Int {
+        getTruePage()
+
+        if(index in 1..maxPage) page = index
+
+        return page
     }
     
     

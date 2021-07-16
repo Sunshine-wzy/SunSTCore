@@ -13,7 +13,8 @@ class SMenuClickEvent(
     val slot: Int,
     val buttonName: String,
     val button: ItemStack,
-) : SMenuEvent(sMenu, id, title, player) {
+    page: Int = 0
+) : SMenuEvent(sMenu, id, title, player, page) {
 
     override fun getHandlers(): HandlerList = handlerList
 

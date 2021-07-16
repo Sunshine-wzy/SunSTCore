@@ -66,8 +66,8 @@ class TaskProject(
                             lastTaskInv[player.uniqueId]?.let { lastInv ->
                                 lastInv.openTaskInv(player)
                                 val holder = player.openInventory.topInventory.holder
-                                if(holder is TaskInventoryHolder && holder.value > 1) {
-                                    holder.value = 1
+                                if(holder is TaskInventoryHolder && holder.page > 1) {
+                                    holder.page = 1
                                     if(player.isSneaking && player.isOp) {
                                         holder.isEditMode = true
                                         

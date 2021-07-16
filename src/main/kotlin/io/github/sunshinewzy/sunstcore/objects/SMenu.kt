@@ -4,6 +4,9 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.events.smenu.SMenuClickEvent
 import io.github.sunshinewzy.sunstcore.events.smenu.SMenuOpenEvent
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
+import io.github.sunshinewzy.sunstcore.objects.SPageButton.NEXT_PAGE
+import io.github.sunshinewzy.sunstcore.objects.SPageButton.PRE_PAGE
+import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.utils.getSPlayer
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -15,7 +18,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -33,13 +35,21 @@ class SMenu(
     private val buttons = HashMap<Int, Pair<String, ItemStack>>()       // 点击触发 SMenuClickEvent 的按钮
     private val items = HashMap<Int, ItemStack>()                       // 普通物品，点击后不会触发事件
     private val buttonOnClick = HashMap<Int, InventoryClickEvent.() -> Unit>()
+    private val pages = HashMap<Int, Inventory.() -> Unit>()
     private var action: Inventory.() -> Unit = { }
-
-    var holder: InventoryHolder = SProtectInventoryHolder(id)
+    private val pageButtons = HashMap<Int, HashMap<Int, Pair<SPageButton, ItemStack>>>()
+    private val allPageButtons = HashMap<Int, Pair<SPageButton, ItemStack>>()
+    
+    var holder: SInventoryHolder<*> = SProtectInventoryHolder(id)
     var openItem: ItemStack? = null
     var openSound: Sound? = null
     var volume = 1f
     var pitch = 1f
+    var maxPage = 0
+        set(value) {
+            field = value
+            holder.maxPage = value
+        }
     
     
     init {
@@ -48,6 +58,32 @@ class SMenu(
                 buttons[slot]?.let {
                     buttonOnClick[slot]?.invoke(this)
                     SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.getSPlayer(), slot, it.first, it.second))
+                }
+                
+                if(holder.page != 0) {
+                    pageButtons[holder.page]?.let { pageButtonMap ->
+                        pageButtonMap[slot]?.let {
+                            val player = view.getSPlayer()
+
+                            when(it.first) {
+                                NEXT_PAGE -> if(holder.page < maxPage) openInventoryByPage(player, holder.nextPage())
+                                PRE_PAGE -> if(holder.page > 1) openInventoryByPage(player, holder.prePage())
+                            }
+                            
+                            return@subscribeEvent
+                        }
+                    }
+
+                    allPageButtons[slot]?.let {
+                        val player = view.getSPlayer()
+
+                        when(it.first) {
+                            NEXT_PAGE -> if(holder.page < maxPage) openInventoryByPage(player, holder.nextPage())
+                            PRE_PAGE -> if(holder.page > 1) openInventoryByPage(player, holder.prePage())
+                        }
+
+                        return@subscribeEvent
+                    }
                 }
             }
         }
@@ -105,6 +141,31 @@ class SMenu(
         return this
     }
     
+    fun setPage(page: Int, action: Inventory.() -> Unit): SMenu {
+        pages[page] = action
+        return this
+    }
+    
+    fun setPageButton(page: Int, order: Int, buttonType: SPageButton, item: ItemStack): SMenu {
+        val pageButtonMap = pageButtons[page]
+        if(pageButtonMap != null) {
+            pageButtonMap[order] = buttonType to item
+        } else pageButtons[page] = hashMapOf(order to (buttonType to item))
+        
+        return this
+    }
+    
+    fun setPageButton(page: Int, x: Int, y: Int, buttonType: SPageButton, item: ItemStack): SMenu =
+        setPageButton(page, x orderWith  y, buttonType, item)
+    
+    fun setAllPageButton(order: Int, buttonType: SPageButton, item: ItemStack): SMenu {
+        allPageButtons[order] = buttonType to item
+        return this
+    }
+    
+    fun setAllPageButton(x: Int, y: Int, buttonType: SPageButton, item: ItemStack): SMenu =
+        setAllPageButton(x orderWith y, buttonType, item)
+    
     
     fun getInventory(): Inventory {
         val inv = Bukkit.createInventory(holder, size * 9, title)
@@ -124,7 +185,6 @@ class SMenu(
     
     fun openInventory(player: Player) {
         player.openInventory(getInventory())
-        
         SunSTCore.pluginManager.callEvent(SMenuOpenEvent(this, id, title, player))
     }
     
@@ -132,7 +192,42 @@ class SMenu(
         openInventory(player)
         player.playSound(player.location, sound, volume, pitch)
     }
+
+    fun openInventoryByPage(player: Player, page: Int) {
+        val inv = getInventory()
+        pages[page]?.let { 
+            it(inv)
+        }
+        
+        allPageButtons.forEach { (order, pair) -> 
+            when(pair.first) {
+                NEXT_PAGE -> if(page == maxPage) return@forEach
+                PRE_PAGE -> if(page == 1) return@forEach
+            }
+            
+            inv.setItem(order, pair.second)
+        }
+        
+        pageButtons[page]?.let { map ->
+            map.forEach { (order, pair) ->
+                when(pair.first) {
+                    NEXT_PAGE -> if(page == maxPage) return@forEach
+                    PRE_PAGE -> if(page == 1) return@forEach
+                }
+                
+                inv.setItem(order, pair.second)
+            }
+        }
+        
+        player.openInventory(inv)
+        SunSTCore.pluginManager.callEvent(SMenuOpenEvent(this, id, title, player, page))
+    }
     
+    fun openInventoryByPageWithSound(player: Player, page: Int, sound: Sound, volume: Float = 1f, pitch: Float = 1f) {
+        openInventoryByPage(player, page)
+        player.playSound(player.location, sound, volume, pitch)
+    }
+
     fun createEdge(edgeItem: ItemStack) {
         val meta = (if (edgeItem.hasItemMeta()) edgeItem.itemMeta else Bukkit.getItemFactory().getItemMeta(edgeItem.type)) ?: return
         meta.setDisplayName(" ")

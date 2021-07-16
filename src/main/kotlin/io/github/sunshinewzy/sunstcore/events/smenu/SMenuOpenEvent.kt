@@ -8,8 +8,9 @@ class SMenuOpenEvent(
     sMenu: SMenu,
     id: String,
     title: String,
-    player: Player
-) : SMenuEvent(sMenu, id, title, player) {
+    player: Player,
+    page: Int = 0
+) : SMenuEvent(sMenu, id, title, player, page) {
 
     override fun getHandlers(): HandlerList = handlerList
 

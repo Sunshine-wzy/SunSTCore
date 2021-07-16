@@ -95,7 +95,7 @@ class ItemCraftTask(
                 setCraftSlotItem(pages.first())
                 setSlotItem(nextPageOrder, TaskGuideItem.PAGE_NEXT)
             }
-            holder.value = 1
+            holder.page = 1
         }
         
     }
@@ -108,7 +108,7 @@ class ItemCraftTask(
         when(e.slot) {
             nextPageOrder ->
                 if(hasMultiPages){
-                    val value = invHolder.value
+                    val value = invHolder.page
                     val size = pages.size
 
                     if(value in 1..size){
@@ -119,16 +119,16 @@ class ItemCraftTask(
                             inv.setItem(prePageOrder, TaskGuideItem.PAGE_PRE.item)
 
                             inv.setCraftSlotItem(pages[value])
-                            invHolder.value = value + 1
+                            invHolder.page = value + 1
                             openTaskInv(player, inv)
                         }
                     }
-                    else invHolder.value = 1
+                    else invHolder.page = 1
                 }
 
             prePageOrder ->
                 if(hasMultiPages){
-                    val value = invHolder.value
+                    val value = invHolder.page
                     val size = pages.size
 
                     if(value in 1..size){
@@ -139,11 +139,11 @@ class ItemCraftTask(
                             inv.setItem(nextPageOrder, TaskGuideItem.PAGE_NEXT.item)
 
                             inv.setCraftSlotItem(pages[value - 2])
-                            invHolder.value = value - 1
+                            invHolder.page = value - 1
                             openTaskInv(player, inv)
                         }
                     }
-                    else invHolder.value = 1
+                    else invHolder.page = 1
                 }
             
             in craftSlotOrders -> {
