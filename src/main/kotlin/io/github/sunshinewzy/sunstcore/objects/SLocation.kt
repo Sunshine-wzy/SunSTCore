@@ -111,7 +111,7 @@ class SLocation {
     
     companion object {
         private val locations = HashMap<SLocation, SBlock>()
-        private val formatException = IllegalArgumentException("The format of SLocation must be world;x,y,z")
+        private val formatException = IllegalArgumentException("The format of SLocation must be 'world;x,y,z'.")
         
         
         fun Location.toSLocation(): SLocation = SLocation(this)

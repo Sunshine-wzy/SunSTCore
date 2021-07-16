@@ -10,8 +10,9 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeS
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.item.TaskGuideItem
+import io.github.sunshinewzy.sunstcore.utils.actionList
+import io.github.sunshinewzy.sunstcore.utils.getPlayer
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
-import io.github.sunshinewzy.sunstcore.utils.setItems
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Effect
 import org.bukkit.Material
@@ -28,13 +29,13 @@ class SMachineWrench(
     val plugin: JavaPlugin,
     item: ItemStack,
     name: String,
-    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§f$name §f机器图鉴"),
+    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§r$name §a机器图鉴"),
     val edgeItem: ItemStack = SItem(Material.WHITE_STAINED_GLASS_PANE),
     val openSound: Sound = Sound.ENTITY_HORSE_ARMOR,
     val volume: Float = 1f,
     val pitch: Float = 1.2f
-) : SItem(item) {
-    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§f$name §f机器图鉴"
+) : SItem(item), Initable {
+    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§r$name §a机器图鉴"
     
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
     private val holder = SPartProtectInventoryHolder(arrayListOf(), 0)
@@ -57,26 +58,6 @@ class SMachineWrench(
         menu.createEdge(edgeItem)
         menu.holder = holder
 
-        val machineItems = ArrayList<ItemStack>()
-        machines.values.forEach { list ->
-            list.forEach { sMachine ->
-                machineItems += sMachine.displayItem
-            }
-        }
-        
-        var page = 0
-        var itemList = ArrayList<ItemStack>()
-        do {
-            page++
-            menu.setPage(page) {
-                itemList = setItems(2, 2, 2, 5, 7, machineItems)
-            }
-        } while(itemList.isNotEmpty())
-        menu.maxPage = page
-        
-        menu.setAllPageButton(9, 6, SPageButton.NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
-        menu.setAllPageButton(1, 6, SPageButton.PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
-        
         
         addAction({
             val clickedBlock = clickedBlock
@@ -118,8 +99,36 @@ class SMachineWrench(
             openIllustratedBook(player)
         }
     }
-    
-    
+
+    /**
+     * 请在所有机器初始化完成后调用
+     */
+    override fun init() {
+        val sMachines = ArrayList<SMachine>()
+        machines.values.forEach { list ->
+            list.forEach { sMachine ->
+                sMachines += sMachine
+            }
+        }
+
+        var page = 0
+        var itemList = ArrayList<SMachine>()
+        do {
+            page++
+            menu.setPageAction(page) {
+                itemList = actionList(2, 2, 2, 5, 7, sMachines) { order ->
+                    menu.setPageButton(page, order, displayItem, id) {
+                        editRecipe(getPlayer())
+                    }
+                }
+            }
+        } while(itemList.isNotEmpty())
+        menu.maxPage = page
+
+        menu.setAllPageButton(9, 6, STurnPageType.NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
+        menu.setAllPageButton(1, 6, STurnPageType.PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
+    }
+
     fun addMachine(machine: SMachine) {
         val centerBlock = machine.structure.centerBlock
         if(machines.containsKey(centerBlock)){

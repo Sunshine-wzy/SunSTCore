@@ -31,7 +31,7 @@ abstract class SMachine(
     val structure: SMachineStructure
 ) : Initable {
     val sMachines = HashMap<SLocation, SMachineInformation>()
-    val displayItem = structure.centerBlock.toItem().setNameAndLore(name, "§7----------", "§fID: §a$id", "§7----------")
+    val displayItem = structure.centerBlock.toItem().setNameAndLore("§e$name", "§7----------", "§fID: §a$id", "§7----------")
     var isCancelInteract = true
     
     
@@ -53,6 +53,14 @@ abstract class SMachine(
      */
     abstract fun runMachine(event: SMachineRunEvent)
 
+    /**
+     * 当编辑机器配方时触发
+     */
+    open fun editRecipe(player: Player) {
+        player.sendMsg("&c该机器的配方不能编辑！")
+        player.closeInventory()
+    }
+    
 
     /**
      * 多方块机器结构判定

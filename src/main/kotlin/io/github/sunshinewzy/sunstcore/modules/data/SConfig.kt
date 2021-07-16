@@ -10,6 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
 
+/**
+ * 只读的配置文件
+ */
 abstract class SConfig(
     private val plugin: JavaPlugin,
     val name: String,

@@ -42,7 +42,7 @@ abstract class TaskBase(
         taskStage.taskMap[id] = this
         
         subscribeEvent<InventoryClickEvent> {
-            val player = view.getSPlayer()
+            val player = view.asPlayer()
             
             if(inventory.holder == this@TaskBase.holder){
                 when(slot) {

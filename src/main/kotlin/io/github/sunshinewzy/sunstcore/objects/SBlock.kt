@@ -6,14 +6,17 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockState
+import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.inventory.ItemStack
 
-class SBlock(val type: Material, val damage: Short = -1, var name: String = "") {
+class SBlock(val type: Material, val damage: Short = -1, var name: String = "") : ConfigurationSerializable {
     
     private var item: ItemStack = SItem(type, 1)
     private val types: ArrayList<Material> by lazy { ArrayList() }
     private var hasTypes: Boolean = false
     
+    
+    constructor(map: Map<String, Any>) : this(map["type"] as? Material ?: Material.AIR, map["damage"] as? Short ?: -1, map["name"] as? String ?: "")
     
     constructor(type: Material, name: String) : this(type) {
         this.name = name
@@ -139,8 +142,22 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
         
         return "SBlock{type=$type,damage=$damage}"
     }
-    
-    
+
+    override fun serialize(): MutableMap<String, Any> {
+        val map = HashMap<String, Any>()
+        
+        map["type"] = type.name
+        map["damage"] = damage
+        map["name"] = name
+        map["item"] = item
+        
+        if(hasTypes) {
+            map["types"] = types
+        }
+        
+        return map
+    }
+
     companion object {
         @JvmStatic
         fun createAir(item: ItemStack): SBlock = SBlock(Material.AIR).setItem(item)
@@ -151,6 +168,7 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
         fun Block.toSBlock(): SBlock = SBlock(this)
         
         fun BlockState.toSBlock(): SBlock = SBlock(this)
+
     }
 
 }

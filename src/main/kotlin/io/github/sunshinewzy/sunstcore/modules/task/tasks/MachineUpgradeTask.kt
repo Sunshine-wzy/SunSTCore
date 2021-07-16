@@ -10,8 +10,8 @@ import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.objects.toX
 import io.github.sunshinewzy.sunstcore.objects.toY
+import io.github.sunshinewzy.sunstcore.utils.asPlayer
 import io.github.sunshinewzy.sunstcore.utils.containsItem
-import io.github.sunshinewzy.sunstcore.utils.getSPlayer
 import io.github.sunshinewzy.sunstcore.utils.setItem
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -120,7 +120,7 @@ class MachineUpgradeTask(
     }
 
     override fun clickInventory(e: InventoryClickEvent) {
-        val player = e.view.getSPlayer()
+        val player = e.view.asPlayer()
         val x = e.slot.toX(9)
         val y = e.slot.toY(9)
 

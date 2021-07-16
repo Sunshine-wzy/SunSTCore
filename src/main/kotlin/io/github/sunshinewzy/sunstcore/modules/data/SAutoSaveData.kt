@@ -10,6 +10,8 @@ import java.io.File
 import java.io.IOException
 
 /**
+ * 自动保存, 可读可写 ,但不覆盖原有数据的配置文件
+ * 
  * @param plugin 插件实例
  * @param name 保存的文件名
  * @param path 保存的路径(保存到 plugins/插件名/路径 下)

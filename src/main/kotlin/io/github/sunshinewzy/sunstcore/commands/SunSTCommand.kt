@@ -25,7 +25,7 @@ object SunSTCommand : Initable {
                         for(wrench in SMachineWrench.wrenches) {
                             if(handItem.isItemSimilar(wrench)) {
                                 player.giveItem(wrench.illustratedBook)
-                                player.sendMsg(colorName, "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}]")
+                                player.sendMsg(colorName, "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}&a]")
                                 
                                 return@empty
                             }

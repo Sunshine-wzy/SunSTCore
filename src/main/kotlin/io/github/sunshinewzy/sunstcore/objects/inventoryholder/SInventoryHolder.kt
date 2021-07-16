@@ -4,16 +4,25 @@ import org.bukkit.Bukkit
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 
-open class SInventoryHolder<T>(var data: T) : InventoryHolder {
+open class SInventoryHolder<T>(var data: T) : InventoryHolder, Cloneable {
     private val inventory: Inventory = Bukkit.createInventory(this, 9)
 
     var page: Int = 0
     var maxPage: Int = 0
     
     
+    
     override fun getInventory(): Inventory {
         return inventory
     }
+    
+    @Suppress("UNCHECKED_CAST")
+    @Throws(CloneNotSupportedException::class)
+    public override fun clone(): SInventoryHolder<T> {
+        return super.clone() as SInventoryHolder<T>
+    }
+    
+    
 
     inline fun <reified T> isData(target: T): Boolean {
         if(data is T){

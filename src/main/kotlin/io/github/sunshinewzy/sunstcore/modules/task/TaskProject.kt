@@ -5,8 +5,8 @@ import io.github.sunshinewzy.sunstcore.modules.data.DataManager.getTaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
+import io.github.sunshinewzy.sunstcore.utils.asPlayer
 import io.github.sunshinewzy.sunstcore.utils.createEdge
-import io.github.sunshinewzy.sunstcore.utils.getSPlayer
 import io.github.sunshinewzy.sunstcore.utils.hasCompleteStage
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Bukkit
@@ -89,7 +89,7 @@ class TaskProject(
         subscribeEvent<InventoryClickEvent> { 
             if(inventory.holder == this@TaskProject.holder){
                 stageMap.values.forEach { 
-                    val player = view.getSPlayer()
+                    val player = view.asPlayer()
                     if(slot == it.order && player.hasCompleteStage(it.predecessor)){
                         it.openTaskInv(player)
                     }

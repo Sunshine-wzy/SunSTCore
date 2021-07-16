@@ -40,7 +40,7 @@ class TaskStage(
 
         subscribeEvent<InventoryClickEvent> {
             if(inventory.holder == this@TaskStage.holder){
-                val player = view.getSPlayer()
+                val player = view.asPlayer()
                 
                 if(slot == 5 orderWith 5){
                     taskProject.openTaskInv(player)

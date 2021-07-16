@@ -19,6 +19,7 @@ import org.bukkit.block.BlockFace.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.*
 import org.bukkit.material.MaterialData
 import org.bukkit.metadata.MetadataValueAdapter
@@ -154,6 +155,12 @@ fun Player.giveItem(item: ItemStack, amount: Int = 0) {
 }
 
 fun Player.giveItem(items: Array<ItemStack>) {
+    items.forEach { 
+        giveItem(it)
+    }
+}
+
+fun Player.giveItem(items: List<ItemStack>) {
     items.forEach { 
         giveItem(it)
     }
@@ -336,6 +343,13 @@ fun Inventory.removeSItem(items: Array<ItemStack>): Boolean {
     return true
 }
 
+fun Inventory.removeSItem(items: List<ItemStack>): Boolean {
+    items.forEach {
+        if(!removeSItem(it)) return false
+    }
+    return true
+}
+
 fun Inventory.removeSItem(type: Material, amount: Int = 1): Boolean {
     if(amount <= 0) return true
     var cnt = amount
@@ -381,6 +395,51 @@ fun Inventory.removeSItem(types: List<Material>, amount: Int = 1): Boolean {
 fun Inventory.removeSItem(types: Materialsable, amount: Int = 1): Boolean = removeSItem(types.types(), amount)
 
 
+fun PlayerInventory.removeHandItem(item: ItemStack, amount: Int = 1): Boolean {
+    if(amount <= 0) return true
+    val handItem = itemInMainHand
+    if(handItem.type == Material.AIR) return false
+
+    val theItem = item.clone()
+    val cnt = theItem.amount * amount
+    theItem.amount = 1
+    
+    if(handItem.isItemSimilar(theItem)) {
+        return if(handItem.amount > cnt) {
+            handItem.amount -= cnt
+            true
+        } else {
+            handItem.amount = 0
+            false
+        }
+    }
+    
+    return false
+}
+
+fun PlayerInventory.removeOffHandItem(item: ItemStack, amount: Int = 1): Boolean {
+    if(amount <= 0) return true
+    val handItem = itemInOffHand
+    if(handItem.type == Material.AIR) return false
+
+    val theItem = item.clone()
+    val cnt = theItem.amount * amount
+    theItem.amount = 1
+
+    if(handItem.isItemSimilar(theItem)) {
+        return if(handItem.amount > cnt) {
+            handItem.amount -= cnt
+            true
+        } else {
+            handItem.amount = 0
+            false
+        }
+    }
+
+    return false
+}
+
+
 fun Inventory.isFull(): Boolean = firstEmpty() > size
 
 fun Inventory.setItem(order: Int, item: Itemable) {
@@ -417,6 +476,29 @@ fun Inventory.setItems(start: Int, end: Int, width: Int, items: List<ItemStack>)
 
 fun Inventory.setItems(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> =
     setItems(startX orderWith startY, endX orderWith endY, width, items)
+
+fun <T> Inventory.actionList(start: Int, end: Int, width: Int, list: List<T>, action: T.(Int) -> Unit): ArrayList<T> {
+    var j = 0
+    val resList = arrayListOf<T>()
+
+    for(ptr in start..end step 9) {
+        for(i in ptr until ptr + width) {
+            if(j in list.indices)
+                action(list[j], i)
+            else return resList
+
+            j++
+        }
+    }
+
+    for(k in j until list.size) {
+        resList += list[k]
+    }
+    return resList
+}
+
+fun <T> Inventory.actionList(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int) -> Unit): ArrayList<T> =
+    actionList(startX orderWith startY, endX orderWith endY, width, list, action)
 
 
 /**
@@ -461,7 +543,7 @@ fun Inventory.clearCraftSlotItem(baseX: Int = 0, baseY: Int = 1) {
 }
 
 
-fun InventoryView.getSPlayer(): Player = player as Player
+fun InventoryView.asPlayer(): Player = player as Player
 
 //endregion
 
@@ -871,5 +953,11 @@ fun <E> Array<out E>.toArrayList(): ArrayList<E> {
     list.addAll(this)
     return list
 }
+
+//endregion
+
+//region Event
+
+fun InventoryClickEvent.getPlayer(): Player = view.player as Player
 
 //endregion

@@ -103,7 +103,7 @@ class ItemCraftTask(
 
     override fun clickInventory(e: InventoryClickEvent) {
         val invHolder = e.inventory.holder as TaskInventoryHolder
-        val player = e.view.getSPlayer()
+        val player = e.view.asPlayer()
 
         when(e.slot) {
             nextPageOrder ->
@@ -187,7 +187,7 @@ class ItemCraftTask(
         
         init {
             subscribeEvent<InventoryClickEvent> { 
-                val player = view.getSPlayer()
+                val player = view.asPlayer()
                 val holder = inventory.holder
                 if(holder !is SProtectInventoryHolder<*>) return@subscribeEvent
                 
@@ -195,7 +195,7 @@ class ItemCraftTask(
                 if(data == null || data !is Triple<*, *, *>) return@subscribeEvent
                 
                 val (first, second, third) = data
-                if(first == null || first !is Pair<*, *> || second !is SPage || third !is ArrayList<*>) return@subscribeEvent
+                if(first == null || first !is Pair<*, *> || second !is SPageValue || third !is ArrayList<*>) return@subscribeEvent
                 
                 val (pFirst, pSecond) = first
                 if(pFirst !is String || pSecond !is UUID || pFirst != holderName || pSecond != player.uniqueId) return@subscribeEvent
@@ -274,7 +274,7 @@ class ItemCraftTask(
         fun ItemStack.openItemRecipeInv(player: Player) {
             val pages = ArrayList<Array<ItemStack>>()
             val holder = SProtectInventoryHolder(
-                Triple(holderName to player.uniqueId, SPage(1), pages)
+                Triple(holderName to player.uniqueId, SPageValue(1), pages)
             )
             val inv = Bukkit.createInventory(holder, 5 * 9, "合成表")
             inv.setItem(9, 5, TaskGuideItem.BACK)
