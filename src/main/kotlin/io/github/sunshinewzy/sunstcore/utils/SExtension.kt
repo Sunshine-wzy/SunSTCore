@@ -500,6 +500,32 @@ fun <T> Inventory.actionList(start: Int, end: Int, width: Int, list: List<T>, ac
 fun <T> Inventory.actionList(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int) -> Unit): ArrayList<T> =
     actionList(startX orderWith startY, endX orderWith endY, width, list, action)
 
+/**
+ * @param action First Int is page, second Int is order.
+ */
+fun <T> Inventory.actionList(page: Int, start: Int, end: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit): ArrayList<T> {
+    var j = 0
+    val resList = arrayListOf<T>()
+
+    for(ptr in start..end step 9) {
+        for(i in ptr until ptr + width) {
+            if(j in list.indices)
+                action(list[j], page, i)
+            else return resList
+
+            j++
+        }
+    }
+
+    for(k in j until list.size) {
+        resList += list[k]
+    }
+    return resList
+}
+
+fun <T> Inventory.actionList(page: Int, startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit): ArrayList<T> =
+    actionList(page, startX orderWith startY, endX orderWith endY, width, list, action)
+
 
 /**
  * 快速创建 5*9 边框

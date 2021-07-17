@@ -24,6 +24,10 @@ sealed class SMachineRecipe(val coord: SCoordinate) : ConfigurationSerializable 
     fun consume(loc: Location) {
         execute(loc.addClone(coord))
     }
+    
+    fun consume(loc: Location, player: Player) {
+        playerExecute(loc, player)
+    }
 
     override fun serialize(): MutableMap<String, Any> {
         val map = HashMap<String, Any>()
@@ -38,57 +42,98 @@ sealed class SMachineRecipe(val coord: SCoordinate) : ConfigurationSerializable 
         
     }
     
+    protected open fun playerExecute(loc: Location, player: Player) {
+        
+    }
+    
     
     class BlockPlace(coord: SCoordinate, val sBlock: SBlock) : SMachineRecipe(coord) {
+        
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock ?: SBlock(Material.AIR))
+        
         override fun execute(loc: Location) {
             sBlock.setLocation(loc)
         }
 
         override fun serialize(): MutableMap<String, Any> {
-            val map = super.serialize()
-            
-            return map
+            return super.serialize().also { 
+                it["sBlock"] = sBlock
+            }
         }
     }
     
     class BlockBreak(coord: SCoordinate, val sBlock: SBlock) : SMachineRecipe(coord) {
+
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock ?: SBlock(Material.AIR))
+
         override fun execute(loc: Location) {
             val block = loc.block
             if(sBlock.isSimilar(block)) {
                 block.type = Material.AIR
             }
         }
-    }
-    
-    class ItemAddPlayer(coord: SCoordinate, val player: Player, val items: List<ItemStack>) : SMachineRecipe(coord) {
-        
-        constructor(coord: SCoordinate, player: Player, vararg item: ItemStack) : this(coord, player, item.toList())
-        
-        override fun execute(loc: Location) {
-            player.giveItem(items)
+
+        override fun serialize(): MutableMap<String, Any> {
+            return super.serialize().also { 
+                it["sBlock"] = sBlock
+            }
         }
     }
     
-    class ItemRemovePlayer(coord: SCoordinate, val player: Player, val type: Type, val items: List<ItemStack>) : SMachineRecipe(coord) {
+    class ItemAddPlayer(coord: SCoordinate, val items: List<ItemStack>) : SMachineRecipe(coord) {
+        
+        constructor(coord: SCoordinate, vararg item: ItemStack) : this(coord, item.toList())
 
-        constructor(coord: SCoordinate, player: Player, type: Type, vararg item: ItemStack) : this(coord, player, type, item.toList())
+        constructor(map: Map<String, Any>) : this(
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
+            map["items"]?.castList<ItemStack>() ?: emptyList()
+        )
 
-        override fun execute(loc: Location) {
+        override fun playerExecute(loc: Location, player: Player) {
+            player.giveItem(items)
+        }
+
+        override fun serialize(): MutableMap<String, Any> {
+            return super.serialize().also { 
+                it["items"] = items
+            }
+        }
+    }
+    
+    class ItemRemovePlayer(coord: SCoordinate, val type: Type, val items: List<ItemStack>) : SMachineRecipe(coord) {
+
+        constructor(coord: SCoordinate, type: Type, vararg item: ItemStack) : this(coord, type, item.toList())
+
+        constructor(map: Map<String, Any>) : this(
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
+            (map["type"] as? String)?.let { Type.valueOf(it) } ?: Type.HAND,
+            map["items"]?.castList<ItemStack>() ?: emptyList()
+        )
+        
+
+        override fun playerExecute(loc: Location, player: Player) {
             val inv = player.inventory
             when(type) {
                 Type.HAND -> {
-                    items.forEach { 
+                    items.forEach {
                         inv.removeHandItem(it)
                     }
                 }
-                
+
                 Type.OFF_HAND -> {
-                    items.forEach { 
+                    items.forEach {
                         inv.removeOffHandItem(it)
                     }
                 }
-                
+
                 Type.INVENTORY -> inv.removeSItem(items)
+            }
+        }
+
+        override fun serialize(): MutableMap<String, Any> {
+            return super.serialize().also { 
+                it["type"] = type.name
+                it["items"] = items
             }
         }
 
@@ -102,12 +147,23 @@ sealed class SMachineRecipe(val coord: SCoordinate) : ConfigurationSerializable 
     class ItemAddGround(coord: SCoordinate, val items: List<ItemStack>) : SMachineRecipe(coord) {
         
         constructor(coord: SCoordinate, vararg item: ItemStack) : this(coord, item.toList())
+
+        constructor(map: Map<String, Any>) : this(
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
+            map["items"]?.castList<ItemStack>() ?: emptyList()
+        )
         
         override fun execute(loc: Location) {
             loc.world?.let { world ->
                 items.forEach { 
                     world.dropItemNaturally(loc, it)
                 }
+            }
+        }
+
+        override fun serialize(): MutableMap<String, Any> {
+            return super.serialize().also { 
+                it["items"] = items
             }
         }
     }

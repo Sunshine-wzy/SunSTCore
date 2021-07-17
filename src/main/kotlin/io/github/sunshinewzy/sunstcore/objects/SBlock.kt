@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.objects
 
 import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
+import io.github.sunshinewzy.sunstcore.utils.castList
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -16,7 +17,16 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
     private var hasTypes: Boolean = false
     
     
-    constructor(map: Map<String, Any>) : this(map["type"] as? Material ?: Material.AIR, map["damage"] as? Short ?: -1, map["name"] as? String ?: "")
+    constructor(map: Map<String, Any>) : this(map["type"] as? Material ?: Material.AIR, map["damage"] as? Short ?: -1, map["name"] as? String ?: "") {
+        map["item"]?.let { 
+            if(it is ItemStack)
+                item = it
+        }
+
+        map["types"]?.castList<Material>()?.let { 
+            types += it
+        }
+    }
     
     constructor(type: Material, name: String) : this(type) {
         this.name = name

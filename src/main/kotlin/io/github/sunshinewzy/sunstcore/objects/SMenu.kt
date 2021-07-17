@@ -8,6 +8,8 @@ import io.github.sunshinewzy.sunstcore.objects.STurnPageType.NEXT_PAGE
 import io.github.sunshinewzy.sunstcore.objects.STurnPageType.PRE_PAGE
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
+import io.github.sunshinewzy.sunstcore.objects.item.TaskGuideItem
+import io.github.sunshinewzy.sunstcore.utils.actionList
 import io.github.sunshinewzy.sunstcore.utils.asPlayer
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Bukkit
@@ -15,6 +17,7 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
@@ -36,9 +39,10 @@ class SMenu(
     private val items = HashMap<Int, ItemStack>()                       // 普通物品，点击后不会触发事件
     private val buttonOnClick = HashMap<Int, InventoryClickEvent.() -> Unit>()
     private var action: Inventory.() -> Unit = {}
+    private var closeAction: InventoryCloseEvent.() -> Unit = {}
     
     private val pages = HashMap<Int, SPage>()
-    private val allPageButtons = HashMap<Int, Pair<STurnPageType, ItemStack>>()
+    private val allTurnPageButtons = HashMap<Int, Pair<STurnPageType, ItemStack>>()
     
     var holder: SInventoryHolder<*> = SProtectInventoryHolder(id)
     var openItem: ItemStack? = null
@@ -77,7 +81,7 @@ class SMenu(
                         }
                     }
 
-                    allPageButtons[slot]?.let {
+                    allTurnPageButtons[slot]?.let {
                         val player = view.asPlayer()
 
                         when(it.first) {
@@ -113,6 +117,13 @@ class SMenu(
                     if(openSound != null) openInventoryWithSound(player, openSound, volume, pitch)
                     else openInventory(player)
                 }
+            }
+        }
+        
+        subscribeEvent<InventoryCloseEvent> { 
+            val holder = inventory.holder ?: return@subscribeEvent
+            if(holder is SInventoryHolder<*> && holder == this@SMenu.holder) {
+                closeAction(this)
             }
         }
         
@@ -155,6 +166,11 @@ class SMenu(
         this.action = action
         return this
     }
+
+    fun setCloseAction(action: InventoryCloseEvent.() -> Unit): SMenu {
+        this.closeAction = action
+        return this
+    }
     
     fun setPageAction(page: Int, action: Inventory.() -> Unit): SMenu {
         getSPage(page).action = action
@@ -194,13 +210,38 @@ class SMenu(
         return this
     }
     
-    fun setAllPageButton(order: Int, buttonType: STurnPageType, item: ItemStack): SMenu {
-        allPageButtons[order] = buttonType to item
+    fun setAllTurnPageButton(order: Int, buttonType: STurnPageType, item: ItemStack): SMenu {
+        allTurnPageButtons[order] = buttonType to item
         return this
     }
     
-    fun setAllPageButton(x: Int, y: Int, buttonType: STurnPageType, item: ItemStack): SMenu =
-        setAllPageButton(x orderWith y, buttonType, item)
+    fun setAllTurnPageButton(x: Int, y: Int, buttonType: STurnPageType, item: ItemStack): SMenu =
+        setAllTurnPageButton(x orderWith y, buttonType, item)
+    
+    fun setDefaultTurnPageButton(): SMenu {
+        setAllTurnPageButton(9, size, NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
+        setAllTurnPageButton(1, size, PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
+        return this
+    }
+
+    /**
+     * @param action First Int is page, second Int is order.
+     */
+    fun <T> setMultiPageAction(startPage: Int, startOrder: Int, endOrder: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit) {
+        var page = startPage - 1
+        var itemList = ArrayList<T>()
+        do {
+            page++
+            setPageAction(page) {
+                itemList = actionList(page, startOrder, endOrder, width, list, action)
+            }
+        } while(itemList.isNotEmpty())
+        maxPage = page
+    }
+
+    fun <T> setMultiPageAction(startPage: Int, startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit) {
+        setMultiPageAction(startPage, startX orderWith startY, endX orderWith endY, width, list, action)
+    }
     
     
     fun getInventory(page: Int = 0): Inventory {
@@ -234,7 +275,7 @@ class SMenu(
     fun openInventoryByPage(player: Player, page: Int) {
         val inv = getInventory(page)
         
-        allPageButtons.forEach { (order, pair) -> 
+        allTurnPageButtons.forEach { (order, pair) -> 
             when(pair.first) {
                 NEXT_PAGE -> if(page == maxPage) return@forEach
                 PRE_PAGE -> if(page == 1) return@forEach

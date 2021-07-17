@@ -1,13 +1,11 @@
 package io.github.sunshinewzy.sunstcore.modules.machine
 
-import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.utils.castMap
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 
 data class SMachineInformation(
     var owner: String = "",
     var level: Short = 0,
-    var recipes: HashMap<String, SMachineRecipes> = hashMapOf(),
     val data: HashMap<String, Any> = HashMap()
 ) : ConfigurationSerializable {
 
@@ -15,7 +13,6 @@ data class SMachineInformation(
         val map = HashMap<String, Any>()
         map["owner"] = owner
         map["level"] = level
-        map["recipes"] = recipes
         map["data"] = data
         return map
     }
@@ -35,8 +32,6 @@ data class SMachineInformation(
                 if(it is Short)
                     information.level = it
             }
-
-            map["recipes"]?.castMap(information.recipes)
 
             map["data"]?.castMap(information.data)
 

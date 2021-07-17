@@ -6,14 +6,18 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
+import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
+import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
+import io.github.sunshinewzy.sunstcore.objects.SMenu
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.getSMetadata
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.subtractClone
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -31,14 +35,33 @@ abstract class SMachine(
     val structure: SMachineStructure
 ) : Initable {
     val sMachines = HashMap<SLocation, SMachineInformation>()
+    val recipes = HashMap<String, SMachineRecipes>()
     val displayItem = structure.centerBlock.toItem().setNameAndLore("§e$name", "§7----------", "§fID: §a$id", "§7----------")
     var isCancelInteract = true
+    
+    private val editMenu = SMenu("SMachine Edit - $id", "§r[$name§r] 机器编辑", 5)
+    val editRecipeMenu = SMenu("SMachine Edit Recipe - $id", "§r[$name§r] 机器配方编辑", 6)
     
     
     init {
         wrench.addMachine(this)
 
         SMachineData(this)
+        
+        editMenu.apply { 
+            createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
+            setItem(3, 3, displayItem)
+        }
+        
+        editRecipeMenu.apply { 
+            createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
+            setDefaultTurnPageButton()
+            
+            setItem(1, 2, SItem(Material.BROWN_STAINED_GLASS_PANE, "§a配方ID: "))
+            setItem(1, 3, SItem(Material.RED_STAINED_GLASS_PANE, "§a输入: "))
+            setItem(1, 4, SItem(Material.GREEN_STAINED_GLASS_PANE, "§a输出: "))
+            setItem(1, 5, SItem(Material.YELLOW_STAINED_GLASS_PANE, "§a概率: "))
+        }
     }
 
 
@@ -53,6 +76,17 @@ abstract class SMachine(
      */
     abstract fun runMachine(event: SMachineRunEvent)
 
+    /**
+     * 机器编辑界面
+     */
+    fun edit(player: Player) {
+        editMenu.setButton(5, 3, SItem(Material.CRAFTING_TABLE, "§a修改机器配方"), "EDIT_RECIPE") {
+            editRecipe(player)
+        }
+        
+        editMenu.openInventory(player)
+    }
+    
     /**
      * 当编辑机器配方时触发
      */

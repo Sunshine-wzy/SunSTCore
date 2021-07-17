@@ -10,7 +10,6 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeS
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.item.TaskGuideItem
-import io.github.sunshinewzy.sunstcore.utils.actionList
 import io.github.sunshinewzy.sunstcore.utils.getPlayer
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -111,22 +110,18 @@ class SMachineWrench(
             }
         }
 
-        var page = 0
-        var itemList = ArrayList<SMachine>()
-        do {
-            page++
-            menu.setPageAction(page) {
-                itemList = actionList(2, 2, 2, 5, 7, sMachines) { order ->
-                    menu.setPageButton(page, order, displayItem, id) {
-                        editRecipe(getPlayer())
-                    }
+        
+        menu.setMultiPageAction(1, 2, 2, 2, 5, 7, sMachines) { page, order ->
+            menu.setPageButton(page, order, displayItem, id) {
+                val player = getPlayer()
+                if(player.isOp) {
+                    edit(player)
                 }
             }
-        } while(itemList.isNotEmpty())
-        menu.maxPage = page
+        }
 
-        menu.setAllPageButton(9, 6, STurnPageType.NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
-        menu.setAllPageButton(1, 6, STurnPageType.PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
+        menu.setAllTurnPageButton(9, 6, STurnPageType.NEXT_PAGE, TaskGuideItem.PAGE_NEXT.item)
+        menu.setAllTurnPageButton(1, 6, STurnPageType.PRE_PAGE, TaskGuideItem.PAGE_PRE.item)
     }
 
     fun addMachine(machine: SMachine) {

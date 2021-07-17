@@ -9,6 +9,7 @@ import io.github.sunshinewzy.sunstcore.modules.machine.*
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
+import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
@@ -86,6 +87,8 @@ object SunSTCore : Plugin() {
     }
     
     private fun registerSerialization() {
+        ConfigurationSerialization.registerClass(SBlock::class.java)
+        
         ConfigurationSerialization.registerClass(TaskProgress::class.java)
         
         ConfigurationSerialization.registerClass(LineStick::class.java)
@@ -97,7 +100,6 @@ object SunSTCore : Plugin() {
         
         ConfigurationSerialization.registerClass(SMachineRecipe::class.java)
         ConfigurationSerialization.registerClass(SMachineRecipes::class.java)
-        
     }
     
     
