@@ -45,7 +45,7 @@ abstract class TaskBase(
             val player = view.asPlayer()
             
             if(inventory.holder == this@TaskBase.holder){
-                when(slot) {
+                when(rawSlot) {
                     submitItemOrder -> {
                         if(!player.hasCompleteTask(this@TaskBase)){
                             submit(player)

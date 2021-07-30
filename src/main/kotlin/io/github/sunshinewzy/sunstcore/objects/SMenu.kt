@@ -63,7 +63,7 @@ class SMenu(
             if(holder is SInventoryHolder<*> && holder == this@SMenu.holder) {
                 if(holder.page != 0) {
                     pages[holder.page]?.let { sPage ->
-                        sPage.turnPageButtons[slot]?.let {
+                        sPage.turnPageButtons[rawSlot]?.let {
                             val player = view.asPlayer()
 
                             when(it.first) {
@@ -74,15 +74,15 @@ class SMenu(
                             return@subscribeEvent
                         }
                         
-                        sPage.buttons[slot]?.let { 
+                        sPage.buttons[rawSlot]?.let { 
                             it.third(this)
-                            SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.asPlayer(), slot, it.first, it.second, sPage.page))
+                            SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.asPlayer(), rawSlot, it.first, it.second, sPage.page))
                             
                             return@subscribeEvent
                         }
                     }
 
-                    allTurnPageButtons[slot]?.let {
+                    allTurnPageButtons[rawSlot]?.let {
                         val player = view.asPlayer()
 
                         when(it.first) {
@@ -94,9 +94,9 @@ class SMenu(
                     }
                 }
 
-                buttons[slot]?.let {
-                    buttonOnClick[slot]?.invoke(this)
-                    SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.asPlayer(), slot, it.first, it.second))
+                buttons[rawSlot]?.let {
+                    buttonOnClick[rawSlot]?.invoke(this)
+                    SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.asPlayer(), rawSlot, it.first, it.second))
                 }
                 
                 try {

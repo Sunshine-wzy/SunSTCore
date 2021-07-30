@@ -42,13 +42,13 @@ class TaskStage(
             if(inventory.holder == this@TaskStage.holder){
                 val player = view.asPlayer()
                 
-                if(slot == 5 orderWith 5){
+                if(rawSlot == 5 orderWith 5){
                     taskProject.openTaskInv(player)
                     return@subscribeEvent
                 }
                 
                 taskMap.values.forEach {
-                    if(slot == it.order && player.hasCompleteTask(it.predecessor)){
+                    if(rawSlot == it.order && player.hasCompleteTask(it.predecessor)){
                         it.openTaskInv(player)
                     }
                 }

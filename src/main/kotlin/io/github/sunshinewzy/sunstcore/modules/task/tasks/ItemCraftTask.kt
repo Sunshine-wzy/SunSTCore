@@ -105,7 +105,7 @@ class ItemCraftTask(
         val invHolder = e.inventory.holder as TaskInventoryHolder
         val player = e.view.asPlayer()
 
-        when(e.slot) {
+        when(e.rawSlot) {
             nextPageOrder ->
                 if(hasMultiPages){
                     val value = invHolder.page
@@ -204,7 +204,7 @@ class ItemCraftTask(
                 val pages = third.castList<Array<ItemStack>>()
                 val inv = inventory
                 
-                when(slot) {
+                when(rawSlot) {
                     nextPageOrder -> {
                         val size = pages.size
 

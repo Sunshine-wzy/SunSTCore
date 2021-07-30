@@ -84,7 +84,6 @@ sealed class SMachineRecipe(
             val blockItem = sBlock.getItem().clone()
             
             menu.setClickAction {
-                val clickedInventory = clickedInventory ?: return@setClickAction
                 val currentItem = currentItem ?: return@setClickAction
 
                 if(currentItem.type != Material.AIR) {
@@ -93,7 +92,7 @@ sealed class SMachineRecipe(
                     val item = currentItem.clone()
                     item.amount = 1
                     sBlock = SBlock(item)
-                    menu.setButtonWithInv(5, 2, item,"SBLOCK", clickedInventory) {
+                    menu.setButtonWithInv(5, 2, item,"SBLOCK", view.topInventory) {
                         player.giveItem(item)
                     }
 
@@ -158,19 +157,18 @@ sealed class SMachineRecipe(
             val blockItem = sBlock.getItem().clone()
 
             menu.setClickAction {
-                val clickedInventory = clickedInventory ?: return@setClickAction
                 val currentItem = currentItem ?: return@setClickAction
 
                 if(currentItem.type != Material.AIR) {
                     if(slot == 8 orderWith 2 && currentItem.isItemSimilar(confirmItem)) return@setClickAction
-                    
+
                     val item = currentItem.clone()
                     item.amount = 1
                     sBlock = SBlock(item)
-                    menu.setButtonWithInv(5, 2, item,"SBLOCK", clickedInventory) {
+                    menu.setButtonWithInv(5, 2, item,"SBLOCK", view.topInventory) {
                         player.giveItem(item)
                     }
-                    
+
                     player.updateInventory()
                 }
             }
@@ -418,8 +416,6 @@ data class SMachineRecipes(
     var output: SMachineRecipe = SMachineRecipe.Empty,
     var percent: Int = 0
 ) : ConfigurationSerializable {
-    private val editMenu = SMenu("Edit Machine Recipe", "机器配方编辑", 6)
-    private val typeChooseMenu = SMenu("Choose Machine Recipe Type", "配方类型选择", 1)
     
     init {
         require(percent in 0..100) {
@@ -551,6 +547,9 @@ data class SMachineRecipes(
 
 
     companion object {
+        private val editMenu = SMenu("Edit Machine Recipe", "机器配方编辑", 6)
+        private val typeChooseMenu = SMenu("Choose Machine Recipe Type", "配方类型选择", 1)
+        
         @JvmStatic
         fun deserialize(map: Map<String, Any>): SMachineRecipes {
             val information = SMachineRecipes(map["id"] as String)

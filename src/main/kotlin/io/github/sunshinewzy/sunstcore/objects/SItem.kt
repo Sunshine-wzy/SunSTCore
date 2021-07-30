@@ -102,6 +102,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
     companion object {
         private val itemActions = HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
+        private val protectedItems = ArrayList<ItemStack>()
         
         val items = HashMap<String, ItemStack>()
 
@@ -128,6 +129,12 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                 val item = item
                 if(item == null || item.type == Material.AIR) return@subscribeEvent
                 
+                protectedItems.forEach { 
+                    if(item.isItemSimilar(it)) {
+                        isCancelled = true
+                    }
+                }
+                
                 itemActions.forEach { (sItem, pair) -> 
                     if(pair.first(this) && item.isItemSimilar(sItem)){
                         pair.second.forEach { it(this) }
@@ -136,6 +143,12 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             }
         }
         
+        fun ItemStack.protect(): ItemStack {
+            val item = clone()
+            item.amount = 1
+            protectedItems += item
+            return this
+        }
         
         fun ItemStack.setName(name: String): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type) 

@@ -90,7 +90,7 @@ class TaskProject(
             if(inventory.holder == this@TaskProject.holder){
                 stageMap.values.forEach { 
                     val player = view.asPlayer()
-                    if(slot == it.order && player.hasCompleteStage(it.predecessor)){
+                    if(rawSlot == it.order && player.hasCompleteStage(it.predecessor)){
                         it.openTaskInv(player)
                     }
                 }
