@@ -7,6 +7,8 @@ import org.bukkit.inventory.InventoryHolder
 open class SInventoryHolder<T>(var data: T) : InventoryHolder, Cloneable {
     private val inventory: Inventory = Bukkit.createInventory(this, 9)
 
+    val extra: HashMap<String, Any> by lazy { hashMapOf() }
+    
     var page: Int = 0
     var maxPage: Int = 0
     

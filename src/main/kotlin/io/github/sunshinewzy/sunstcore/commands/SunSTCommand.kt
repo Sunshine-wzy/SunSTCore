@@ -20,7 +20,15 @@ object SunSTCommand : Initable {
                     empty {
                         val player = getPlayer() ?: return@empty
                         val handItem = player.inventory.itemInMainHand
-                        if(handItem.type == Material.AIR) return@empty
+
+                        fun sendTip() {
+                            sender.sendMsg("&c请拿着&a扳手&c输入此命令以获得该扳手可构建的机器图鉴！")
+                        }
+                        
+                        if(handItem.type == Material.AIR) {
+                            sendTip()
+                            return@empty
+                        }
 
                         for(wrench in SMachineWrench.wrenches) {
                             if(handItem.isItemSimilar(wrench)) {
@@ -31,7 +39,7 @@ object SunSTCommand : Initable {
                             }
                         }
                         
-                        sender.sendMsg("&c请拿着&a扳手&c输入此命令以获得该扳手可构建的机器图鉴！")
+                        sendTip()
                     }
                 }
 

@@ -170,8 +170,11 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
 
     companion object {
         @JvmStatic
-        fun createAir(item: ItemStack): SBlock = SBlock(Material.AIR).setItem(item)
+        val AIR = SBlock(Material.AIR)
         
+        
+        @JvmStatic
+        fun createAir(item: ItemStack): SBlock = SBlock(Material.AIR).setItem(item)
         
         fun Location.getSBlock(): SBlock = SBlock(this)
         

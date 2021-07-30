@@ -19,10 +19,6 @@ import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.metrics.BMetrics
-import io.izzel.taboolib.module.dependency.Dependencies
-import io.izzel.taboolib.module.dependency.Dependency
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.configuration.serialization.ConfigurationSerialization
@@ -32,9 +28,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 
 
-@Dependencies(Dependency(maven = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"))
 object SunSTCore : Plugin() {
-    val sunstScope by lazy { CoroutineScope(SupervisorJob()) }
     val pluginManager = Bukkit.getServer().pluginManager
     val logger = plugin.logger
     

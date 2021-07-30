@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.BoundingBox
 import java.io.File
 import java.util.*
+import kotlin.math.min
 import kotlin.random.Random
 
 
@@ -508,7 +509,7 @@ fun <T> Inventory.actionList(page: Int, start: Int, end: Int, width: Int, list: 
     val resList = arrayListOf<T>()
 
     for(ptr in start..end step 9) {
-        for(i in ptr until ptr + width) {
+        for(i in ptr until min(ptr + width, end)) {
             if(j in list.indices)
                 action(list[j], page, i)
             else return resList
@@ -963,6 +964,10 @@ fun <E> LinkedList<E>.copy(): LinkedList<E> {
     list.addAll(this)
     return list
 }
+
+fun List<ItemStack>.firstOrAir(): ItemStack = firstOrNull() ?: SItem(Material.AIR)
+
+fun List<ItemStack>.cloneFirstOrAir(): ItemStack = firstOrNull()?.clone() ?: SItem(Material.AIR)
 
 //endregion
 

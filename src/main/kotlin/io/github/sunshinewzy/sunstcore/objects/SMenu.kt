@@ -39,10 +39,11 @@ class SMenu(
     private val items = HashMap<Int, ItemStack>()                       // 普通物品，点击后不会触发事件
     private val buttonOnClick = HashMap<Int, InventoryClickEvent.() -> Unit>()
     private var action: Inventory.() -> Unit = {}
+    private var clickAction: InventoryClickEvent.() -> Unit = {}
     private var closeAction: InventoryCloseEvent.() -> Unit = {}
     
-    private val pages = HashMap<Int, SPage>()
-    private val allTurnPageButtons = HashMap<Int, Pair<STurnPageType, ItemStack>>()
+    private val pages: HashMap<Int, SPage> by lazy { hashMapOf() }
+    private val allTurnPageButtons: HashMap<Int, Pair<STurnPageType, ItemStack>> by lazy { hashMapOf() }
     
     var holder: SInventoryHolder<*> = SProtectInventoryHolder(id)
     var openItem: ItemStack? = null
@@ -96,6 +97,12 @@ class SMenu(
                 buttons[slot]?.let {
                     buttonOnClick[slot]?.invoke(this)
                     SunSTCore.pluginManager.callEvent(SMenuClickEvent(this@SMenu, id, title, view.asPlayer(), slot, it.first, it.second))
+                }
+                
+                try {
+                    clickAction(this)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
@@ -151,6 +158,17 @@ class SMenu(
         return this
     }
     
+    fun setButtonWithInv(slot: Int, item: ItemStack, name: String, inventory: Inventory, onClick: InventoryClickEvent.() -> Unit): SMenu {
+        setButton(slot, item, name, onClick)
+        inventory.setItem(slot, item)
+        return this
+    }
+    
+    fun setButtonWithInv(x: Int, y: Int, item: ItemStack, name: String, inventory: Inventory, onClick: InventoryClickEvent.() -> Unit): SMenu {
+        setButtonWithInv(x orderWith y, item, name, inventory, onClick)
+        return this
+    }
+    
     
     fun setItem(slot: Int, item: ItemStack): SMenu {
         items[slot] = item
@@ -164,6 +182,11 @@ class SMenu(
     
     fun setAction(action: Inventory.() -> Unit): SMenu {
         this.action = action
+        return this
+    }
+
+    fun setClickAction(action: InventoryClickEvent.() -> Unit): SMenu {
+        this.clickAction = action
         return this
     }
 
@@ -239,8 +262,18 @@ class SMenu(
         maxPage = page
     }
 
+    /**
+     * @param action First Int is page, second Int is order.
+     */
     fun <T> setMultiPageAction(startPage: Int, startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit) {
         setMultiPageAction(startPage, startX orderWith startY, endX orderWith endY, width, list, action)
+    }
+
+    /**
+     * @param action First Int is page, second Int is order.
+     */
+    fun <T> setMultiPageAction(startPage: Int, startX: Int, startY: Int, height: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit) {
+        setMultiPageAction(startPage, startX orderWith startY, startX orderWith (startY + height), width, list, action)
     }
     
     
@@ -248,16 +281,20 @@ class SMenu(
         val holder = holder.clone()
         holder.page = page
         val inv = Bukkit.createInventory(holder, size * 9, title)
-        
-        buttons.forEach { (slot, pair) ->
-            inv.setItem(slot, pair.second)
+
+        try {
+            action(inv)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         
         items.forEach { (slot, item) ->
             inv.setItem(slot, item)
         }
         
-        action(inv)
+        buttons.forEach { (slot, pair) ->
+            inv.setItem(slot, pair.second)
+        }
         
         return inv
     }
@@ -267,12 +304,24 @@ class SMenu(
         SunSTCore.pluginManager.callEvent(SMenuOpenEvent(this, id, title, player))
     }
     
+    fun openInventory(player: Player, actionHolder: SInventoryHolder<*>.() -> Unit) {
+        val inv = getInventory()
+        val holder = inv.holder
+        
+        if(holder is SInventoryHolder<*>) {
+            holder.actionHolder()
+        }
+        
+        player.openInventory(inv)
+        SunSTCore.pluginManager.callEvent(SMenuOpenEvent(this, id, title, player))
+    }
+    
     fun openInventoryWithSound(player: Player, sound: Sound, volume: Float = 1f, pitch: Float = 1f) {
         openInventory(player)
         player.playSound(player.location, sound, volume, pitch)
     }
 
-    fun openInventoryByPage(player: Player, page: Int) {
+    fun openInventoryByPage(player: Player, page: Int = 1) {
         val inv = getInventory(page)
         
         allTurnPageButtons.forEach { (order, pair) -> 
@@ -285,6 +334,12 @@ class SMenu(
         }
 
         pages[page]?.let { sPage ->
+            try {
+                sPage.action(inv)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            
             sPage.turnPageButtons.let { map ->
                 map.forEach { (order, pair) ->
                     when(pair.first) {
@@ -303,8 +358,6 @@ class SMenu(
             sPage.buttons.forEach { (order, triple) -> 
                 inv.setItem(order, triple.second)
             }
-            
-            sPage.action(inv)
         }
         
         player.openInventory(inv)

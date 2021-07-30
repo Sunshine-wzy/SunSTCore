@@ -6,21 +6,21 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
+import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.sunstcore.objects.SMenu
-import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
-import io.github.sunshinewzy.sunstcore.utils.getSMetadata
-import io.github.sunshinewzy.sunstcore.utils.sendMsg
-import io.github.sunshinewzy.sunstcore.utils.subtractClone
+import io.github.sunshinewzy.sunstcore.objects.item.TaskGuideItem
+import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
+import kotlin.reflect.KClass
 
 /**
  * 多方块机器
@@ -36,6 +36,7 @@ abstract class SMachine(
 ) : Initable {
     val sMachines = HashMap<SLocation, SMachineInformation>()
     val recipes = HashMap<String, SMachineRecipes>()
+    var defaultRecipes: Pair<KClass<out SMachineRecipe>, KClass<out SMachineRecipe>> = SMachineRecipe.BlockBreak::class to SMachineRecipe.ItemAddGround::class
     val displayItem = structure.centerBlock.toItem().setNameAndLore("§e$name", "§7----------", "§fID: §a$id", "§7----------")
     var isCancelInteract = true
     
@@ -51,16 +52,19 @@ abstract class SMachine(
         editMenu.apply { 
             createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
             setItem(3, 3, displayItem)
+
+            setButton(5, 5, TaskGuideItem.HOME.item, "HOME") {
+                wrench.openIllustratedBook(view.asPlayer())
+            }
         }
         
         editRecipeMenu.apply { 
             createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
             setDefaultTurnPageButton()
             
-            setItem(1, 2, SItem(Material.BROWN_STAINED_GLASS_PANE, "§a配方ID: "))
-            setItem(1, 3, SItem(Material.RED_STAINED_GLASS_PANE, "§a输入: "))
-            setItem(1, 4, SItem(Material.GREEN_STAINED_GLASS_PANE, "§a输出: "))
-            setItem(1, 5, SItem(Material.YELLOW_STAINED_GLASS_PANE, "§a概率: "))
+            setButton(5, 6, TaskGuideItem.HOME.item, "HOME") {
+                edit(view.asPlayer())
+            }
         }
     }
 
@@ -90,9 +94,16 @@ abstract class SMachine(
     /**
      * 当编辑机器配方时触发
      */
-    open fun editRecipe(player: Player) {
-        player.sendMsg("&c该机器的配方不能编辑！")
-        player.closeInventory()
+    fun editRecipe(player: Player) {
+        editRecipeMenu.setMultiPageAction(1, 2, 2, 4, 7, recipes.toList()) { page, order ->
+            val displayItem = second.getDisplayItem()
+            displayItem.setNameAndLore("§f$first", "§7>> 配方类型", "§b输入: ${second.input.name}", "§e输出: ${second.output.name}")
+            editRecipeMenu.setPageButton(page, order, displayItem, first) {
+                second.openEditMenu(player, this@SMachine)
+            }
+        }
+        
+        editRecipeMenu.openInventoryByPage(player)
     }
     
 
@@ -165,7 +176,14 @@ abstract class SMachine(
             }
         }
     }
-    
+
+    /**
+     * 添加配方
+     */
+    fun addRecipe(id: String, input: SMachineRecipe, output: SMachineRecipe, percent: Int = 100) {
+        recipes[id] = SMachineRecipes(id, input, output, percent)
+    }
+
     override fun init() {
         
     }

@@ -28,13 +28,13 @@ class SMachineWrench(
     val plugin: JavaPlugin,
     item: ItemStack,
     name: String,
-    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§r$name §a机器图鉴"),
+    val illustratedBook: SItem = SItem(Material.ENCHANTED_BOOK, "§r$name §r机器图鉴"),
     val edgeItem: ItemStack = SItem(Material.WHITE_STAINED_GLASS_PANE),
     val openSound: Sound = Sound.ENTITY_HORSE_ARMOR,
     val volume: Float = 1f,
     val pitch: Float = 1.2f
 ) : SItem(item), Initable {
-    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§r$name §a机器图鉴"
+    val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§r$name §r机器图鉴"
     
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
     private val holder = SPartProtectInventoryHolder(arrayListOf(), 0)
@@ -111,7 +111,7 @@ class SMachineWrench(
         }
 
         
-        menu.setMultiPageAction(1, 2, 2, 2, 5, 7, sMachines) { page, order ->
+        menu.setMultiPageAction(1, 2, 2, 4, 7, sMachines) { page, order ->
             menu.setPageButton(page, order, displayItem, id) {
                 val player = getPlayer()
                 if(player.isOp) {
