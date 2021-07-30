@@ -31,6 +31,8 @@ data class SMachineInformation(
             map["level"]?.let { 
                 if(it is Short)
                     information.level = it
+                else if(it is Int)
+                    information.level = it.toShort()
             }
 
             map["data"]?.castMap(information.data)

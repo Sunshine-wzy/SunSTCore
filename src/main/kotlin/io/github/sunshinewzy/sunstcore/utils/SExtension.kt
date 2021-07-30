@@ -441,7 +441,7 @@ fun PlayerInventory.removeOffHandItem(item: ItemStack, amount: Int = 1): Boolean
 }
 
 
-fun Inventory.isFull(): Boolean = firstEmpty() > size
+fun Inventory.isFull(): Boolean = firstEmpty() == -1 || firstEmpty() > size
 
 fun Inventory.setItem(order: Int, item: Itemable) {
     setItem(order, item.getSItem())
