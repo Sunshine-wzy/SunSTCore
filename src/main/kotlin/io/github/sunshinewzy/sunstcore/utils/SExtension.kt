@@ -16,6 +16,7 @@ import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.BlockFace.*
+import org.bukkit.block.Chest
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
@@ -640,6 +641,14 @@ fun BlockFace.transform(excludeFace: BlockFace): MutableList<BlockFace> {
     list.remove(excludeFace)
     list.remove(excludeFace.oppositeFace)
     return list
+}
+
+fun Block.getChest(): Chest? {
+    if(type == Material.CHEST) {
+        val state = state
+        if(state is Chest) return state
+    }
+    return null
 }
 
 //endregion

@@ -183,14 +183,17 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
 
-        fun ItemStack.isItemSimilar(
+        @JvmStatic
+        fun ItemStack?.isItemSimilar(
             item: ItemStack,
             checkLore: Boolean = true,
             checkAmount: Boolean = true,
             checkDurability: Boolean = false,
             ignoreLastTwoLine: Boolean = false
         ): Boolean {
-            return if (type != item.type) {
+            return if(this == null) {
+                false
+            } else if (type != item.type) {
                 false
             } else if (checkAmount && amount < item.amount) {
                 false
@@ -208,13 +211,21 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             } else !item.hasItemMeta()
         }
         
-        fun ItemStack.isItemSimilar(
+        @JvmStatic
+        fun ItemStack?.isItemSimilar(
             item: Itemable,
             checkLore: Boolean = true,
             checkAmount: Boolean = true,
             checkDurability: Boolean = false,
             ignoreLastTwoLine: Boolean = false
         ): Boolean = isItemSimilar(item.getSItem(), checkLore, checkAmount, checkDurability, ignoreLastTwoLine)
+        
+        @JvmStatic
+        fun ItemStack?.isItemSimilar(item: ItemStack): Boolean = isItemSimilar(item, true)
+        
+        @JvmStatic
+        fun ItemStack?.isItemSimilar(item: ItemStack, checkLore: Boolean): Boolean = isItemSimilar(item, checkLore, true)
+        
         
         fun ItemStack.addRecipe(plugin: JavaPlugin, recipe: Recipe): ItemStack {
             plugin.server.addRecipe(recipe)

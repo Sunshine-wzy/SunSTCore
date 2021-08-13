@@ -22,7 +22,7 @@ data class SMachineInformation(
         @JvmStatic
         fun deserialize(map: Map<String, Any>): SMachineInformation {
             val information = SMachineInformation()
-
+            
             map["owner"]?.let {
                 if(it is String)
                     information.owner = it
