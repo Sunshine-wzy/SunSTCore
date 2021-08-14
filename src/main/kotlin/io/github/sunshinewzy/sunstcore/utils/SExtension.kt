@@ -996,6 +996,17 @@ fun <E> Array<out E>.toArrayList(): ArrayList<E> {
 
 //endregion
 
+//region Map
+
+fun <K, T> MutableMap<K, ArrayList<T>>.putElement(key: K, element: T) {
+    val value = this[key]
+    if(value != null) {
+        value += element
+    } else this[key] = arrayListOf(element)
+}
+
+//endregion
+
 //region Event
 
 fun InventoryClickEvent.getPlayer(): Player = view.player as Player

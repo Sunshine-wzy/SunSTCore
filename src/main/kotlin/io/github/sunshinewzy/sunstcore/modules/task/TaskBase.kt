@@ -26,6 +26,7 @@ abstract class TaskBase(
 ): ConfigurationSerializable, TaskInventory {
     protected val holder = TaskInventoryHolder(this)
     
+    private val title = taskStage.taskProject.title
     private val slotItems = HashMap<Int, ItemStack>()
     private var submitItemOrder = -1
     private var backItemOrder = -1
@@ -143,12 +144,12 @@ abstract class TaskBase(
 
     open fun againSubmitTask(player: Player) {
         player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, 1f, 0.8f)
-        player.sendMsg("&c您已完成过任务 &f[&a$taskName&f]&c 了，不能重复提交！")
+        player.sendMsg(title, "&c您已完成过任务 &f[&a$taskName&f]&c 了，不能重复提交！")
     }
     
     open fun requireNotEnough(player: Player) {
         player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, 1f, 1.2f)
-        player.sendMsg("&c您的背包中没有所需物品！")
+        player.sendMsg(title, "&c您的背包中没有所需物品！")
     }
     
     open fun completeTask(player: Player, isSilent: Boolean = false) {
