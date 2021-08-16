@@ -8,28 +8,31 @@ class BlockOperator(val block: Block) {
     constructor(loc: Location) : this(loc.block)
     
     
-    fun x(offset: Int, operator: BlockOperator.() -> Unit) {
+    inline fun x(offset: Int, operator: BlockOperator.() -> Unit) {
         val loc = block.location
         loc.x += offset
         operator(BlockOperator(loc))
     }
-    
-    fun y(offset: Int, operator: BlockOperator.() -> Unit) {
+
+    inline fun y(offset: Int, operator: BlockOperator.() -> Unit) {
         val loc = block.location
         loc.y += offset
         operator(BlockOperator(loc))
     }
-    
-    fun z(offset: Int, operator: BlockOperator.() -> Unit) {
+
+    inline fun z(offset: Int, operator: BlockOperator.() -> Unit) {
         val loc = block.location
         loc.z += offset
         operator(BlockOperator(loc))
     }
-    
+
     fun block(operator: Block.() -> Unit) {
         operator(block)
     }
-    
+
+    /**
+     * 空间四周六个面
+     */
     fun surroundings(operation: Block.() -> Boolean): Boolean {
         var flag = false
         
@@ -68,6 +71,8 @@ class BlockOperator(val block: Block) {
 
     /**
      * 水平面四周
+     * 
+     * @param around 是否包含四个角
      */
     fun horizontal(around: Boolean = false, operation: Block.() -> Boolean) {
         var flag = false
@@ -79,7 +84,7 @@ class BlockOperator(val block: Block) {
                 z(1) {
                     flag = operation(block)
                 }
-
+                if(flag) return
                 z(-1) {
                     flag = operation(block)
                 }
@@ -94,7 +99,7 @@ class BlockOperator(val block: Block) {
                 z(1) {
                     flag = operation(block)
                 }
-
+                if(flag) return
                 z(-1) {
                     flag = operation(block)
                 }

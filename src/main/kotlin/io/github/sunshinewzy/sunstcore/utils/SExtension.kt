@@ -17,6 +17,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.BlockFace.*
 import org.bukkit.block.Chest
+import org.bukkit.block.Hopper
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
@@ -170,6 +171,19 @@ fun Player.giveItem(items: List<ItemStack>) {
 
 fun Player.giveItem(item: Itemable, amount: Int = 0) {
     giveItem(item.getSItem(), amount)
+}
+
+fun Player.giveItemInMainHand(item: ItemStack) {
+    if(inventory.itemInMainHand.type == Material.AIR) {
+        inventory.setItemInMainHand(item)
+        return
+    }
+    
+    giveItem(item)
+}
+
+fun Player.giveItemInMainHand(item: Itemable) {
+    giveItemInMainHand(item.getSItem())
 }
 
 /**
@@ -647,6 +661,14 @@ fun Block.getChest(): Chest? {
     if(type == Material.CHEST) {
         val state = state
         if(state is Chest) return state
+    }
+    return null
+}
+
+fun Block.getHopper(): Hopper? {
+    if(type == Material.HOPPER) {
+        val state = state
+        if(state is Hopper) return state
     }
     return null
 }
