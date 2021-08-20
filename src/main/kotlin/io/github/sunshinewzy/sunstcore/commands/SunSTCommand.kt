@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.commands
 
-import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
+import io.github.sunshinewzy.sunstcore.SunSTCore.Companion.colorName
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench

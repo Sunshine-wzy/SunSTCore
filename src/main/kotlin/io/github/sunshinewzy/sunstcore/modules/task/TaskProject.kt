@@ -13,7 +13,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -46,12 +45,12 @@ class TaskProject(
             DataManager.firstJoinGiveOpenItems[id] = openItem
 
         
-        subscribeEvent<PlayerInteractEvent>(EventPriority.LOWEST) {
+        subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
             val item = item ?: return@subscribeEvent
 
             if(hand == EquipmentSlot.HAND){
                 when(action) {
-                    Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
+                    Action.LEFT_CLICK_BLOCK -> {
                         if(item.isItemSimilar(openItem)){
                             isCancelled = true
 

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.utils
 
-import io.izzel.taboolib.kotlin.SingleListener
+import io.github.sunshinewzy.sunstcore.objects.SingleListener
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 

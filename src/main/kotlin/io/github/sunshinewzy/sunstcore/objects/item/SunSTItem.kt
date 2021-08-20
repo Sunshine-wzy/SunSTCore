@@ -41,7 +41,7 @@ enum class SunSTItem(val item: ItemStack) : Itemable {
         item.addRecipe(
             SunSTCore.plugin,
             SShapedRecipe(
-                NamespacedKey(SunSTCore.getPlugin(), key),
+                NamespacedKey(SunSTCore.plugin, key),
                 item,
                 ingredient,
                 line1, line2, line3

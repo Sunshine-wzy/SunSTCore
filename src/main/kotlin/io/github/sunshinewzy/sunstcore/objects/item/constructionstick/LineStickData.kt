@@ -8,7 +8,7 @@ import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 
 object LineStickData : SAutoSaveData(
-    SunSTCore.getPlugin(),
+    SunSTCore.plugin,
     "LineStick",
     "ConstructionStick"
 ) {

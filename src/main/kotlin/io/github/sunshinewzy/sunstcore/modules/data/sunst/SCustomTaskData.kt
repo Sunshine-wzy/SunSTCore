@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 /**
  * 自定义任务数据保存
  */
-class SCustomTaskData(val taskProject: TaskProject) : SAutoSaveData(SunSTCore.getPlugin(), taskProject.id, "TaskData") {
+class SCustomTaskData(val taskProject: TaskProject) : SAutoSaveData(SunSTCore.plugin, taskProject.id, "TaskData") {
 
     override fun YamlConfiguration.createConfig() {
         
