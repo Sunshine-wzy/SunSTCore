@@ -143,18 +143,15 @@ fun Player.openInvWithSound(inv: Inventory, openSound: Sound, volume: Float, pit
  * 否则以掉落物的形式生成到玩家附近
  */
 fun Player.giveItem(item: ItemStack, amount: Int = 0) {
-    if(amount > 0){
-        if(amount < 64){
+    if(amount > 0) {
+        if(amount < 64) {
             item.amount = amount
         } else item.amount = 64
     }
     
-    if(inventory.isFull()){
+    if(inventory.isFull()) {
         world.dropItem(location, item)
-    }
-    else {
-        inventory.addItem(item)
-    }
+    } else inventory.addItem(item)
 }
 
 fun Player.giveItem(items: Array<ItemStack>) {

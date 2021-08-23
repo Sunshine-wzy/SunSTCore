@@ -2,10 +2,12 @@ package io.github.sunshinewzy.sunstcore.objects
 
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.utils.getInt
+import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
@@ -153,7 +155,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         fun ItemStack.setName(name: String): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type) 
             
-            meta?.setDisplayName(name)
+            meta?.setDisplayName(name.replace("&", "§"))
             itemMeta = meta
             return this
         }
@@ -165,7 +167,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
         fun ItemStack.setLore(lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore
+            meta?.lore = lore.map { it.replace("&", "§") }
             itemMeta = meta
             return this
         }
@@ -177,8 +179,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
         fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore
-            meta?.setDisplayName(name)
+            meta?.lore = lore.map { it.replace("&", "§") }
+            meta?.setDisplayName(name.replace("&", "§"))
             itemMeta = meta
             return this
         }
@@ -312,40 +314,46 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         
         fun ItemStack.getSMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
         
-        fun ItemStack.addUseCount(maxCnt: Int): Boolean {
+        fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
+            var itemGive: ItemStack? = null
+            if(amount > 1) {
+                itemGive = clone()
+                itemGive.amount--
+                amount = 1
+            }
+            var flag = false
+            
             val meta = getSMeta()
             val lore = meta.lore ?: ArrayList<String>()
             
-            if(lore.isNotEmpty() && lore.last().startsWith("§7||§a=")){
+            if(lore.isNotEmpty() && lore.last().startsWith("§7||§a=")) {
                 val last = lore.last()
                 var str = last.substringBefore('>')
                 val cnt = last.filter { it == '=' }.length
                 
-                if(cnt >= maxCnt){
+                if(cnt >= maxCnt) {
                     lore.removeAt(lore.lastIndex)
                     lore.removeAt(lore.lastIndex)
                     amount--
                     
-                    meta.lore = lore
-                    itemMeta = meta
-                    return true
-                }
-                else{
+                    flag = true
+                } else {
                     str += "=> §e"
                     val num = (100 / maxCnt) * (cnt + 1)
                     str += "$num%"
                 }
                 
                 lore[lore.lastIndex] = str
-            }
-            else {
+            } else {
                 lore.add("")
                 lore.add("§7||§a=> §e${100 / maxCnt}%")
             }
             
             meta.lore = lore
             itemMeta = meta
-            return false
+            itemGive?.let { player.giveItem(itemGive) }
+            
+            return flag
         }
         
         fun ItemStack.randomAmount(st: Int, ed: Int): ItemStack {

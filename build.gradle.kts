@@ -43,7 +43,7 @@ tasks {
         archiveClassifier.set("")
         destinationDirectory.set(file("build/core"))
         
-        relocate("org.bstats", "io.github.sunshinewzy.sunstcore.lib.bstats")
+        relocate("org.bstats", "io.github.sunshinewzy.sunstcore.libs.bstats")
         
         dependencies { 
             include(dependency("org.bstats:bstats-base:2.2.1"))

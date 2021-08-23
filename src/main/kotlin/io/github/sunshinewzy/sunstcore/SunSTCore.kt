@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore
 
 import io.github.sunshinewzy.sunstcore.commands.SunSTCommand
+import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
 import io.github.sunshinewzy.sunstcore.listeners.BlockListener
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
@@ -12,8 +13,6 @@ import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
-import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStick
-import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStick
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -30,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 
 
-class SunSTCore : JavaPlugin() {
+class SunSTCore : JavaPlugin(), SPlugin {
     companion object {
         lateinit var plugin: JavaPlugin
         val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
@@ -92,9 +91,6 @@ class SunSTCore : JavaPlugin() {
         ConfigurationSerialization.registerClass(SBlock::class.java)
         
         ConfigurationSerialization.registerClass(TaskProgress::class.java)
-        
-        ConfigurationSerialization.registerClass(LineStick::class.java)
-        ConfigurationSerialization.registerClass(RangeStick::class.java)
         
         ConfigurationSerialization.registerClass(SMachineInformation::class.java)
         ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)

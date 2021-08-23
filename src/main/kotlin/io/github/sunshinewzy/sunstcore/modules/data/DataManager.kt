@@ -5,8 +5,6 @@ import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SCustomTaskData
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
-import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.LineStickData
-import io.github.sunshinewzy.sunstcore.objects.item.constructionstick.RangeStickData
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.configuration.file.YamlConfiguration
@@ -28,10 +26,6 @@ object DataManager : Initable {
     
     
     override fun init() {
-//        loadFolderData("SPlayer"){
-//            file, fileName ->
-//            SunSTPlayerData(SunSTCore.getPlugin(), fileName, file).load()
-//        }
         
         subscribeEvent<PlayerJoinEvent> { 
             val uid = player.uniqueId.toString()
@@ -46,8 +40,6 @@ object DataManager : Initable {
             }
         }
 
-        LineStickData.init()
-        RangeStickData.init()
     }
     
     fun saveData() {

@@ -14,13 +14,17 @@ object SunSTSubscriber : Initable {
             val holder = inventory.holder ?: return@subscribeEvent
             
             when(holder) {
-                is SPartProtectInventoryHolder<*> -> {
-                    if(!holder.allowClickSlots.contains(slot))
-                        isCancelled = true
-                }
-
                 is SProtectInventoryHolder<*> -> {
                     isCancelled = true
+                }
+                
+                else -> {
+                    view.topInventory.holder?.let { topHolder ->
+                        if(topHolder is SPartProtectInventoryHolder<*>) {
+                            if(!topHolder.allowClickSlots.contains(slot))
+                                isCancelled = true
+                        }
+                    }
                 }
             }
             

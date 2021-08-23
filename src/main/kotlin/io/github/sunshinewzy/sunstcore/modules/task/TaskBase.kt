@@ -157,7 +157,7 @@ abstract class TaskBase(
         
         if(isSilent) return
         
-        player.giveItem(reward)
+        player.giveItem(reward.clone())
         player.world.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1f, 0.2f)
         player.sendTitle("§f[§e$taskName§f]", "§a任务完成", 10, 70, 20)
         player.closeInventory()

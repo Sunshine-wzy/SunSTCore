@@ -189,6 +189,8 @@ abstract class SMachine(
     }
 
     /**
+     * 临时数据存储
+     * 
      * 增加 [block] 的 Metadata 中的整型数据直至 [maxCnt]
      * 
      * 若增加前 Metadata 中的数据:
@@ -248,7 +250,7 @@ abstract class SMachine(
 
 
     /**
-     * 数据
+     * 持久化数据存储
      */
     fun setData(sLocation: SLocation, key: String, value: Any): Boolean {
         sMachines[sLocation]?.data?.let { information ->
