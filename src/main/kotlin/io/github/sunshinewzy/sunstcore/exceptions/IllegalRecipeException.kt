@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.sunstcore.exceptions
 
-open class MachineStructureException(structure: String, reason: String) : RuntimeException(
+class IllegalRecipeException(shape: String, reason: String) : RuntimeException(
     """
-        The machine structure:
+        The recipe:
         ----------------------
-        $structure
+        $shape
         ----------------------
         is illegal.
 

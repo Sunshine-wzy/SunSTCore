@@ -218,12 +218,9 @@ abstract class SMachineStructure(
     
 
     fun shapeStructure(structure: CoordSBlockMap, shape: String, ingredients: Map<Char, SBlock>) {
-        val layers = shape.split("\n\n")
-        
-        layers.forEachIndexed forEachY@{ y, layer ->
-            
-            val lines = layer.split("\n")
-            lines.forEachIndexed forEachZ@{ z, line ->
+        shape.split("\n\n").forEachIndexed forEachY@{ y, layer ->
+
+            layer.split("\n").forEachIndexed forEachZ@{ z, line ->
                 
                 line.forEachIndexed forEachX@{ x, char ->
                     if(char == ' ') return@forEachX

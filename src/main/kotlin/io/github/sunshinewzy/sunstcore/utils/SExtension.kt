@@ -581,6 +581,25 @@ fun Inventory.clearCraftSlotItem(baseX: Int = 0, baseY: Int = 1) {
         setCraftSlotItem(i, ItemStack(Material.AIR), baseX, baseY)
 }
 
+fun Inventory.getRectangleItems(x: Int, y: Int, width: Int, height: Int): Array<ItemStack> {
+    val items = Array(width * height) { ItemStack(Material.AIR) }
+    
+    var ptr = 0
+    for(j in y until (y + height)) {
+        for(i in x until (x + width)) {
+            getItem(i orderWith j)?.let { 
+                items[ptr] = it
+            }
+            ptr++
+        }
+    }
+    
+    return items
+}
+
+fun Inventory.getSquareItems(x: Int, y: Int, length: Int): Array<ItemStack> =
+    getRectangleItems(x, y, length, length)
+
 
 fun InventoryView.asPlayer(): Player = player as Player
 
@@ -1011,6 +1030,14 @@ fun <E> Array<out E>.toArrayList(): ArrayList<E> {
     val list = ArrayList<E>()
     list.addAll(this)
     return list
+}
+
+fun Array<ItemStack>.typeHash(): Int {
+    var hash = 1
+    forEach { 
+        hash = hash * 31 + it.type.hashCode()
+    }
+    return hash
 }
 
 //endregion
