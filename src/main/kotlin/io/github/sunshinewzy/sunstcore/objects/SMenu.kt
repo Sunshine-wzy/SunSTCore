@@ -60,7 +60,7 @@ class SMenu(
     init {
         subscribeEvent<InventoryClickEvent> { 
             val holder = inventory.holder ?: return@subscribeEvent
-            if(holder is SInventoryHolder<*> && holder == this@SMenu.holder) {
+            if(holder is SInventoryHolder<*> && this@SMenu.holder == holder) {
                 if(holder.page != 0) {
                     pages[holder.page]?.let { sPage ->
                         sPage.turnPageButtons[rawSlot]?.let {

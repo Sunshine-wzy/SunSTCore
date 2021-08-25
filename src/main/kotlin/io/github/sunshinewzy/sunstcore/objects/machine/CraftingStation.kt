@@ -4,8 +4,10 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.addShapelessRecipe
-import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder
-import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
+import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SCraftInventoryHolder
+import io.github.sunshinewzy.sunstcore.utils.getPlayer
+import io.github.sunshinewzy.sunstcore.utils.giveItem
+import io.github.sunshinewzy.sunstcore.utils.removeSquareItems
 import io.github.sunshinewzy.sunstcore.utils.setItem
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -27,13 +29,12 @@ object CraftingStation : SSingleMachine(
     
     init {
         menu.apply { 
-            holder = SPartProtectInventoryHolder(
+            holder = SCraftInventoryHolder(
                 arrayListOf(
                     2 orderWith 2, 3 orderWith 2, 4 orderWith 2,
                     2 orderWith 3, 3 orderWith 3, 4 orderWith 3,
-                    2 orderWith 4, 3 orderWith 4, 4 orderWith 4,
-                    8 orderWith 3
-                ), id
+                    2 orderWith 4, 3 orderWith 4, 4 orderWith 4
+                ), 8 orderWith 3, id
             )
             
             for(x in 1..9) {
@@ -60,15 +61,29 @@ object CraftingStation : SSingleMachine(
             
             setClickAction { 
                 if(rawSlot == 8 orderWith 3) {
-                    val currentItem = currentItem
-                    if(currentItem == null || currentItem.type == Material.AIR) {
-                        isCancelled = true
-                    } else {
-                        
+                    isCancelled = true
+                    
+                    val currentItem = currentItem ?: return@setClickAction
+                    if(currentItem.type != Material.AIR) {
+                        val holder = inventory.holder ?: return@setClickAction
+                        if(holder is SCraftInventoryHolder<*>) {
+                            holder.recipe?.let { recipe ->
+                                if(view.topInventory.removeSquareItems(recipe.input, 2, 2, 3)) {
+                                    val player = getPlayer()
+                                    player.giveItem(recipe.output.clone())
+                                    player.playSound(player.location, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1.2f)
+                                    
+                                    scheduler.runTaskLater(SunSTCore.plugin, Runnable {
+                                        player.updateInventory()
+                                    }, 1)
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+        
     }
     
     override fun onClick(sLocation: SLocation, event: PlayerInteractEvent) {
@@ -80,16 +95,18 @@ object CraftingStation : SSingleMachine(
             val inv = player.openInventory.topInventory
             val holder = inv.holder
             
-            if(holder != null && holder is SInventoryHolder<*> && holder == menu.holder && inv.type == InventoryType.CHEST) {
+            if(holder != null && holder is SCraftInventoryHolder<*> && menu.holder == holder && inv.type == InventoryType.CHEST) {
                 val recipe = SCraftRecipe.matchRecipe(inv, 2, 2, 3) ?: kotlin.run { 
+                    holder.recipe = null
                     inv.setItem(8, 3, SItem(Material.AIR))
                     return@Consumer
                 }
                 
+                holder.recipe = recipe
                 inv.setItem(8, 3, recipe.output)
                 
             } else scheduler.cancelTask(it.taskId)
-        }, 1, 10)
+        }, 1, 5)
     }
     
 }

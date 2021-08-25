@@ -50,13 +50,12 @@ sealed class SCraftRecipe(
     fun match(items: Array<ItemStack>, checkLore: Boolean = true, checkAmount: Boolean = true, checkDurability: Boolean = false): Boolean {
         if(items.size != input.size) return false
         
-        var flag = true
         for(i in input.indices) {
             if(!items[i].isItemSimilar(input[i], checkLore, checkAmount, checkDurability))
-                flag = false
+                return false
         }
         
-        return flag
+        return true
     }
     
     fun match(items: Array<ItemStack>): Boolean = match(items, true)

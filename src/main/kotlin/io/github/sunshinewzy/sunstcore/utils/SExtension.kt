@@ -53,7 +53,7 @@ inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>
     val result = HashMap<K, V>()
     if (this is Map<*, *>) {
         for ((key, value) in this) {
-            if(key is K && value is V){
+            if(key != null && value != null && key is K && value is V){
                 result[kClazz.cast(key)] = vClazz.cast(value)
             }
         }
@@ -65,7 +65,7 @@ inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>
 inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>, targetMap: MutableMap<K, V>): Boolean {
     if (this is Map<*, *>) {
         for ((key, value) in this) {
-            if(key is K && value is V)
+            if(key != null && value != null && key is K && value is V)
                 targetMap[kClazz.cast(key)] = vClazz.cast(value)
         }
         return true
@@ -84,7 +84,7 @@ fun Any.castMapBoolean(): HashMap<String, Boolean> {
     
     if(this is Map<*, *>){
         forEach { key, value -> 
-            if(key is String && value is Boolean){
+            if(key != null && value != null && key is String && value is Boolean){
                 map[key] = value
             }
         }
@@ -599,6 +599,24 @@ fun Inventory.getRectangleItems(x: Int, y: Int, width: Int, height: Int): Array<
 
 fun Inventory.getSquareItems(x: Int, y: Int, length: Int): Array<ItemStack> =
     getRectangleItems(x, y, length, length)
+
+fun Inventory.removeRectangleItems(items: Array<ItemStack>, x: Int, y: Int, width: Int, height: Int): Boolean {
+    val target = getRectangleItems(x, y, width, height)
+    if(target.size != items.size) return false
+    
+    for(i in items.indices) {
+        if(!target[i].isItemSimilar(items[i]))
+            return false
+    }
+    
+    for(i in items.indices) {
+        target[i].amount -= items[i].amount
+    }
+    return true
+}
+
+fun Inventory.removeSquareItems(items: Array<ItemStack>, x: Int, y: Int, length: Int): Boolean =
+    removeRectangleItems(items, x, y, length, length)
 
 
 fun InventoryView.asPlayer(): Player = player as Player

@@ -77,6 +77,20 @@ object SunSTCommand : Initable {
                     sender.sendMsg(colorName, "&a配置文件重载成功！")
                 }
             }
+        
+            .addCommand("group", "组", isOp = true) {
+                
+                
+                empty {  
+                    sender.sendMsg("")
+                }
+            }
+            
+            .addCommand("item", "物品编辑", isOp = true) {
+                empty { 
+                    
+                }
+            }
             
     }
     

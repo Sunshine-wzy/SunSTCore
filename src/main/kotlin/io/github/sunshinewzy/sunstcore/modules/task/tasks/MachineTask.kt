@@ -36,7 +36,7 @@ class MachineTask(
 ) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore), MultiPageable {
     private val size = sMachine.structure.size
     private val upgradeStructure = sMachine.structure.getUpgradeOrFail(level)
-    private val greenGlassPane = Material.GREEN_STAINED_GLASS_PANE
+    private val greenGlassPane = Material.LIME_STAINED_GLASS_PANE
     
     
     init {

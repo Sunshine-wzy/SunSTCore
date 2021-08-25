@@ -1,12 +1,17 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
+import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SCraftInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
+import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
+import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 
 object SunSTSubscriber : Initable {
@@ -29,6 +34,13 @@ object SunSTSubscriber : Initable {
                     }
                     
                     clickedInventory?.holder?.let { topHolder ->
+                        if(topHolder is SCraftInventoryHolder<*>) {
+                            if(slot == topHolder.outputSlot) {
+                                isCancelled = false
+                                return@subscribeEvent
+                            }
+                        }
+                        
                         if(topHolder is SPartProtectInventoryHolder<*>) {
                             if(topHolder.allowClickSlots.contains(slot))
                                 isCancelled = false
@@ -55,11 +67,27 @@ object SunSTSubscriber : Initable {
 
                 is SPartProtectInventoryHolder<*> -> {
                     rawSlots.forEach {
-                        if(!holder.allowClickSlots.contains(it))
+                        if(!holder.allowClickSlots.contains(it)) {
                             isCancelled = true
+                            return@subscribeEvent
+                        }
                     }
+                }
+            }
+        }
 
-                    return@subscribeEvent
+        subscribeEvent<InventoryCloseEvent> {
+            val inv = view.topInventory
+            val holder = inv.holder ?: return@subscribeEvent
+
+            if(holder is SCraftInventoryHolder<*>) {
+                val player = player as? Player ?: return@subscribeEvent
+
+                holder.allowClickSlots.forEach { order ->
+                    inv.getItem(order)?.let {
+                        if(it.type != Material.AIR)
+                            player.giveItem(it)
+                    }
                 }
             }
         }
