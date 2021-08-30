@@ -6,6 +6,7 @@ import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
+import io.github.sunshinewzy.sunstcore.objects.sunst.SunSTMenu
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import org.bukkit.Material
@@ -82,13 +83,14 @@ object SunSTCommand : Initable {
                 
                 
                 empty {  
-                    sender.sendMsg("")
+                    
                 }
             }
             
-            .addCommand("item", "物品编辑", isOp = true) {
+            .addCommand("item", "手持物品编辑", isOp = true) {
                 empty { 
-                    
+                    val player = getPlayer() ?: return@empty
+                    SunSTMenu.itemEdit.openInventory(player)
                 }
             }
             
