@@ -341,9 +341,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                     str += "=> §e"
                     val num = (100 / maxCnt) * (cnt + 1)
                     str += "$num%"
+                    lore[lore.lastIndex] = str
                 }
-                
-                lore[lore.lastIndex] = str
             } else {
                 lore.add("")
                 lore.add("§7||§a=> §e${100 / maxCnt}%")
