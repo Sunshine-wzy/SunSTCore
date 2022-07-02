@@ -17,7 +17,7 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
     private var hasTypes: Boolean = false
     
     
-    constructor(map: Map<String, Any>) : this(map["type"] as? Material ?: Material.AIR, map["damage"] as? Short ?: -1, map["name"] as? String ?: "") {
+    constructor(map: Map<String, Any>) : this((map["type"] as? String)?.let { Material.valueOf(it) } ?: Material.AIR, map["damage"] as? Short ?: -1, map["name"] as? String ?: "") {
         map["item"]?.let { 
             if(it is ItemStack)
                 item = it

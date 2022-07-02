@@ -94,16 +94,14 @@ class SunSTCore : JavaPlugin(), SPlugin {
     }
     
     private fun registerSerialization() {
-        ConfigurationSerialization.registerClass(SBlock::class.java)
-        
-        ConfigurationSerialization.registerClass(TaskProgress::class.java)
-        
-        ConfigurationSerialization.registerClass(SMachineInformation::class.java)
-        ConfigurationSerialization.registerClass(SSingleMachineInformation::class.java)
-        ConfigurationSerialization.registerClass(SFlatMachineInformation::class.java)
-        
-        ConfigurationSerialization.registerClass(SMachineRecipe::class.java)
-        ConfigurationSerialization.registerClass(SMachineRecipes::class.java)
+        arrayOf(
+            SBlock::class.java,
+            TaskProgress::class.java,
+            SMachineInformation::class.java, SSingleMachineInformation::class.java, SFlatMachineInformation::class.java,
+            SMachineRecipe::class.java, SMachineRecipes::class.java
+        ).forEach { 
+            ConfigurationSerialization.registerClass(it)
+        }
     }
     
     
