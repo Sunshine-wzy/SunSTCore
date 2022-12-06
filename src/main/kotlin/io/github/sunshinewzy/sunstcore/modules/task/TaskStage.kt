@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-class TaskStage(
+class TaskStage @JvmOverloads constructor(
     val taskProject: TaskProject,
     val id: String,
     val stageName: String,

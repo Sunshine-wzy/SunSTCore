@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.sunshinewzy"
-version = "1.2.3"
+version = "1.2.4"
 
 repositories {
     maven {
@@ -44,6 +44,7 @@ tasks {
         destinationDirectory.set(file("build/core"))
         
         relocate("org.bstats", "io.github.sunshinewzy.sunstcore.libs.bstats")
+        relocate("kotlin", "kotlin1510")
         
         dependencies { 
             include(dependency("org.bstats:bstats-base:2.2.1"))

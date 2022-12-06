@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class SMachineWrench(
+class SMachineWrench @JvmOverloads constructor(
     val plugin: JavaPlugin,
     item: ItemStack,
     name: String,
@@ -59,43 +59,45 @@ class SMachineWrench(
 
         
         addAction({
-            val clickedBlock = clickedBlock
-            action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR
-        }) { 
-            val clickedBlock = clickedBlock ?: return@addAction
-            isCancelled = true
+            val clickedBlock = it.clickedBlock
+            it.action == Action.RIGHT_CLICK_BLOCK && it.hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR
+        }) { event ->
+            event.apply {
+                val clickedBlock = clickedBlock ?: return@addAction
+                isCancelled = true
 
-            val loc = clickedBlock.location
-            if(loc.hasSMachine()){
-                if(loc.judgeSMachineStructure(player, true)){
-                    player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
-                    player.sendMsg(prefix, msgAlreadyExist)
+                val loc = clickedBlock.location
+                if(loc.hasSMachine()){
+                    if(loc.judgeSMachineStructure(player, true)){
+                        player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
+                        player.sendMsg(prefix, msgAlreadyExist)
+                    }
+
+                    return@addAction
                 }
 
-                return@addAction
-            }
+                machines.forEach machines@{ (sBlock, listMachine) ->
+                    if(!sBlock.isSimilar(clickedBlock)) return@machines
 
-            machines.forEach machines@{ (sBlock, listMachine) ->
-                if(!sBlock.isSimilar(clickedBlock)) return@machines
+                    listMachine.forEach machine@{ sMachine ->
+                        if(sMachine.judgeStructure(loc, true)){
+                            sMachine.addMachine(loc, player)
 
-                listMachine.forEach machine@{ sMachine ->
-                    if(sMachine.judgeStructure(loc, true)){
-                        sMachine.addMachine(loc, player)
-
-                        loc.world?.playEffect(loc, Effect.ENDER_SIGNAL, 1)
-                        loc.world?.playEffect(loc, Effect.CLICK1, 1)
-                        player.sendMsg(sMachine.name, msgBuildSuccessful)
-                        return@addAction
+                            loc.world?.playEffect(loc, Effect.ENDER_SIGNAL, 1)
+                            loc.world?.playEffect(loc, Effect.CLICK1, 1)
+                            player.sendMsg(sMachine.name, msgBuildSuccessful)
+                            return@addAction
+                        }
                     }
                 }
-            }
 
-            player.playEffect(loc, Effect.STEP_SOUND, 1)
-            player.sendMsg(prefix, msgIncorrectStructure)
+                player.playEffect(loc, Effect.STEP_SOUND, 1)
+                player.sendMsg(prefix, msgIncorrectStructure)
+            }
         }
         
-        illustratedBook.addAction({ hand == EquipmentSlot.HAND }) {
-            openIllustratedBook(player)
+        illustratedBook.addAction({ it.hand == EquipmentSlot.HAND }) {
+            openIllustratedBook(it.player)
         }
     }
 

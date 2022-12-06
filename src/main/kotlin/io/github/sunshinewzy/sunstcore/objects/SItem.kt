@@ -14,6 +14,8 @@ import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.function.Consumer
+import java.util.function.Function
 import kotlin.random.Random
 
 open class SItem(item: ItemStack) : ItemStack(item) {
@@ -70,7 +72,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
      * 此函数已经帮您判断好了 [PlayerInteractEvent] 事件的物品(确保为你的 [SItem])
      * 无需重复判断
      */
-    fun addAction(filter: PlayerInteractEvent.() -> Boolean = { true }, block: PlayerInteractEvent.() -> Unit): SItem {
+    fun addAction(filter: Function<PlayerInteractEvent, Boolean>, block: Consumer<PlayerInteractEvent>): SItem {
         val actions = itemActions[this] ?: kotlin.run {
             itemActions[this] = filter to arrayListOf(block)
             return this
@@ -80,7 +82,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         return this
     }
     
-    fun addAction(block: PlayerInteractEvent.() -> Unit): SItem {
+    fun addAction(block: Consumer<PlayerInteractEvent>): SItem {
         addAction({ true }, block)
         return this
     }
@@ -103,12 +105,13 @@ open class SItem(item: ItemStack) : ItemStack(item) {
     }
 
     companion object {
-        private val itemActions = HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
+        private val itemActions = HashMap<SItem, Pair<Function<PlayerInteractEvent, Boolean>, ArrayList<Consumer<PlayerInteractEvent>>>>()
         private val protectedItems = ArrayList<ItemStack>()
         
         val items = HashMap<String, ItemStack>()
 
 
+        @JvmStatic
         fun createTaskSymbol(type: Material, vararg lore: String = arrayOf()): SItem {
             val loreList = arrayListOf("§a>点我查看任务<")
             if(lore.isNotEmpty())
@@ -116,7 +119,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
             return SItem(type,"", loreList)
         }
-        
+
+        @JvmStatic
         fun createTaskSymbolWithDamage(type: Material, damage: Short, vararg lore: String = arrayOf()): SItem {
             val loreList = arrayListOf("§a>点我查看任务<")
             if(lore.isNotEmpty())
@@ -124,7 +128,6 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
             return SItem(type, damage, 1, "", loreList)
         }
-        
         
         internal fun initAction() {
             subscribeEvent<PlayerInteractEvent> { 
@@ -138,20 +141,22 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                 }
                 
                 itemActions.forEach { (sItem, pair) -> 
-                    if(pair.first(this) && item.isItemSimilar(sItem)){
-                        pair.second.forEach { it(this) }
+                    if(pair.first.apply(this) && item.isItemSimilar(sItem)){
+                        pair.second.forEach { it.accept(this) }
                     }
                 }
             }
         }
-        
+
+        @JvmStatic
         fun ItemStack.protect(): ItemStack {
             val item = clone()
             item.amount = 1
             protectedItems += item
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.setName(name: String): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type) 
             
@@ -160,11 +165,13 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
 
+        @JvmStatic
         fun ItemStack.setLore(vararg lore: String): ItemStack {
             setLore(lore.toList())
             return this
         }
 
+        @JvmStatic
         fun ItemStack.setLore(lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
             meta?.lore = lore.map { it.replace("&", "§") }
@@ -172,11 +179,13 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
 
+        @JvmStatic
         fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack {
             setNameAndLore(name, lore.toList())
             return this
         }
 
+        @JvmStatic
         fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
             meta?.lore = lore.map { it.replace("&", "§") }
@@ -227,13 +236,15 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         
         @JvmStatic
         fun ItemStack?.isItemSimilar(item: ItemStack, checkLore: Boolean): Boolean = isItemSimilar(item, checkLore, true)
+
         
-        
+        @JvmStatic
         fun ItemStack.addRecipe(plugin: JavaPlugin, recipe: Recipe): ItemStack {
             plugin.server.addRecipe(recipe)
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.addRecipe(plugin: JavaPlugin, vararg recipes: Recipe): ItemStack {
             recipes.forEach { 
                 plugin.server.addRecipe(it)
@@ -241,7 +252,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.addShapedRecipe(
             plugin: JavaPlugin,
             key: String,
@@ -263,7 +275,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             )
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.addShapedRecipeByChoice(
             plugin: JavaPlugin,
             key: String,
@@ -278,7 +291,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.addShapelessRecipe(
             plugin: JavaPlugin,
             key: String,
@@ -295,7 +309,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             addRecipe(plugin, recipe)
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.addShapelessRecipe(
             plugin: JavaPlugin,
             key: String,
@@ -311,9 +326,11 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             )
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.getSMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
-        
+
+        @JvmStatic
         fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
             var itemGive: ItemStack? = null
             if(amount > 1) {
@@ -354,23 +371,28 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             
             return flag
         }
-        
+
+        @JvmStatic
         fun ItemStack.randomAmount(st: Int, ed: Int): ItemStack {
             amount = Random.getInt(st, ed)
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.randomAmount(ed: Int): ItemStack = randomAmount(1, ed)
 
+        @JvmStatic
         fun ItemStack.cloneRandomAmount(st: Int, ed: Int): ItemStack {
             val randItem = clone()
             randItem.amount = Random.getInt(st, ed)
             return randItem
         }
 
+        @JvmStatic
         fun ItemStack.cloneRandomAmount(ed: Int): ItemStack = randomAmount(1, ed)
-        
 
+
+        @JvmStatic
         fun ItemMeta.isMetaEqual(
             itemMeta: ItemMeta,
             checkLore: Boolean = true,
@@ -390,7 +412,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             } else !itemMeta.hasLore() && !hasLore()
         }
 
-        
+
+        @JvmStatic
         fun List<String>.isLoreEqual(
             lore: List<String>,
             ignoreLastTwoLine: Boolean = false
@@ -409,11 +432,13 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         }
 
 
+        @JvmStatic
         fun ItemStack.addToSunSTItem(keyName: String): ItemStack {
             items[keyName] = this
             return this
         }
-        
+
+        @JvmStatic
         fun ItemStack.removeOne() {
             amount--
         }

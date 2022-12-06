@@ -201,6 +201,7 @@ abstract class SMachine(
      * 
      * · >= [maxCnt] -> 设置为 [addCnt] 并返回 [SMachineStatus.FINISH]
      */
+    @JvmOverloads
     protected fun addMetaCnt(block: Block, maxCnt: Int, addCnt: Int = 1): SMachineStatus {
         val meta = block.getSMetadata(wrench.plugin, id)
         var cnt = meta.asInt()
@@ -224,10 +225,12 @@ abstract class SMachine(
         block.setMetadata(id, meta)
         return status
     }
-    
+
+    @JvmOverloads
     protected fun addMetaCnt(loc: Location, maxCnt: Int, addCnt: Int = 1): SMachineStatus =
         addMetaCnt(loc.block, maxCnt, addCnt)
-    
+
+    @JvmOverloads
     protected fun addMetaCnt(event: SMachineRunEvent, maxCnt: Int, addCnt: Int = 1): SMachineStatus =
         addMetaCnt(event.loc, maxCnt, addCnt)
 
@@ -281,6 +284,32 @@ abstract class SMachine(
     fun getDataOrFail(sLocation: SLocation, key: String): Any =
         getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SMachine($id) data of $key.")
 
+    
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getDataByType(sLocation: SLocation, key: String, type: Class<T>): T? {
+        sMachines[sLocation]?.data?.let { data ->
+            if(data.containsKey(key)) {
+                data[key]?.let {
+                    if(type.isInstance(it)) {
+                        return it as T
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getDataByTypeOrFail(sLocation: SLocation, key: String, type: Class<T>): T {
+        getDataOrFail(sLocation, key).let {
+            if(type.isInstance(it)) {
+                return it as T
+            }
+        }
+
+        throw IllegalArgumentException("Cannot cast data of $key to ${type.name}.")
+    }
+    
     inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
         sMachines[sLocation]?.data?.let { data ->
             if(data.containsKey(key)) {

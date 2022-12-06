@@ -16,9 +16,9 @@ import org.bukkit.inventory.ItemStack
 
 enum class SunSTItem(val item: ItemStack) : Itemable {
     TOOL_BLOCK_INFO(SItem(Material.WOODEN_SHOVEL, "§a方块信息查看器").addAction { 
-        val clickedBlock = clickedBlock ?: return@addAction
-        if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK){
-            player.sendMsg("§a方块信息查看器", "${clickedBlock.type}:${clickedBlock.state.data.toItemStack(1).durability}")
+        val clickedBlock = it.clickedBlock ?: return@addAction
+        if(it.hand == EquipmentSlot.HAND && it.action == Action.RIGHT_CLICK_BLOCK){
+            it.player.sendMsg("§a方块信息查看器", "${clickedBlock.type}:${clickedBlock.state.data.toItemStack(1).durability}")
         }
     })
     

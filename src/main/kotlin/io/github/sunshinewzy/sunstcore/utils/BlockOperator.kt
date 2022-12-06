@@ -2,28 +2,30 @@ package io.github.sunshinewzy.sunstcore.utils
 
 import org.bukkit.Location
 import org.bukkit.block.Block
+import java.util.function.Consumer
+import java.util.function.Function
 
 class BlockOperator(val block: Block) {
     
     constructor(loc: Location) : this(loc.block)
     
     
-    inline fun x(offset: Int, operator: BlockOperator.() -> Unit) {
+    fun x(offset: Int, operator: Consumer<BlockOperator>) {
         val loc = block.location
         loc.x += offset
-        operator(BlockOperator(loc))
+        operator.accept(BlockOperator(loc))
     }
 
-    inline fun y(offset: Int, operator: BlockOperator.() -> Unit) {
+    fun y(offset: Int, operator: Consumer<BlockOperator>) {
         val loc = block.location
         loc.y += offset
-        operator(BlockOperator(loc))
+        operator.accept(BlockOperator(loc))
     }
 
-    inline fun z(offset: Int, operator: BlockOperator.() -> Unit) {
+    fun z(offset: Int, operator: Consumer<BlockOperator>) {
         val loc = block.location
         loc.z += offset
-        operator(BlockOperator(loc))
+        operator.accept(BlockOperator(loc))
     }
 
     fun block(operator: Block.() -> Unit) {
@@ -33,36 +35,36 @@ class BlockOperator(val block: Block) {
     /**
      * 空间四周六个面
      */
-    fun surroundings(operation: Block.() -> Boolean): Boolean {
+    fun surroundings(operation: Function<Block, Boolean>): Boolean {
         var flag = false
         
         x(1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
         
         x(-1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
 
         y(1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
 
         y(-1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
 
         z(1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
 
         z(-1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return true
         
@@ -74,57 +76,60 @@ class BlockOperator(val block: Block) {
      * 
      * @param around 是否包含四个角
      */
-    fun horizontal(around: Boolean = false, operation: Block.() -> Boolean) {
+    @JvmOverloads
+    fun horizontal(around: Boolean = false, operation: Function<Block, Boolean>) {
         var flag = false
 
         x(1) {
-            flag = operation(block)
+            flag = operation.apply(block)
 
             if(around && !flag) {
                 z(1) {
-                    flag = operation(block)
+                    flag = operation.apply(block)
                 }
-                if(flag) return
+                if(flag) return@x
                 z(-1) {
-                    flag = operation(block)
+                    flag = operation.apply(block)
                 }
             }
         }
         if(flag) return
 
         x(-1) {
-            flag = operation(block)
+            flag = operation.apply(block)
 
             if(around && !flag) {
                 z(1) {
-                    flag = operation(block)
+                    flag = operation.apply(block)
                 }
-                if(flag) return
+                if(flag) return@x
                 z(-1) {
-                    flag = operation(block)
+                    flag = operation.apply(block)
                 }
             }
         }
         if(flag) return
 
         z(1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
         if(flag) return
 
         z(-1) {
-            flag = operation(block)
+            flag = operation.apply(block)
         }
     }
     
     
     companion object {
-        fun Block.operate(operator: BlockOperator.() -> Unit) {
-            operator(BlockOperator(this))
+        @JvmStatic
+        fun Block.operate(operator: Consumer<BlockOperator>) {
+            operator.accept(BlockOperator(this))
         }
         
-        fun Location.operate(operator: BlockOperator.() -> Unit) {
-            operator(BlockOperator(this))
+        @JvmStatic
+        fun Location.operate(operator: Consumer<BlockOperator>) {
+            operator.accept(BlockOperator(this))
         }
     }
     

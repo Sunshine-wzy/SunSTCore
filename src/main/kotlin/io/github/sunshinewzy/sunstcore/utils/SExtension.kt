@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.BoundingBox
 import java.io.File
 import java.util.*
+import java.util.function.Function
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -142,6 +143,7 @@ fun Player.openInvWithSound(inv: Inventory, openSound: Sound, volume: Float, pit
  * 如果未满则直接添加到玩家背包
  * 否则以掉落物的形式生成到玩家附近
  */
+@JvmOverloads
 fun Player.giveItem(item: ItemStack, amount: Int = 0) {
     if(amount > 0) {
         if(amount < 64) {
@@ -921,41 +923,43 @@ fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false): 
     return cnt
 }
 
-fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false, judge: Block.() -> Boolean): Int {
+fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false, judge: Function<Block, Boolean>): Int {
     val loc = clone()
     var cnt = 0
 
+    
+    
     loc.x = x + 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
     loc.x = x - 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
     loc.x = x
 
     loc.z = z + 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
     loc.z = z - 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
     loc.z = z
 
     if(includeCorners){
         loc.x = x + 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
         loc.z = z - 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
 
         loc.x = x - 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
         loc.z = z - 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if(it.type == type && judge.apply(it)) cnt++ }
 
         loc.x = x
         loc.z = z

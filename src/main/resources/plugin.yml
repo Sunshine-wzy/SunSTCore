@@ -6,8 +6,6 @@ description: A core lib made by SunShine Technology.
 
 api-version: 1.13
 
-softdepend: [SunSTKotlinLib]
-
 commands:
   SunST:
     aliases: [sun]

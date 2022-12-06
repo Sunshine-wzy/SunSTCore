@@ -27,6 +27,13 @@ object SEventSubscriber {
         }
         else list += eventBlock
     }
+
+    inline fun <reified E: Event> subscribeEvent(
+        priority: EventPriority = EventPriority.NORMAL,
+        ignoreCancelled: Boolean = true,
+        noinline block: E.() -> Unit
+    ) = subscribeEvent(E::class.java, priority, ignoreCancelled, block)
+    
     
     fun <E: Event> callSubscribeEvent(event: E, key: Triple<String, EventPriority, Boolean>) {
         val list = subscribers[key]

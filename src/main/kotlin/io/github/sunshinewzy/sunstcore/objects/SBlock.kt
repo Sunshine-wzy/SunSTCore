@@ -176,10 +176,13 @@ class SBlock(val type: Material, val damage: Short = -1, var name: String = "") 
         @JvmStatic
         fun createAir(item: ItemStack): SBlock = SBlock(Material.AIR).setItem(item)
         
+        @JvmStatic
         fun Location.getSBlock(): SBlock = SBlock(this)
-        
+
+        @JvmStatic
         fun Block.toSBlock(): SBlock = SBlock(this)
-        
+
+        @JvmStatic
         fun BlockState.toSBlock(): SBlock = SBlock(this)
 
     }

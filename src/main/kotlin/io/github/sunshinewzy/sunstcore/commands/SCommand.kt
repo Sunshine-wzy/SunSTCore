@@ -67,7 +67,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
             return true
         }
         
-        val first = args.first().toLowerCase()
+        val first = args.first().lowercase()
         
         if(first.startsWith("?")){
             first.substring(1).toIntOrNull()?.let {
@@ -83,7 +83,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
                 return false
             }
             
-            scWrapper.first(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
+            scWrapper.first.accept(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
             return true
         }
         
@@ -99,7 +99,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         if(!cmd.name.equals(name, true)) return null
         if(args.isEmpty()) return null
         
-        val first = args.first().toLowerCase()
+        val first = args.first().lowercase()
         val list = ArrayList<String>()
 
         if(args.size == 1) {
@@ -116,13 +116,14 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
             val scWrapper = commands[first] ?: return list
             if(scWrapper.second && !sender.isOp) return list
             
-            scWrapper.first(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first, true, list))
+            scWrapper.first.accept(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first, true, list))
         }
         
         return list
     }
 
     
+    @JvmOverloads
     fun addCommand(
         cmd: String,
         description: String = "",

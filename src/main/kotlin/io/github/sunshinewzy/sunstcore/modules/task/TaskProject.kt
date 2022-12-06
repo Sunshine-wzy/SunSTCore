@@ -21,7 +21,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class TaskProject(
+class TaskProject @JvmOverloads constructor(
     val id: String,
     val projectName: String,
     val openItem: ItemStack = SItem(Material.ENCHANTED_BOOK, "§e$projectName §a向导"),
@@ -125,6 +125,7 @@ class TaskProject(
         return player.getTaskProgress(id)
     }
 
+    @JvmOverloads
     fun completeAllTask(player: Player, isSilent: Boolean = true) {
         stageMap.values.forEach { 
             it.completeAllTask(player, isSilent)

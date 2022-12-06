@@ -7,8 +7,9 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.function.Consumer
 
-typealias SCWrapper = SCommandWrapper.() -> Unit
+typealias SCWrapper = Consumer<SCommandWrapper>
 
 class SCommandWrapper(
     val sender: CommandSender,
@@ -54,7 +55,7 @@ class SCommandWrapper(
         if(type != EMPTY) pre = list.removeFirst()
         
         val scWrapper = SCommandWrapper(sender, cmd, label, list, pre, isTabCompleter, complements)
-        wrapper(scWrapper)
+        wrapper.accept(scWrapper)
         return true
     }
     
