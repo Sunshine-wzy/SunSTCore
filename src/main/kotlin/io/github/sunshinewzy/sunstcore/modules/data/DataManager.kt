@@ -4,6 +4,7 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SCustomTaskData
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -26,12 +27,15 @@ object DataManager : Initable {
     
     
     override fun init() {
+        WorldConfig.init()
         
         subscribeEvent<PlayerJoinEvent> { 
-            val uid = player.uniqueId.toString()
+            if(!WorldConfig.isWorldEnabled(player.world)) return@subscribeEvent
             
+            val uid = player.uniqueId.toString()
             val data = player.getSunSTData()
             val isFirstJoinGive = data.isFirstJoinGive
+            
             firstJoinGiveOpenItems.forEach { (projectId, openItem) -> 
                 if(!isFirstJoinGive.containsKey(projectId) || isFirstJoinGive[projectId] != true){
                     player.giveItem(openItem)
@@ -39,7 +43,6 @@ object DataManager : Initable {
                 }
             }
         }
-
     }
     
     fun saveData() {

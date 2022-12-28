@@ -11,24 +11,14 @@ import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SBlock
-import io.github.sunshinewzy.sunstcore.objects.SCraftRecipe
-import io.github.sunshinewzy.sunstcore.objects.SHashMap
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
-import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
@@ -107,61 +97,6 @@ class SunSTCore : JavaPlugin(), SPlugin {
     
     @SunSTTestApi
     private fun test() {
-        
-        SCraftRecipe.addRecipe(SCraftRecipe.Size3(
-            SItem(Material.DIAMOND, "&d金刚石", "&7人工钻石"),
-            """
-                 c 
-                cxc
-                 c
-            """.trimIndent(),
-            mapOf('c' to SItem(Material.COAL_BLOCK), 'x' to SItem(Material.NETHER_STAR))
-        ))
-        
-        SCraftRecipe.addRecipe(SCraftRecipe.Size3(
-            SItem(Material.WOODEN_SWORD, "&6桃木剑"),
-            " w ",
-            " w ",
-            "wxw",
-            SHashMap<Char, ItemStack>()
-                .set('w', SItem(Material.OAK_LOG))
-                .set('x', SItem(Material.NETHER_STAR))
-        ))
-        
-        val iron = SItem(Material.IRON_INGOT, "&e陨铁")
-        
-        SCraftRecipe.addRecipe(SCraftRecipe.Size3(
-            iron,
-            """
-                iii
-                ixi
-                iii
-            """.trimIndent(),
-            mapOf('i' to SItem(Material.IRON_INGOT), 'x' to SItem(Material.NETHER_STAR))
-        ))
-        
-        SCraftRecipe.addRecipe(SCraftRecipe.Size3(
-            SItem(Material.IRON_SWORD, "&b陨铁剑"),
-            arrayOf(
-                SItem(Material.AIR), iron, SItem(Material.AIR),
-                SItem(Material.AIR), iron, SItem(Material.AIR),
-                iron, SItem(Material.NETHER_STAR), iron
-            )
-        ))
-        
-        subscribeEvent<PlayerInteractEvent> { 
-            if(hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
-                
-            }
-        }
-        
-        subscribeEvent<PlayerJoinEvent> { 
-            Bukkit.getScheduler().runTaskLater(plugin, Runnable {
-                if(player.isOp) {
-                    player.gameMode = GameMode.CREATIVE
-                }
-            }, 20)
-        }
         
     }
     

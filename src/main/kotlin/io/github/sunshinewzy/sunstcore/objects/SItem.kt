@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.objects
 
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.utils.getInt
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -133,6 +134,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             subscribeEvent<PlayerInteractEvent> { 
                 val item = item
                 if(item == null || item.type == Material.AIR) return@subscribeEvent
+                if(!WorldConfig.isWorldEnabled(player.world)) return@subscribeEvent
                 
                 protectedItems.forEach { 
                     if(item.isItemSimilar(it)) {

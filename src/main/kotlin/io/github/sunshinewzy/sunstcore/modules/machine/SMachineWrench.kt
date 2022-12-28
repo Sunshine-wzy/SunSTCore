@@ -4,6 +4,7 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeSMachineStructure
@@ -64,6 +65,7 @@ class SMachineWrench @JvmOverloads constructor(
         }) { event ->
             event.apply {
                 val clickedBlock = clickedBlock ?: return@addAction
+                if(!WorldConfig.isWorldEnabled(clickedBlock.world)) return@addAction
                 isCancelled = true
 
                 val loc = clickedBlock.location
@@ -151,6 +153,7 @@ class SMachineWrench @JvmOverloads constructor(
         override fun init() {
             subscribeEvent<PlayerInteractEvent> { 
                 val clickedBlock = clickedBlock ?: return@subscribeEvent
+                if(!WorldConfig.isWorldEnabled(clickedBlock.world)) return@subscribeEvent
                 
                 if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR){
                     item?.let { item ->
@@ -195,6 +198,6 @@ class SMachineWrench @JvmOverloads constructor(
         }
         
         fun Player.getLastAddMachine(): Pair<String, Short> =
-            playerLastAddMachine[uniqueId] ?: "" to 0
+            playerLastAddMachine[uniqueId] ?: ("" to 0)
     }
 }

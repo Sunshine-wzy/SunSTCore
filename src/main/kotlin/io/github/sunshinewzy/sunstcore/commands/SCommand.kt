@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.toLinkedList
 import org.bukkit.Bukkit
@@ -8,6 +9,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import org.bukkit.entity.Player
 
 /**
  * 自带自动补全的指令
@@ -61,6 +63,11 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         args: Array<out String>
     ): Boolean {
         if(!cmd.name.equals(name, true)) return false
+        
+        if(sender is Player && !WorldConfig.isWorldEnabled(sender.world)) {
+            sender.sendMsg("&c当前世界未启用 &eSunSTCore")
+            return false
+        }
         
         if(args.isEmpty()) {
             helper(sender, 1)
@@ -131,7 +138,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         isOp: Boolean = false,
         wrapper: SCWrapper
     ): SCommand {
-        commands[cmd.toLowerCase()] = wrapper to isOp
+        commands[cmd.lowercase()] = wrapper to isOp
         descriptions += (format + description) to isOp
         
         return this

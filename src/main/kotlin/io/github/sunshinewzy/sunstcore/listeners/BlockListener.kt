@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.getEnergyCell
 import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.isEnergyBlock
@@ -24,6 +25,8 @@ object BlockListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onBlockPlace(e: BlockPlaceEvent) {
         val block = e.blockPlaced
+        if(!WorldConfig.isWorldEnabled(block.world)) return
+        
         val loc = block.location
         val item = e.itemInHand
         
@@ -72,6 +75,7 @@ object BlockListener : Listener {
     fun onBlockBreak(e: BlockBreakEvent) {
         if(!e.isCancelled) {
             val block = e.block
+            if(!WorldConfig.isWorldEnabled(block.world)) return
 
             if(SEnergyCell.hasEnergyBlocks()) {
                 val sBlock = block.toSBlock()

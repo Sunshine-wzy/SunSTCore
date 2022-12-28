@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.task
 
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager.getTaskProgress
+import io.github.sunshinewzy.sunstcore.modules.data.sunst.WorldConfig
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
@@ -47,6 +48,7 @@ class TaskProject @JvmOverloads constructor(
         
         subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
             val item = item ?: return@subscribeEvent
+            if(!WorldConfig.isWorldEnabled(player.world)) return@subscribeEvent
 
             if(hand == EquipmentSlot.HAND){
                 when(action) {
