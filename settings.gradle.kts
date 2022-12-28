@@ -1,1 +1,1 @@
-rootProject.name = "SunSTCore-v1"
+rootProject.name = "SunSTCore"

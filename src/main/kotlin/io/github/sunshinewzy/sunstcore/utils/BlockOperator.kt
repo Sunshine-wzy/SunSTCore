@@ -39,32 +39,32 @@ class BlockOperator(val block: Block) {
         var flag = false
         
         x(1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
         
         x(-1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
 
         y(1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
 
         y(-1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
 
         z(1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
 
         z(-1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return true
         
@@ -80,43 +80,43 @@ class BlockOperator(val block: Block) {
     fun horizontal(around: Boolean = false, operation: Function<Block, Boolean>) {
         var flag = false
 
-        x(1) {
-            flag = operation.apply(block)
+        x(1) { operator ->
+            flag = operation.apply(operator.block)
 
             if(around && !flag) {
-                z(1) {
-                    flag = operation.apply(block)
+                operator.z(1) {
+                    flag = operation.apply(it.block)
                 }
                 if(flag) return@x
-                z(-1) {
-                    flag = operation.apply(block)
+                operator.z(-1) {
+                    flag = operation.apply(it.block)
                 }
             }
         }
         if(flag) return
 
-        x(-1) {
-            flag = operation.apply(block)
+        x(-1) { operator ->
+            flag = operation.apply(operator.block)
 
             if(around && !flag) {
-                z(1) {
-                    flag = operation.apply(block)
+                operator.z(1) {
+                    flag = operation.apply(it.block)
                 }
                 if(flag) return@x
-                z(-1) {
-                    flag = operation.apply(block)
+                operator.z(-1) {
+                    flag = operation.apply(it.block)
                 }
             }
         }
         if(flag) return
 
         z(1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
         if(flag) return
 
         z(-1) {
-            flag = operation.apply(block)
+            flag = operation.apply(it.block)
         }
     }
     

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.sunshinewzy"
-version = "1.2.4"
+version = "1.2.5"
 
 repositories {
     maven {
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib"))
+    implementation(kotlin("stdlib"))
     implementation("org.bstats", "bstats-bukkit", "2.2.1")
 
     compileOnly(fileTree(mapOf("dir" to "cores", "include" to listOf("*.jar"))))
@@ -46,10 +46,10 @@ tasks {
         relocate("org.bstats", "io.github.sunshinewzy.sunstcore.libs.bstats")
         relocate("kotlin", "kotlin1510")
         
-        dependencies { 
-            include(dependency("org.bstats:bstats-base:2.2.1"))
-            include(dependency("org.bstats:bstats-bukkit:2.2.1"))
-        }
+//        dependencies { 
+//            include(dependency("org.bstats:bstats-base:2.2.1"))
+//            include(dependency("org.bstats:bstats-bukkit:2.2.1"))
+//        }
     }
 
     compileKotlin {
