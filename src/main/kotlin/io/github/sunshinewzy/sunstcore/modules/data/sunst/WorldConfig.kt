@@ -11,9 +11,10 @@ object WorldConfig : Initable {
     private val file: File = File(SunSTCore.plugin.dataFolder, "config/world.yml")
     private val worldEnabledMap: MutableMap<String, Boolean> = hashMapOf()
     
+    lateinit var config: YamlConfiguration
     
     override fun init() {
-        val config = if(file.exists()) {
+        config = if(file.exists()) {
             YamlConfiguration.loadConfiguration(file)
         } else {
             val theConfig = YamlConfiguration()
@@ -29,19 +30,16 @@ object WorldConfig : Initable {
             theConfig
         }
         
-        var flag = false
-        Bukkit.getWorlds().forEach { world ->
-            val name = world.name
-            if(config.contains(name)) {
-                worldEnabledMap[name] = config.getBoolean(name, true)
-            } else {
-                config.set(name, true)
-                worldEnabledMap[name] = true
-                flag = true
-            }
+        config.getKeys(false).forEach { world ->
+            worldEnabledMap[world] = config.getBoolean(world, true)
         }
-        
-        if(flag) {
+    }
+    
+    fun checkWorld(world: String) {
+        if(world !in worldEnabledMap) {
+            config.set(world, true)
+            worldEnabledMap[world] = true
+
             try {
                 config.save(file)
             } catch (ex: Exception) {
@@ -49,6 +47,7 @@ object WorldConfig : Initable {
             }
         }
     }
+    
     
     fun isWorldEnabled(world: String): Boolean =
         worldEnabledMap[world] ?: true

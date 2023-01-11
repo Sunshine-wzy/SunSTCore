@@ -132,6 +132,8 @@ class SLocationData(val world: String) : SAutoCoverSaveData(SunSTCore.plugin, wo
             if(!createdDataWorlds.contains(world)) {
                 createdDataWorlds += world
                 SLocationData(world)
+                
+                WorldConfig.checkWorld(world)
             }
         }
 

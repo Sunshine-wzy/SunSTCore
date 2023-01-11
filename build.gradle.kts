@@ -1,12 +1,12 @@
 plugins {
     java
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    id("org.jetbrains.kotlin.jvm") version "1.7.21"
 
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 group = "io.github.sunshinewzy"
-version = "1.2.5"
+version = "1.2.6"
 
 repositories {
     maven {
@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21")
     implementation("org.bstats", "bstats-bukkit", "2.2.1")
 
     compileOnly(fileTree(mapOf("dir" to "cores", "include" to listOf("*.jar"))))
@@ -44,7 +45,7 @@ tasks {
         destinationDirectory.set(file("build/core"))
         
         relocate("org.bstats", "io.github.sunshinewzy.sunstcore.libs.bstats")
-        relocate("kotlin", "kotlin1510")
+        relocate("kotlin", "kotlin1721")
         
 //        dependencies { 
 //            include(dependency("org.bstats:bstats-base:2.2.1"))

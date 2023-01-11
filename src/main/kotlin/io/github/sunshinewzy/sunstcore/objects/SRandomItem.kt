@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.cloneRandomAmount
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import kotlin.random.Random
+import java.util.*
 
 class SRandomItems(val items: List<SRandomItem>) {
     
@@ -16,7 +16,7 @@ class SRandomItems(val items: List<SRandomItem>) {
         val list = ArrayList<ItemStack>()
         
         items.forEach {
-            val randInt = Random.nextInt(100) + 1
+            val randInt = random.nextInt(100) + 1
             
             if(randInt in 1..it.percent) {
                 list += it.getItemsByRandom()
@@ -27,7 +27,7 @@ class SRandomItems(val items: List<SRandomItem>) {
     }
     
     fun takeOne(): List<ItemStack> {
-        val randInt = Random.nextInt(100) + 1
+        val randInt = random.nextInt(100) + 1
         
         var cnt = 0
         items.forEach { 
@@ -45,7 +45,7 @@ class SRandomItems(val items: List<SRandomItem>) {
         val list = ArrayList<ItemStack>()
 
         items.forEach {
-            val randInt = Random.nextInt(100) + 1
+            val randInt = random.nextInt(100) + 1
 
             if(randInt in 1..it.percent) {
                 list += it.getItemByRandom()
@@ -56,7 +56,7 @@ class SRandomItems(val items: List<SRandomItem>) {
     }
     
     fun takeOneFirst(): ItemStack {
-        val randInt = Random.nextInt(100) + 1
+        val randInt = random.nextInt(100) + 1
 
         var cnt = 0
         items.forEach {
@@ -73,6 +73,9 @@ class SRandomItems(val items: List<SRandomItem>) {
     
     companion object {
 
+        val random = Random()
+        
+        
         fun Array<ItemStack>.randItem(): ItemStack = random()
         
     }
