@@ -1,27 +1,29 @@
 plugins {
     java
-    id("org.jetbrains.kotlin.jvm") version "1.7.21"
+    id("org.jetbrains.kotlin.jvm") version "1.8.22"
 
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 group = "io.github.sunshinewzy"
-version = "1.2.6"
+version = "1.2.7"
 
 repositories {
-    maven {
-        url = uri("https://maven.aliyun.com/repository/public/")
-    }
+    maven("https://maven.aliyun.com/repository/public/")
+    maven("http://sacredcraft.cn:8081/repository/releases") { isAllowInsecureProtocol = true }
+    
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
     implementation("org.bstats", "bstats-bukkit", "2.2.1")
 
-    compileOnly(fileTree(mapOf("dir" to "cores", "include" to listOf("*.jar"))))
+    compileOnly("ink.ptms.core:v12001:12001:universal")
+    compileOnly("ink.ptms.core:v12001:12001:mapped")
+
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
@@ -42,10 +44,9 @@ tasks {
     
     shadowJar {
         archiveClassifier.set("")
-        destinationDirectory.set(file("build/core"))
         
-        relocate("org.bstats", "io.github.sunshinewzy.sunstcore.libs.bstats")
-        relocate("kotlin", "kotlin1721")
+        relocate("org.bstats.", "io.github.sunshinewzy.sunstcore.libs.bstats.")
+        relocate("kotlin.", "kotlin1822s.")
         
 //        dependencies { 
 //            include(dependency("org.bstats:bstats-base:2.2.1"))
